@@ -33,7 +33,17 @@ module.exports =  {
     extensions: [ '.tsx', '.ts', '.js' ],
   },
   optimization:{
-    // minimize: false
+    minimize: false,
+    runtimeChunk: "single",
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: "vendors",
+          chunks: "all"
+        }
+      }
+    }
   },
   plugins:[],
   output: {

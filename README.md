@@ -1,1 +1,2 @@
 # argos
+error catch
