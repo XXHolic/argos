@@ -10,7 +10,7 @@ const init = (options={}) => {
   }
   const combineOptions = {...defaultOptions,...options}
   if (!combineOptions.url) {
-    return;
+    console.warn('no url')
   }
   baseClient.bindOptions(combineOptions);
   globalHandlers.bindOptions(combineOptions,baseClient);

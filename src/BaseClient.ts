@@ -26,17 +26,24 @@ class BaseClient {
 
   createFetch(data) {
     const {url,headers} = this.options;
+    if (!url) {
+      console.warn('no url')
+      return;
+    }
     const reqOptions = {
       body: JSON.stringify(data),
       method: 'POST',
       headers:{...headers}
     }
-
     fetch(url,{...reqOptions});
   }
 
   createXHR(data) {
     const {url,headers} = this.options;
+    if (!url) {
+      console.warn('no url')
+      return;
+    }
     const request = new XMLHttpRequest();
     // request.onreadystatechange = () => {
 
