@@ -57,32 +57,6 @@ export const uuid4 = () => {
   });
 }
 
-let debounceTimer = 0;
-let lastCapturedEvent;
-export const domEventHandler = (name, handler, debounce = false)=> {
-  return (event) => {
-
-      // It's possible this handler might trigger multiple times for the same
-      // event (e.g. event propagation through node ancestors). Ignore if we've
-      // already captured the event.
-      if (!event || lastCapturedEvent === event) {
-          return;
-      }
-      lastCapturedEvent = event;
-      if (debounceTimer) {
-          clearTimeout(debounceTimer);
-      }
-      if (debounce) {
-          debounceTimer = setTimeout(() => {
-              handler({ event, name });
-          });
-      }
-      else {
-          handler({ event, name });
-      }
-  };
-}
-
 
 // 事件统一发布订阅
 const handlers ={}

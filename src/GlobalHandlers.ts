@@ -1,5 +1,5 @@
 // 重写原生的一些异常相关的方法
-import { getGlobalObject,addHandler,triggerHandler,uuid4,fill,domEventHandler } from './utils'
+import { getGlobalObject,addHandler,triggerHandler,uuid4,fill } from './utils'
 
 interface GlobalHandlersOptions {
   onerrorMark?: boolean,
@@ -35,9 +35,9 @@ class GlobalHandlers {
     if (onunhandledrejectionMark) {
       this.wrapOnunhandledrejection()
     }
-    // if (eventTargetMark) {
-      // this.wrapEventTarget()
-    // }
+    if (eventTargetMark) {
+      this.wrapEventTarget()
+    }
   }
 
   wrapOnerror() {
@@ -73,12 +73,14 @@ class GlobalHandlers {
 
   wrapOnunhandledrejection() {
     const global:any = this.global;
+    const baseClient: any = this.baseClient;
     // 有可能已有被重写了，所以要暂存下来
     const oldOnError = global.onunhandledrejection;
 
     addHandler({type:'unhandledrejection',fn:(data) => {
-      console.info('unhandledrejection',data);
-      // baseClient.send(data);
+      // console.info('unhandledrejection',data);
+      const eventId = uuid4()
+      baseClient.send({type:'unhandledrejection',eventId:eventId,exception:data});
     }})
 
     global.onunhandledrejection = function(e) {
@@ -93,38 +95,38 @@ class GlobalHandlers {
 
   wrapEventTarget() {
     const global:any = this.global;
+    const baseClient: any = this.baseClient;
 
     if (!('document' in global)) {
       return;
     }
-    addHandler({type:'dom',fn:(data) => {
-      console.info('dom data',data)
-      // baseClient.send(data);
-    }})
-
-    global.document.addEventListener('click', domEventHandler('click', triggerHandler.bind(null, 'dom')), true);
-
+    addHandler({
+      type:'dom',
+      fn:(data) => {
+        const eventId = uuid4()
+        baseClient.send({type:'dom',eventId:eventId,exception:data});
+      }
+    })
 
     const proto = global.EventTarget && global.EventTarget.prototype;
-    if(!proto) {
+    if(!proto || !proto.hasOwnProperty || !proto.hasOwnProperty('addEventListener')) {
       return;
     }
 
-    // react 中不能放到生命周期中，会中止渲染
-      fill(proto,'addEventListener',function(original){
-        return function(eventName,fn,options) {
+    // react 里面不能放到生命周期中，会中止渲染
+    fill(proto,'addEventListener',function(original: () => void){
+      return function(eventName,fn,options) {
 
-          const wrapFn= (...args) => {
-            try {
-              fn.apply(this,args);
-            } catch (error) {
-              console.info('addEventListener error',error)
-              // throw error;
-            }
+        const wrapFn= (...args) => {
+          try {
+            fn.apply(this,args);
+          } catch (error) {
+            console.info('addEventListener error',error)
           }
-          return original.call(this,eventName,wrapFn,options);
         }
-      });
+        return original.call(this,eventName,wrapFn,options);
+      }
+    });
 
   }
 

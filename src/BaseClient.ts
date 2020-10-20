@@ -1,7 +1,5 @@
 import { getGlobalObject,supportsFetch } from './utils'
 
-
-
 interface BaseClientOptions {
   headers?: object,
   url?: string
