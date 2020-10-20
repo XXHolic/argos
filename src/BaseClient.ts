@@ -11,8 +11,6 @@ class BaseClient {
       'Content-Type': 'application/json'
     }
   }
-  constructor() {
-  }
 
   bindOptions(options) {
     this.options = {...this.options,...options}

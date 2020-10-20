@@ -8,14 +8,13 @@ interface GlobalHandlersOptions {
 }
 
 class GlobalHandlers {
-
-  options:GlobalHandlersOptions = {
+  options: GlobalHandlersOptions = {
     onerrorMark:true,
     onunhandledrejectionMark:true,
     eventTargetMark: true,
-  }
-  global: object
-  baseClient: object
+  };
+  global: object;
+  baseClient: object;
 
   constructor() {
     this.global = getGlobalObject();
