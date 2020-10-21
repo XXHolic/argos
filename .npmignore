@@ -1,6 +1,5 @@
 script/
 public/
-dist/
 src/
 commitlint.config.js
 tsconfig.json
