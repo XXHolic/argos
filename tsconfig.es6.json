@@ -1,15 +1,15 @@
 {
   "extends": "@tsconfig/recommended/tsconfig.json",
   "compilerOptions": {
-    // "outDir": "./dist/",
+    "outDir": "es6",
     "noImplicitAny": false,
     "noImplicitThis": false,
     "module": "es6",
-    "target": "es5",
+    "target": "es6",
     "jsx": "react",
     "allowJs": true,
-    "sourceMap": true,
-    "moduleResolution":"node",
+    // "sourceMap": true,
+    // "moduleResolution":"node",
     "strict": false,
   },
   "include": [
