@@ -4,6 +4,7 @@ const basePath = path.dirname(__dirname);
 module.exports =  {
   entry: path.resolve(basePath, "src/index.ts"),
   mode: 'production',
+  devtool: 'source-map',
   module: {
     rules: [
       {
@@ -11,22 +12,6 @@ module.exports =  {
         use: 'ts-loader',
         exclude: /node_modules/,
       },
-      // {
-      //   test: /\.(ts|tsx|js)$/,
-      //   exclude: /(node_modules|bower_components)/,
-      //   use: {
-      //     loader: 'babel-loader',
-      //     options: {
-      //       presets: [
-      //         "@babel/preset-typescript",
-      //       ],
-      //       plugins: [
-      //         "@babel/plugin-transform-classes",
-      //         ["@babel/plugin-proposal-class-properties", { loose: true }]
-      //       ]
-      //     }
-      //   }
-      // }
     ]
   },
   resolve:{

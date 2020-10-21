@@ -10,22 +10,27 @@ class BaseClient {
     headers:{
       'Content-Type': 'application/json'
     }
-  }
+  };
+  logger: object;
 
-  bindOptions(options) {
-    this.options = {...this.options,...options}
+
+  bindOptions(options,logger) {
+    this.options = {...this.options,...options};
+    this.logger = logger;
   }
 
   // 主动捕获
   capture(data) {
-    console.info('capture')
+    const logger: any = this.logger;
+    logger.info('capture data',data);
     this.send(data);
   }
 
   createFetch(data) {
     const {url,headers} = this.options;
+    const logger: any = this.logger;
     if (!url) {
-      console.warn('no url')
+      logger.error('There is no upload data url!');
       return;
     }
     const reqOptions = {
@@ -33,13 +38,15 @@ class BaseClient {
       method: 'POST',
       headers:{...headers}
     }
+    logger.info('upload params',reqOptions);
     fetch(url,{...reqOptions});
   }
 
   createXHR(data) {
     const {url,headers} = this.options;
+    const logger: any = this.logger;
     if (!url) {
-      console.warn('no url')
+      logger.error('There is no upload data url!');
       return;
     }
     const request = new XMLHttpRequest();
@@ -52,7 +59,9 @@ class BaseClient {
             request.setRequestHeader(header, headers[header]);
         }
     }
-    request.send(JSON.stringify(data));
+    logger.info('upload params',data);
+    const sendData = JSON.stringify(data);
+    request.send(sendData);
   }
 
   // 获取环境基本信息
@@ -95,7 +104,6 @@ class BaseClient {
   // 发送数据
   send(data) {
     const environment = this.getUserAgent()
-    // console.info('environment',environment)
     if (!data.environment) {
       data.environment = environment;
     }
