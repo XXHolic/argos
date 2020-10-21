@@ -34,20 +34,11 @@ module.exports =  {
   },
   optimization:{
     minimize: false,
-    runtimeChunk: "single",
-    splitChunks: {
-      cacheGroups: {
-        vendor: {
-          test: /[\\/]node_modules[\\/]/,
-          name: "vendors",
-          chunks: "all"
-        }
-      }
-    }
   },
   plugins:[],
   output: {
     filename: "index.js",
-    path: path.resolve(basePath, "es")
+    path: path.resolve(basePath, "dist"),
+    libraryTarget: 'umd'
   },
 };
