@@ -31,7 +31,7 @@ class Log {
       return;
     }
     const msg = args.join(' ')
-    global.console.log(`[${prefix}] ${msg}`)
+    global.console.log(`[${prefix}]`)
   }
 
   warn(...args) {

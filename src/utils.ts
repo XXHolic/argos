@@ -82,24 +82,3 @@ export const triggerHandler = (type, data) => {
       }
   }
 }
-
-
-interface ErrorInfo {
-  type?:string;
-  msg:string;
-}
-
-export const log = {
-  log: (msg:string) => {
-    console.log(`---${msg}---`)
-  },
-  warn: (msg:string) => {
-    console.warn(`---${msg}---`)
-  },
-  info: (msg:string) => {
-    console.info(`---${msg}---`)
-  },
-  error:(msg:string) => {
-    throw new Error(`---${msg}---`);
-  }
-}

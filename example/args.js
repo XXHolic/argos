@@ -389,6 +389,7 @@ var BaseClient_BaseClient = /** @class */ (function () {
         if (!data.environment) {
             data.environment = environment;
         }
+        debugger
         if (supportsFetch()) {
             this.createFetch(data);
             return;
@@ -435,10 +436,10 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
             this.wrapOnerror();
         }
         if (onunhandledrejectionMark) {
-            this.wrapOnunhandledrejection();
+            // this.wrapOnunhandledrejection();
         }
         if (eventTargetMark) {
-            this.wrapEventTarget();
+            // this.wrapEventTarget();
         }
     };
     GlobalHandlers.prototype.wrapOnerror = function () {
