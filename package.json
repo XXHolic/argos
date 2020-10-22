@@ -5,8 +5,9 @@
   "main": "./dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "run-s build:dist build:es6",
+    "build": "run-s build:dist build:es6 build:example",
     "build:dist": "webpack --config ./script/webpack.prod.js",
+    "build:example": "webpack --outPath=example --filename=args --config ./script/webpack.prod.js",
     "build:es6": "tsc -p tsconfig.es6.json",
     "watch": "webpack --watch",
     "start": "webpack-dev-server --open --config ./script/webpack.dev.js"

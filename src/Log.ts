@@ -10,7 +10,7 @@ interface LogOptions {
 const prefix = 'Argos Log'
 class Log {
   options: LogOptions = {
-    enableLog: false, //
+    enableLog: false,
     showLog: true,
     showInfo: true,
     showWarn: true,
@@ -21,7 +21,7 @@ class Log {
 
   bindOptions(options) {
     this.options = {...this.options,...options};
-    this.globalObj = getGlobalObject
+    this.globalObj = getGlobalObject();
   }
 
   log(...args) {

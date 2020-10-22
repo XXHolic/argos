@@ -1,5 +1,8 @@
 const path = require("path");
 const basePath = path.dirname(__dirname);
+const filterArgv = require('./filterArgv.js')
+const outPath = filterArgv('--outPath') || 'dist';
+const filename = filterArgv('--filename') || 'index';
 
 module.exports =  {
   entry: path.resolve(basePath, "src/index.ts"),
@@ -22,8 +25,10 @@ module.exports =  {
   },
   plugins:[],
   output: {
-    filename: "index.js",
-    path: path.resolve(basePath, "dist"),
-    libraryTarget: 'umd'
+    filename: `${filename}.js`,
+    path: path.resolve(basePath, outPath),
+    libraryTarget: 'umd',
+    library: 'Argos',
   },
+
 };
