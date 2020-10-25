@@ -1,4 +1,4 @@
-import { getGlobalObject } from './utils'
+import { getGlobalObject } from './helper'
 
 interface LogOptions {
   enableLog?:boolean,
@@ -30,8 +30,7 @@ class Log {
     if (!enableLog || !showLog) {
       return;
     }
-    const msg = args.join(' ')
-    global.console.log(`[${prefix}]`)
+    global.console.log(`[${prefix}]`,...args)
   }
 
   warn(...args) {
@@ -40,8 +39,7 @@ class Log {
     if (!enableLog || !showWarn) {
       return;
     }
-    const msg = args.join(' ')
-    global.console.warn(`[${prefix}] ${msg}`)
+    global.console.warn(`[${prefix}]`,...args)
   }
 
   info(...args) {
@@ -50,8 +48,7 @@ class Log {
     if (!enableLog || !showInfo) {
       return;
     }
-    const msg = args.join(' ')
-    global.console.info(`[${prefix}] ${msg}`)
+    global.console.info(`[${prefix}]`,...args)
   }
 
   error(...args) {
@@ -61,7 +58,7 @@ class Log {
       return;
     }
     const msg = args.join(' ')
-    global.console.error(`[${prefix}] ${msg}`)
+    global.console.error(`[${prefix}]`,...args)
   }
 
 }

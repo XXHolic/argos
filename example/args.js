@@ -107,18 +107,40 @@ __webpack_require__.d(__webpack_exports__, "init", function() { return /* bindin
 __webpack_require__.d(__webpack_exports__, "captureMessage", function() { return /* binding */ captureMessage; });
 
 // CONCATENATED MODULE: ./src/utils.ts
+var originMark = '__argos_original__';
+var wrapMark = '__argos_wrapped__';
 var fallbackGlobalObject = {};
 // 获取全局属性，在其它的一些环境（例如 node）中，可能没有 window 对象
 var getGlobalObject = function () {
     return typeof window !== 'undefined' ? window : fallbackGlobalObject;
 };
-// 扩展属性，避免覆盖已存在的方法
+/**
+ * 扩展属性，避免覆盖已存在的方法
+ * @param source 原方法
+ * @param name 属性名称
+ * @param replacement 扩展的方法
+ */
 var fill = function (source, name, replacement) {
+    var _a;
     if (!(name in source)) {
         return;
     }
     var original = source[name];
     var wrapped = replacement(original);
+    if (typeof wrapped === 'function') {
+        try {
+            wrapped.prototype = wrapped.prototype || {};
+            Object.defineProperties(wrapped, (_a = {},
+                _a[originMark] = {
+                    enumerable: false,
+                    value: original,
+                },
+                _a));
+        }
+        catch (e) {
+            console.warn('multiple fill may cause error');
+        }
+    }
     source[name] = wrapped;
 };
 var supportsFetch = function () {
@@ -137,11 +159,7 @@ var uuid4 = function () {
         // Use window.crypto API if available
         var arr = new Uint16Array(8);
         crypto.getRandomValues(arr);
-        // set 4 in byte 7
-        // eslint-disable-next-line no-bitwise
         arr[3] = (arr[3] & 0xfff) | 0x4000;
-        // set 2 most significant bits of byte 9 to '10'
-        // eslint-disable-next-line no-bitwise
         arr[4] = (arr[4] & 0x3fff) | 0x8000;
         var pad = function (num) {
             var v = num.toString(16);
@@ -154,9 +172,7 @@ var uuid4 = function () {
     }
     // http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/2117523#2117523
     return 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        // eslint-disable-next-line no-bitwise
         var r = (Math.random() * 16) | 0;
-        // eslint-disable-next-line no-bitwise
         var v = c === 'x' ? r : (r & 0x3) | 0x8;
         return v.toString(16);
     });
@@ -184,19 +200,57 @@ var triggerHandler = function (type, data) {
         }
     }
 };
-var log = {
-    log: function (msg) {
-        console.log("---" + msg + "---");
-    },
-    warn: function (msg) {
-        console.warn("---" + msg + "---");
-    },
-    info: function (msg) {
-        console.info("---" + msg + "---");
-    },
-    error: function (msg) {
-        throw new Error("---" + msg + "---");
+var wrap = function (fn, options) {
+    var _a;
+    if (options === void 0) { options = {}; }
+    if (typeof fn !== 'function') {
+        return fn;
     }
+    try {
+        if (fn[wrapMark]) {
+            return fn[wrapMark];
+        }
+    }
+    catch (e) {
+        return fn;
+    }
+    var wrapped = function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        try {
+            return fn.apply(this, args);
+        }
+        catch (error) {
+            throw error;
+        }
+    };
+    try {
+        for (var property in fn) {
+            if (Object.prototype.hasOwnProperty.call(fn, property)) {
+                wrapped[property] = fn[property];
+            }
+        }
+    }
+    catch (error) {
+        // throw error;
+    }
+    // 相当于复制
+    fn.prototype = fn.prototype || {};
+    wrapped.prototype = fn.prototype;
+    Object.defineProperty(fn, wrapMark, {
+        enumerable: false,
+        value: wrapped,
+    });
+    // 添加源标记
+    Object.defineProperties(wrapped, (_a = {},
+        _a[originMark] = {
+            enumerable: false,
+            value: fn,
+        },
+        _a));
+    return wrapped;
 };
 
 // CONCATENATED MODULE: ./src/Log.ts
@@ -210,6 +264,13 @@ var __assign = (undefined && undefined.__assign) || function () {
         return t;
     };
     return __assign.apply(this, arguments);
+};
+var __spreadArrays = (undefined && undefined.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
 };
 
 var prefix = 'Argos Log';
@@ -229,56 +290,57 @@ var Log_Log = /** @class */ (function () {
         this.globalObj = getGlobalObject();
     };
     Log.prototype.log = function () {
+        var _a;
         var args = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i] = arguments[_i];
         }
-        var _a = this.options, enableLog = _a.enableLog, showLog = _a.showLog;
+        var _b = this.options, enableLog = _b.enableLog, showLog = _b.showLog;
         var global = this.globalObj;
         if (!enableLog || !showLog) {
             return;
         }
-        var msg = args.join(' ');
-        global.console.log("[" + prefix + "] " + msg);
+        (_a = global.console).log.apply(_a, __spreadArrays(["[" + prefix + "]"], args));
     };
     Log.prototype.warn = function () {
+        var _a;
         var args = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i] = arguments[_i];
         }
-        var _a = this.options, enableLog = _a.enableLog, showWarn = _a.showWarn;
+        var _b = this.options, enableLog = _b.enableLog, showWarn = _b.showWarn;
         var global = this.globalObj;
         if (!enableLog || !showWarn) {
             return;
         }
-        var msg = args.join(' ');
-        global.console.warn("[" + prefix + "] " + msg);
+        (_a = global.console).warn.apply(_a, __spreadArrays(["[" + prefix + "]"], args));
     };
     Log.prototype.info = function () {
+        var _a;
         var args = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i] = arguments[_i];
         }
-        var _a = this.options, enableLog = _a.enableLog, showInfo = _a.showInfo;
+        var _b = this.options, enableLog = _b.enableLog, showInfo = _b.showInfo;
         var global = this.globalObj;
         if (!enableLog || !showInfo) {
             return;
         }
-        var msg = args.join(' ');
-        global.console.info("[" + prefix + "] " + msg);
+        (_a = global.console).info.apply(_a, __spreadArrays(["[" + prefix + "]"], args));
     };
     Log.prototype.error = function () {
+        var _a;
         var args = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i] = arguments[_i];
         }
-        var _a = this.options, enableLog = _a.enableLog, showError = _a.showError;
+        var _b = this.options, enableLog = _b.enableLog, showError = _b.showError;
         var global = this.globalObj;
         if (!enableLog || !showError) {
             return;
         }
         var msg = args.join(' ');
-        global.console.error("[" + prefix + "] " + msg);
+        (_a = global.console).error.apply(_a, __spreadArrays(["[" + prefix + "]"], args));
     };
     return Log;
 }());
@@ -389,7 +451,6 @@ var BaseClient_BaseClient = /** @class */ (function () {
         if (!data.environment) {
             data.environment = environment;
         }
-        debugger
         if (supportsFetch()) {
             this.createFetch(data);
             return;
@@ -412,7 +473,10 @@ var GlobalHandlers_assign = (undefined && undefined.__assign) || function () {
     };
     return GlobalHandlers_assign.apply(this, arguments);
 };
-// 重写原生的一些异常相关的方法
+/**
+ * 对原生方法的重新包装，为错误捕获提供另外一个角度
+ * 比如本地无服务情况下，chrome 由于同源策略，看不到错误相关信息，这个时候，对原生方法重新包装就有效果
+ */
 
 var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
     function GlobalHandlers() {
@@ -436,10 +500,10 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
             this.wrapOnerror();
         }
         if (onunhandledrejectionMark) {
-            // this.wrapOnunhandledrejection();
+            this.wrapOnunhandledrejection();
         }
         if (eventTargetMark) {
-            // this.wrapEventTarget();
+            this.wrapEventTarget();
         }
     };
     GlobalHandlers.prototype.wrapOnerror = function () {
@@ -508,7 +572,8 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
         }
         fill(proto, 'addEventListener', function (original) {
             return function (eventName, fn, options) {
-                return original.call(this, eventName, fn, options);
+                var wrapFn = wrap(fn, options);
+                return original.call(this, eventName, wrapFn, options);
             };
         });
     };

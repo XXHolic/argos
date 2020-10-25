@@ -1,26 +1,36 @@
 
-const fallbackGlobalObject = {};
-// 获取全局属性，在其它的一些环境（例如 node）中，可能没有 window 对象
-export const getGlobalObject = ()=> {
-  return typeof window !== 'undefined' ? window : fallbackGlobalObject;
-}
+const originMark = '__argos_original__';
+const wrapMark = '__argos_wrapped__';
 
-// 扩展属性，避免覆盖已存在的方法
+/**
+ * 扩展属性，避免覆盖已存在的方法
+ * @param source 原方法
+ * @param name 属性名称
+ * @param replacement 扩展的方法
+ */
 export const fill = (source, name, replacement) => {
   if (!(name in source)) {
       return;
   }
   const original = source[name];
   const wrapped = replacement(original);
+  if (typeof wrapped === 'function') {
+    try {
+        wrapped.prototype = wrapped.prototype || {};
+        Object.defineProperties(wrapped, {
+            [originMark]: {
+                enumerable: false,
+                value: original,
+            },
+        });
+    } catch (e) {
+      console.warn('multiple fill may cause error')
+    }
+}
   source[name] = wrapped;
 }
 
-export const supportsFetch = () => {
-  if (!('fetch' in getGlobalObject())) {
-      return false;
-  }
-  return true;
-}
+
 
 /**
  * 生成唯一标志
@@ -32,11 +42,7 @@ export const uuid4 = () => {
       // Use window.crypto API if available
       const arr = new Uint16Array(8);
       crypto.getRandomValues(arr);
-      // set 4 in byte 7
-      // eslint-disable-next-line no-bitwise
       arr[3] = (arr[3] & 0xfff) | 0x4000;
-      // set 2 most significant bits of byte 9 to '10'
-      // eslint-disable-next-line no-bitwise
       arr[4] = (arr[4] & 0x3fff) | 0x8000;
       const pad = (num) => {
           let v = num.toString(16);
@@ -49,9 +55,7 @@ export const uuid4 = () => {
   }
   // http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/2117523#2117523
   return 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, c => {
-      // eslint-disable-next-line no-bitwise
       const r = (Math.random() * 16) | 0;
-      // eslint-disable-next-line no-bitwise
       const v = c === 'x' ? r : (r & 0x3) | 0x8;
       return v.toString(16);
   });
@@ -69,7 +73,7 @@ export const addHandler = (handler) => {
   handlers[handler.type].push(handler.fn);
 }
 
-export const triggerHandler = (type, data) => {
+export const triggerHandler = (type: string, data) => {
   if (!type || !handlers[type]) {
       return;
   }
@@ -81,4 +85,58 @@ export const triggerHandler = (type, data) => {
         console.error('Error while triggering handler')
       }
   }
+}
+
+export const wrap = (fn, options={}) => {
+  if (typeof fn !== 'function') {
+    return fn;
+  }
+  try {
+      if (fn[wrapMark]) {
+        return fn[wrapMark];
+      }
+  } catch (e) {
+    return fn;
+  }
+
+  const wrapped = function (...args) {
+    try {
+      return fn.apply(this, args);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  try {
+    for (var property in fn) {
+        if (Object.prototype.hasOwnProperty.call(fn, property)) {
+          wrapped[property] = fn[property];
+        }
+    }
+  } catch (error) {
+    // throw error;
+  }
+
+  // 相当于复制
+  fn.prototype = fn.prototype || {};
+  wrapped.prototype = fn.prototype;
+  Object.defineProperty(fn, wrapMark, {
+      enumerable: false,
+      value: wrapped,
+  });
+
+  // 添加源标记
+  Object.defineProperties(wrapped, {
+      [originMark]:{
+        enumerable: false,
+        value: fn,
+      }
+  });
+
+  return wrapped;
+}
+
+// 解析异常字符串
+export const computeStackTrace  = () => {
+
 }

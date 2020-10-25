@@ -1,5 +1,9 @@
-// 重写原生的一些异常相关的方法
-import { getGlobalObject,addHandler,triggerHandler,uuid4,fill } from './utils'
+/**
+ * 对原生方法的重新包装，为错误捕获提供另外一个角度
+ * 比如本地无服务情况下，chrome 由于同源策略，看不到错误相关信息，这个时候，对原生方法重新包装就有效果
+ */
+import { addHandler,triggerHandler,uuid4,fill,wrap } from './utils'
+import { getGlobalObject } from './helper'
 
 interface GlobalHandlersOptions {
   onerrorMark?: boolean,
@@ -118,7 +122,8 @@ class GlobalHandlers {
 
     fill(proto,'addEventListener',function(original: () => void){
       return function(eventName,fn,options) {
-        return original.call(this,eventName,fn,options);
+        const wrapFn = wrap(fn,options);
+        return original.call(this,eventName,wrapFn,options);
       }
     });
 

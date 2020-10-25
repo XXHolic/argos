@@ -1,8 +1,10 @@
+import Hub from './Hub';
 import Log from './Log';
-import BaseClient from './BaseClient';
+import Base from './Base';
 import GlobalHandlers from './GlobalHandlers';
 
-const baseClient = new BaseClient();
+const hub = new Hub();
+const base = new Base();
 const globalHandlers = new GlobalHandlers();
 const logger = new Log();
 
@@ -15,10 +17,11 @@ const init = (options={}) => {
   if (!combineOptions.url) {
     logger.warn('There is no upload data url!');
   }
-  baseClient.bindOptions(combineOptions,logger);
-  globalHandlers.bindOptions(combineOptions,baseClient,logger);
+  base.bindOptions(combineOptions,logger);
+  globalHandlers.bindOptions(combineOptions,base,logger);
+  hub.bindClient(base)
 };
 
-const captureMessage = baseClient.capture.bind(baseClient);
+const captureMessage = base.capture.bind(base);
 
 export {init,captureMessage}
