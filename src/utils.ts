@@ -209,3 +209,38 @@ export function eventFromString(
 
   return event;
 }
+
+export enum Status {
+  /** The status could not be determined. */
+  Unknown = 'unknown',
+  /** The event was skipped due to configuration or callbacks. */
+  // Skipped = 'skipped',
+  /** The event was sent to Sentry successfully. */
+  Success = 'success',
+  /** The client is currently rate limited and will try again later. */
+  RateLimit = 'rate_limit',
+  /** The event could not be processed. */
+  Invalid = 'invalid',
+  /** A server-side error ocurred during submission. */
+  Failed = 'failed',
+}
+
+export function fromHttpCode(code: number) {
+  if (code >= 200 && code < 300) {
+    return Status.Success;
+  }
+
+  if (code === 429) {
+    return Status.RateLimit;
+  }
+
+  if (code >= 400 && code < 500) {
+    return Status.Invalid;
+  }
+
+  if (code >= 500) {
+    return Status.Failed;
+  }
+
+  return Status.Unknown;
+}

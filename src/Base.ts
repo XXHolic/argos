@@ -1,5 +1,7 @@
-import { getGlobalObject,supportsFetch } from './helper'
-import { exceptionCheck } from './utils'
+import { getGlobalObject,supportsFetch } from './helper';
+import { exceptionCheck } from './utils';
+import {Request,sendData} from './Request';
+
 
 interface BaseClientOptions {
   headers?: object,
@@ -13,57 +15,28 @@ class BaseClient {
     }
   };
   logger: object;
+  request: any;
 
 
   bindOptions(options,logger) {
     this.options = {...this.options,...options};
     this.logger = logger;
+    this.request = new Request();
   }
 
-  captureException(exception) {
+  captureException(exception,otherMsg) {
+    const eventId = otherMsg && otherMsg.eventId;
     const logger: any = this.logger;
     logger.info('exception origin',exception);
-    const exceptionFormat = exceptionCheck(exception);
-    logger.info('exception format',exceptionFormat);
-    // this.send(exception);
-  }
-
-  createFetch(data) {
-    const {url,headers} = this.options;
-    const logger: any = this.logger;
-    if (!url) {
-      logger.error('There is no upload data url!');
-      return;
-    }
-    const reqOptions = {
-      body: JSON.stringify(data),
-      method: 'POST',
-      headers:{...headers}
-    }
-    logger.info('upload params',reqOptions);
-    fetch(url,{...reqOptions});
-  }
-
-  createXHR(data) {
-    const {url,headers} = this.options;
-    const logger: any = this.logger;
-    if (!url) {
-      logger.error('There is no upload data url!');
-      return;
-    }
-    const request = new XMLHttpRequest();
-    // request.onreadystatechange = () => {
-
-    // };
-    request.open('POST', url);
-    for (const header in headers) {
-        if (headers.hasOwnProperty(header)) {
-            request.setRequestHeader(header, headers[header]);
-        }
-    }
-    logger.info('upload params',data);
-    const sendData = JSON.stringify(data);
-    request.send(sendData);
+    let exceptionFormat = exceptionCheck(exception);
+    exceptionFormat.eventId = eventId;
+    const allData = this.combineData(exceptionFormat)
+    logger.info('allData',allData);
+    // this.request.add(() => {
+    //   return new Promise(()=>{
+    //     sendData(allData,this.options)
+    //   })
+    // })
   }
 
   // 获取环境基本信息
@@ -103,17 +76,13 @@ class BaseClient {
     return data;
   }
 
-  // 发送数据
-  send(data) {
+  // 合并数据
+  combineData(data) {
     const environment = this.getUserAgent()
     if (!data.environment) {
       data.environment = environment;
     }
-    if(supportsFetch()) {
-      this.createFetch(data);
-      return;
-    }
-    this.createXHR(data);
+    return data;
   }
 
 }

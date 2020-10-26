@@ -23,4 +23,4 @@ const init = (options={}) => {
 };
 
 
-export {init,captureException}
+export {init,captureException,getCurrentHub}

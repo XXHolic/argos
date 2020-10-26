@@ -105,6 +105,7 @@ __webpack_require__.r(__webpack_exports__);
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, "init", function() { return /* binding */ init; });
 __webpack_require__.d(__webpack_exports__, "captureException", function() { return /* reexport */ captureException; });
+__webpack_require__.d(__webpack_exports__, "getCurrentHub", function() { return /* reexport */ getCurrentHub; });
 
 // CONCATENATED MODULE: ./src/helper.ts
 var fallbackGlobalObject = {};
@@ -706,7 +707,7 @@ var Hub_Hub = /** @class */ (function () {
         if (key === void 0) { key = 'client'; }
         this.getBond().set(key, client);
     };
-    Hub.prototype.captureException = function (key, exception) {
+    Hub.prototype.captureException = function (key, exception, hint) {
         var eventId = uuid4();
         this._dispatchClient('captureException', key, exception, { eventId: eventId });
     };
@@ -844,6 +845,94 @@ var Log_Log = /** @class */ (function () {
 }());
 /* harmony default export */ var src_Log = (Log_Log);
 
+// CONCATENATED MODULE: ./src/Request.ts
+var Request_assign = (undefined && undefined.__assign) || function () {
+    Request_assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return Request_assign.apply(this, arguments);
+};
+
+var Request = /** @class */ (function () {
+    function Request(options) {
+        if (options === void 0) { options = {}; }
+        this.tasks = [];
+        this.options = {
+            maxRequest: 20
+        };
+        this.options = Request_assign(Request_assign({}, this.options), options);
+        var maxRequest = this.options.maxRequest;
+        this.tasks = Array.from({ length: Number(maxRequest) });
+    }
+    Request.prototype.isReady = function () {
+        return this.tasks.length < this.options.maxRequest;
+    };
+    Request.prototype.remove = function (task) {
+        var removedTask = this.tasks.splice(this.tasks.indexOf(task), 1)[0];
+        return removedTask;
+    };
+    Request.prototype.add = function (task) {
+        var _this = this;
+        if (!this.isReady()) {
+            console.warn('too many request');
+            return;
+        }
+        this.tasks.push(task);
+        task.then(function () { return _this.remove(task); }).then(null, function () {
+            return _this.remove(task).then(null, function () {
+                // We have to add this catch here otherwise we have an unhandledPromiseRejection
+                // because it's a new Promise chain.
+            });
+        });
+        return task;
+    };
+    return Request;
+}());
+
+var sendData = function (data, options) {
+    if (supportsFetch()) {
+        createFetch(data, options);
+        return;
+    }
+    createXHR(data, options);
+};
+function createFetch(data, options) {
+    var url = options.url, headers = options.headers;
+    if (!url) {
+        console.error('There is no upload data url!');
+        return;
+    }
+    var reqOptions = {
+        body: JSON.stringify(data),
+        method: 'POST',
+        headers: Request_assign({}, headers)
+    };
+    fetch(url, Request_assign({}, reqOptions));
+}
+function createXHR(data, options) {
+    var url = options.url, headers = options.headers;
+    if (!url) {
+        console.error('There is no upload data url!');
+        return;
+    }
+    var request = new XMLHttpRequest();
+    // request.onreadystatechange = () => {
+    // };
+    request.open('POST', url);
+    for (var header in headers) {
+        if (headers.hasOwnProperty(header)) {
+            request.setRequestHeader(header, headers[header]);
+        }
+    }
+    var sendData = JSON.stringify(data);
+    request.send(sendData);
+}
+
 // CONCATENATED MODULE: ./src/Base.ts
 var Base_assign = (undefined && undefined.__assign) || function () {
     Base_assign = Object.assign || function(t) {
@@ -858,6 +947,7 @@ var Base_assign = (undefined && undefined.__assign) || function () {
 };
 
 
+
 var Base_BaseClient = /** @class */ (function () {
     function BaseClient() {
         this.options = {
@@ -869,48 +959,19 @@ var Base_BaseClient = /** @class */ (function () {
     BaseClient.prototype.bindOptions = function (options, logger) {
         this.options = Base_assign(Base_assign({}, this.options), options);
         this.logger = logger;
+        this.request = new Request();
     };
     BaseClient.prototype.captureException = function (exception) {
         var logger = this.logger;
         logger.info('exception origin', exception);
         var exceptionFormat = exceptionCheck(exception);
-        logger.info('exception format', exceptionFormat);
-        // this.send(exception);
-    };
-    BaseClient.prototype.createFetch = function (data) {
-        var _a = this.options, url = _a.url, headers = _a.headers;
-        var logger = this.logger;
-        if (!url) {
-            logger.error('There is no upload data url!');
-            return;
-        }
-        var reqOptions = {
-            body: JSON.stringify(data),
-            method: 'POST',
-            headers: Base_assign({}, headers)
-        };
-        logger.info('upload params', reqOptions);
-        fetch(url, Base_assign({}, reqOptions));
-    };
-    BaseClient.prototype.createXHR = function (data) {
-        var _a = this.options, url = _a.url, headers = _a.headers;
-        var logger = this.logger;
-        if (!url) {
-            logger.error('There is no upload data url!');
-            return;
-        }
-        var request = new XMLHttpRequest();
-        // request.onreadystatechange = () => {
-        // };
-        request.open('POST', url);
-        for (var header in headers) {
-            if (headers.hasOwnProperty(header)) {
-                request.setRequestHeader(header, headers[header]);
-            }
-        }
-        logger.info('upload params', data);
-        var sendData = JSON.stringify(data);
-        request.send(sendData);
+        var allData = this.combineData(exceptionFormat);
+        logger.info('allData', allData);
+        // this.request.add(() => {
+        //   return new Promise(()=>{
+        //     sendData(allData,this.options)
+        //   })
+        // })
     };
     // 获取环境基本信息
     BaseClient.prototype.getUserAgent = function () {
@@ -945,17 +1006,13 @@ var Base_BaseClient = /** @class */ (function () {
         }
         return data;
     };
-    // 发送数据
-    BaseClient.prototype.send = function (data) {
+    // 合并数据
+    BaseClient.prototype.combineData = function (data) {
         var environment = this.getUserAgent();
         if (!data.environment) {
             data.environment = environment;
         }
-        if (supportsFetch()) {
-            this.createFetch(data);
-            return;
-        }
-        this.createXHR(data);
+        return data;
     };
     return BaseClient;
 }());

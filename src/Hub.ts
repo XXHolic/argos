@@ -28,7 +28,7 @@ export class Hub {
     this.getBond().set(key,client);
   }
 
-  captureException(key,exception) {
+  captureException(key,exception,hint) {
     const eventId = uuid4();
     this._dispatchClient('captureException',key,exception,{eventId})
   }

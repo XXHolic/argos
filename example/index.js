@@ -28,12 +28,9 @@ window.onload = function() {
 
 
 
+
   document.querySelector('#eventException').addEventListener('click', () => {
-    try {
-      throw new Error(`Regular exception no. ${Date.now()}`);
-    } catch (error) {
-      // throw error
-    }
+    a +1
   });
 
   document.querySelector('#regularException').addEventListener('click', () => {
