@@ -5,6 +5,7 @@
 import {uuid4} from './utils'
 import {getGlobalObject} from './helper'
 
+const globalMark = '__ARGOS__'
 export class Hub {
   private _bond = new Map();
 
@@ -12,8 +13,8 @@ export class Hub {
 
   }
 
-  private _dispatchClient(method,...args) {
-    const targetBond = this.getBond().get('client');
+  private _dispatchClient(method,key,...args) {
+    const targetBond = this.getBond().get(key);
     if (targetBond  && targetBond[method]) {
       targetBond[method](...args)
     }
@@ -27,46 +28,47 @@ export class Hub {
     this.getBond().set(key,client);
   }
 
-  captureException(exception) {
+  captureException(key,exception) {
     const eventId = uuid4();
-    this._dispatchClient('captureException',exception,{eventId})
+    this._dispatchClient('captureException',key,exception,{eventId})
   }
 }
 
-export function getMainCarrier(): Carrier {
+export function getGlobalCarrier() {
   const carrier = getGlobalObject();
-  carrier.__SENTRY__ = carrier.__SENTRY__ || {
+  carrier[globalMark] = carrier[globalMark] || {
     hub: undefined,
   };
   return carrier;
 }
 
 export const getCurrentHub = () => {
-  const global = getMainCarrier();
-
+  const global = getGlobalCarrier();
   return getHubFromCarrier(global);
 }
 
-export function getHubFromCarrier(carrier): Hub {
-  if (carrier && carrier.__SENTRY__ && carrier.__SENTRY__.hub) {
-    return carrier.__SENTRY__.hub;
+export function getHubFromCarrier(carrier) {
+  const carrierObj = carrier[globalMark];
+  if (carrierObj && carrierObj.hub) {
+    return carrierObj.hub;
   }
-  carrier.__SENTRY__ = carrier.__SENTRY__ || {};
-  carrier.__SENTRY__.hub = new Hub();
-  return carrier.__SENTRY__.hub;
+  carrier[globalMark] = carrier[globalMark] || {};
+  carrier[globalMark].hub = new Hub();
+  return carrier[globalMark].hub;
 }
 
 
-function callOnHub<T>(method: string, ...args: any[]): T {
+function callOnHub(method: string, ...args: any[]) {
   const hub = getCurrentHub();
-  if (hub && hub[method as keyof Hub]) {
-    // tslint:disable-next-line:no-unsafe-any
-    return (hub[method as keyof Hub] as any)(...args);
+  if (hub && hub[method]) {
+    return (hub[method])(...args);
   }
   throw new Error(`No hub defined or ${method} was not found on the hub, please open a bug report.`);
 }
 
 
-export function captureEvent(event: Event): string {
-  return callOnHub('captureEvent', event);
+export function captureException(exception: any,key='client'): string {
+  return callOnHub('captureException',key,exception, {
+    originalException: exception,
+  });
 }

@@ -53,6 +53,10 @@ export const isDOMException = (value) => {
   return Object.prototype.toString.call(value) === '[object DOMException]';
 }
 
+export const isEvent = (value) => {
+  return typeof Event !== 'undefined' && isInstanceOf(value, Event);
+}
+
 export const isString = (value) => {
   return Object.prototype.toString.call(value) === '[object String]';
 }

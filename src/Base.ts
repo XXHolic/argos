@@ -1,4 +1,5 @@
 import { getGlobalObject,supportsFetch } from './helper'
+import { exceptionCheck } from './utils'
 
 interface BaseClientOptions {
   headers?: object,
@@ -19,11 +20,12 @@ class BaseClient {
     this.logger = logger;
   }
 
-  // 主动捕获
   captureException(exception) {
     const logger: any = this.logger;
-    logger.info('capture data',exception);
-    this.send(exception);
+    logger.info('exception origin',exception);
+    const exceptionFormat = exceptionCheck(exception);
+    logger.info('exception format',exceptionFormat);
+    // this.send(exception);
   }
 
   createFetch(data) {
