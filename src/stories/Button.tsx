@@ -1,4 +1,7 @@
-import React from 'react';
+import React,{useEffect,useState} from 'react';
+// import * as Sentry from "@sentry/react";
+import Sentry from "./Sentry";
+import * as Argos from '../index';
 import './button.css';
 
 export interface ButtonProps {
@@ -27,22 +30,29 @@ export interface ButtonProps {
 /**
  * Primary UI component for user interaction
  */
-export const Button: React.FC<ButtonProps> = ({
-  primary = false,
-  size = 'medium',
-  backgroundColor,
-  label,
-  ...props
-}) => {
+export function Button(props: ButtonProps) {
+  const {primary,size,backgroundColor,label,...otherProps} = props;
+
+  useEffect(() => {
+    Argos.init({url:'http://localhost:6006/'})
+    // Sentry.init({
+    //   dsn: "https://1ea46c0309124094908fa0eb69e21afb@o366923.ingest.sentry.io/5169726",
+    // });
+  },[])
+
   const mode = primary ? 'storybook-button--primary' : 'storybook-button--secondary';
   return (
     <button
       type="button"
       className={['storybook-button', `storybook-button--${size}`, mode].join(' ')}
       style={{ backgroundColor }}
-      {...props}
+      {...otherProps}
     >
       {label}
     </button>
   );
 };
+
+Button.defaultProps = {
+  size:'medium'
+}

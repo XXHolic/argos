@@ -3,7 +3,7 @@
  * 比如本地无服务情况下，chrome 由于同源策略，看不到错误相关信息，这个时候，对原生方法重新包装就有效果
  */
 import { captureException } from './Hub';
-import { fill,wrap,getGlobalObject,exceptionCheck,getLocationHref } from './utils'
+import { fill,wrap,getGlobalObject,exceptionCheck,getLocationHref,shouldIgnoreOnError } from './utils'
 import { isString,isSupportsXMR,isPrimitive,isErrorEvent } from './is'
 import logger from './logger'
 
@@ -59,6 +59,11 @@ class GlobalHandlers {
 
     global.onerror = function(msg, url, line, column, error) {
       logger.info('onerror event: ',{msg, url, line, column, error});
+
+      if (shouldIgnoreOnError()) {
+        return;
+      }
+
       const ex = isPrimitive(error)
       ? self._eventFromIncompleteOnError(msg, url, line, column)
       : self._enhanceEventWithInitialFrame(
@@ -89,6 +94,10 @@ class GlobalHandlers {
         error = e && 'reason' in e ? e.reason : e;
       } catch (ex) {
         // no-empty
+      }
+
+      if (shouldIgnoreOnError()) {
+        return;
       }
 
       const ex = isPrimitive(error)

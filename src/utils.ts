@@ -115,7 +115,9 @@ export const wrap = (fn, options={}) => {
     try {
       return fn.apply(this, args);
     } catch (ex) {
+      ignoreNextOnError()
       captureException(ex);
+      throw ex;
     }
   }
 
@@ -261,4 +263,26 @@ export function getLocationHref(): string {
   } catch (oO) {
     return '';
   }
+}
+
+/**
+ * wrap 方法包裹的方法，如果里面报错了，除了自身会捕获，onerror 也会捕获到，
+ * 这个时候，不应该重复的捕获，于是用了下面的方法
+ */
+let ignoreOnError = 0;
+/**
+ * @hidden
+ */
+export function shouldIgnoreOnError() {
+    return ignoreOnError > 0;
+}
+/**
+ * @hidden
+ */
+export function ignoreNextOnError() {
+    // onerror should trigger before setTimeout
+    ignoreOnError += 1;
+    setTimeout(() => {
+        ignoreOnError -= 1;
+    });
 }

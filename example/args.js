@@ -168,6 +168,13 @@ var isString = function (value) {
 var isPlainObject = function (value) {
     return Object.prototype.toString.call(value) === '[object Object]';
 };
+/**
+ * Checks whether given value's is a primitive (undefined, null, number, boolean, string)
+ * @param value
+ */
+var isPrimitive = function (value) {
+    return value === null || (typeof value !== 'object' && typeof value !== 'function');
+};
 
 // CONCATENATED MODULE: ./src/tracekit.ts
 /**
@@ -487,6 +494,7 @@ function prepareFramesForEvent(stack) {
 
 var originMark = '__argos_original__';
 var wrapMark = '__argos_wrapped__';
+var globalMark = '__ARGOS__';
 var fallbackGlobalObject = {};
 // 获取全局属性，在其它的一些环境（例如 node）中，可能没有 window 对象
 var getGlobalObject = function () {
@@ -714,6 +722,17 @@ function fromHttpCode(code) {
     }
     return Status.Unknown;
 }
+/**
+ * A safe form of location.href
+ */
+function getLocationHref() {
+    try {
+        return document.location.href;
+    }
+    catch (oO) {
+        return '';
+    }
+}
 
 // CONCATENATED MODULE: ./src/Hub.ts
 /**
@@ -721,7 +740,6 @@ function fromHttpCode(code) {
  * 例如 在 try-catch 中捕获的错误，onerror 无法拿到，需要一个公用的方法，可以调用已存在的公共方法
  */
 
-var globalMark = '__ARGOS__';
 var Hub_Hub = /** @class */ (function () {
     function Hub() {
         this._bond = new Map();
@@ -788,9 +806,9 @@ function captureException(exception, key) {
     });
 }
 
-// CONCATENATED MODULE: ./src/Log.ts
-var Log_assign = (undefined && undefined.__assign) || function () {
-    Log_assign = Object.assign || function(t) {
+// CONCATENATED MODULE: ./src/logger.ts
+var logger_assign = (undefined && undefined.__assign) || function () {
+    logger_assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -798,7 +816,7 @@ var Log_assign = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return Log_assign.apply(this, arguments);
+    return logger_assign.apply(this, arguments);
 };
 var __spreadArrays = (undefined && undefined.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
@@ -808,8 +826,9 @@ var __spreadArrays = (undefined && undefined.__spreadArrays) || function () {
     return r;
 };
 
+var logger_global = getGlobalObject();
 var prefix = 'Argos Log';
-var Log_Log = /** @class */ (function () {
+var Log = /** @class */ (function () {
     function Log() {
         this.options = {
             enableLog: false,
@@ -818,11 +837,9 @@ var Log_Log = /** @class */ (function () {
             showWarn: true,
             showError: true,
         };
-        this.globalObj = null;
     }
     Log.prototype.bindOptions = function (options) {
-        this.options = Log_assign(Log_assign({}, this.options), options);
-        this.globalObj = getGlobalObject();
+        this.options = logger_assign(logger_assign({}, this.options), options);
     };
     Log.prototype.log = function () {
         var _a;
@@ -831,11 +848,10 @@ var Log_Log = /** @class */ (function () {
             args[_i] = arguments[_i];
         }
         var _b = this.options, enableLog = _b.enableLog, showLog = _b.showLog;
-        var global = this.globalObj;
         if (!enableLog || !showLog) {
             return;
         }
-        (_a = global.console).log.apply(_a, __spreadArrays(["[" + prefix + "]"], args));
+        (_a = logger_global.console).log.apply(_a, __spreadArrays(["[" + prefix + "]"], args));
     };
     Log.prototype.warn = function () {
         var _a;
@@ -844,11 +860,10 @@ var Log_Log = /** @class */ (function () {
             args[_i] = arguments[_i];
         }
         var _b = this.options, enableLog = _b.enableLog, showWarn = _b.showWarn;
-        var global = this.globalObj;
         if (!enableLog || !showWarn) {
             return;
         }
-        (_a = global.console).warn.apply(_a, __spreadArrays(["[" + prefix + "]"], args));
+        (_a = logger_global.console).warn.apply(_a, __spreadArrays(["[" + prefix + "]"], args));
     };
     Log.prototype.info = function () {
         var _a;
@@ -857,11 +872,10 @@ var Log_Log = /** @class */ (function () {
             args[_i] = arguments[_i];
         }
         var _b = this.options, enableLog = _b.enableLog, showInfo = _b.showInfo;
-        var global = this.globalObj;
         if (!enableLog || !showInfo) {
             return;
         }
-        (_a = global.console).info.apply(_a, __spreadArrays(["[" + prefix + "]"], args));
+        (_a = logger_global.console).info.apply(_a, __spreadArrays(["[" + prefix + "]"], args));
     };
     Log.prototype.error = function () {
         var _a;
@@ -870,16 +884,16 @@ var Log_Log = /** @class */ (function () {
             args[_i] = arguments[_i];
         }
         var _b = this.options, enableLog = _b.enableLog, showError = _b.showError;
-        var global = this.globalObj;
         if (!enableLog || !showError) {
             return;
         }
-        var msg = args.join(' ');
-        (_a = global.console).error.apply(_a, __spreadArrays(["[" + prefix + "]"], args));
+        (_a = logger_global.console).error.apply(_a, __spreadArrays(["[" + prefix + "]"], args));
     };
     return Log;
 }());
-/* harmony default export */ var src_Log = (Log_Log);
+logger_global[globalMark] = logger_global[globalMark] || {};
+var logger = logger_global[globalMark].logger || (logger_global[globalMark].logger = new Log());
+/* harmony default export */ var src_logger = (logger);
 
 // CONCATENATED MODULE: ./src/Request.ts
 var Request_assign = (undefined && undefined.__assign) || function () {
@@ -959,8 +973,8 @@ function createFetch(data, options) {
             }
             reject(response);
         }).catch(function (ex) {
-            //上传的请求报错了，就不要捕获了
-            // reject(ex)
+            //上传的请求报错了，就不要抛到全局捕获了，直接在这里截断
+            reject(ex);
         });
     });
 }
@@ -981,6 +995,7 @@ function createXHR(data, options) {
                 resolve({ status: status });
                 return;
             }
+            // 上传的请求报错了，就不要抛到全局捕获了，直接在这里截断
             reject(request);
         };
         request.open('POST', url);
@@ -1008,34 +1023,30 @@ var Base_assign = (undefined && undefined.__assign) || function () {
 };
 
 
-var Base_BaseClient = /** @class */ (function () {
-    function BaseClient() {
+
+var Base_Base = /** @class */ (function () {
+    function Base(options) {
         this.options = {
             headers: {
                 'Content-Type': 'application/json'
             }
         };
-    }
-    BaseClient.prototype.bindOptions = function (options, logger) {
         this.options = Base_assign(Base_assign({}, this.options), options);
-        this.logger = logger;
         this.request = new Request_Request();
-    };
-    BaseClient.prototype.captureException = function (exception, otherMsg) {
+    }
+    Base.prototype.captureException = function (exception, otherMsg) {
         var _this = this;
         var eventId = otherMsg && otherMsg.eventId;
-        var logger = this.logger;
-        logger.info('exception origin', exception);
         var exceptionFormat = exceptionCheck(exception);
         exceptionFormat.eventId = eventId;
         var allData = this.combineData(exceptionFormat);
-        logger.info('allData', allData);
+        src_logger.info('exception data', allData);
         this.request.add(new Promise(function () {
             Request_sendData(allData, _this.options);
         }));
     };
     // 获取环境基本信息
-    BaseClient.prototype.getUserAgent = function () {
+    Base.prototype.getUserAgent = function () {
         var global = getGlobalObject();
         var data = {
             pageW: null,
@@ -1068,16 +1079,16 @@ var Base_BaseClient = /** @class */ (function () {
         return data;
     };
     // 合并数据
-    BaseClient.prototype.combineData = function (data) {
+    Base.prototype.combineData = function (data) {
         var environment = this.getUserAgent();
         if (!data.environment) {
             data.environment = environment;
         }
         return data;
     };
-    return BaseClient;
+    return Base;
 }());
-/* harmony default export */ var Base = (Base_BaseClient);
+/* harmony default export */ var src_Base = (Base_Base);
 
 // CONCATENATED MODULE: ./src/GlobalHandlers.ts
 var GlobalHandlers_assign = (undefined && undefined.__assign) || function () {
@@ -1097,6 +1108,8 @@ var GlobalHandlers_assign = (undefined && undefined.__assign) || function () {
  */
 
 
+
+
 var GlobalHandlers_global = getGlobalObject();
 var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
     function GlobalHandlers(options) {
@@ -1105,15 +1118,14 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
             onunhandledrejection: true,
             eventTarget: true,
         };
+        this._isSet = false;
         this.options = GlobalHandlers_assign(GlobalHandlers_assign({}, this.options), options);
         this.setUp();
     }
-    GlobalHandlers.prototype.bindOptions = function (options, baseClient, logger) {
-        // this.logger = logger;
-        // this.init();
-    };
-    ;
     GlobalHandlers.prototype.setUp = function () {
+        if (this._isSet) {
+            return;
+        }
         var _a = this.options, onerror = _a.onerror, onunhandledrejection = _a.onunhandledrejection, eventTarget = _a.eventTarget;
         if (onerror) {
             this._wrapOnerror();
@@ -1127,28 +1139,18 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
         // if (xhr) {
         //   this._wrapXHR()
         // }
+        this._isSet = true;
     };
     GlobalHandlers.prototype._wrapOnerror = function () {
-        var baseClient = this.baseClient;
-        var logger = this.logger;
+        var self = this; // tslint:disable-line:no-this-assignment
         // 有可能已有被重写了，所以要暂存下来
         var oldOnError = GlobalHandlers_global.onerror;
-        addHandler({
-            type: 'error',
-            fn: function (data) {
-                var eventId = uuid4();
-                baseClient.send({ type: 'error', eventId: eventId, exception: data });
-            }
-        });
         GlobalHandlers_global.onerror = function (msg, url, line, column, error) {
-            logger.info('onerror event: ', { msg: msg, url: url, line: line, column: column, error: error });
-            triggerHandler('error', {
-                column: column,
-                error: error,
-                line: line,
-                msg: msg,
-                url: url,
-            });
+            src_logger.info('onerror event: ', { msg: msg, url: url, line: line, column: column, error: error });
+            var ex = isPrimitive(error)
+                ? self._eventFromIncompleteOnError(msg, url, line, column)
+                : self._enhanceEventWithInitialFrame(exceptionCheck(error), url, line, column);
+            captureException(ex);
             if (oldOnError) {
                 return oldOnError.apply(this, arguments);
             }
@@ -1156,17 +1158,21 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
         };
     };
     GlobalHandlers.prototype._wrapOnunhandledrejection = function () {
-        var baseClient = this.baseClient;
-        var logger = this.logger;
+        var self = this;
         // 有可能已有被重写了，所以要暂存下来
         var oldOnError = GlobalHandlers_global.onunhandledrejection;
-        addHandler({ type: 'unhandledrejection', fn: function (data) {
-                var eventId = uuid4();
-                baseClient.send({ type: 'unhandledrejection', eventId: eventId, exception: data });
-            } });
         GlobalHandlers_global.onunhandledrejection = function (e) {
-            logger.info('unhandledrejection event: ', e);
-            triggerHandler('unhandledrejection', e);
+            src_logger.info('unhandledrejection event: ', e);
+            var error = e;
+            try {
+                error = e && 'reason' in e ? e.reason : e;
+            }
+            catch (ex) {
+                // no-empty
+            }
+            var ex = isPrimitive(error)
+                ? self._eventFromIncompleteRejection(error)
+                : exceptionCheck(error);
             if (oldOnError) {
                 return oldOnError.apply(this, arguments);
             }
@@ -1174,17 +1180,9 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
         };
     };
     GlobalHandlers.prototype._wrapEventTarget = function () {
-        var baseClient = this.baseClient;
         if (!('document' in GlobalHandlers_global)) {
             return;
         }
-        addHandler({
-            type: 'dom',
-            fn: function (data) {
-                var eventId = uuid4();
-                baseClient.send({ type: 'dom', eventId: eventId, exception: data });
-            }
-        });
         var proto = GlobalHandlers_global.EventTarget && GlobalHandlers_global.EventTarget.prototype;
         if (!proto || !proto.hasOwnProperty || !proto.hasOwnProperty('addEventListener')) {
             return;
@@ -1244,6 +1242,62 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
             };
         });
     };
+    GlobalHandlers.prototype._eventFromIncompleteOnError = function (msg, url, line, column) {
+        var ERROR_TYPES_RE = /^(?:[Uu]ncaught (?:exception: )?)?(?:((?:Eval|Internal|Range|Reference|Syntax|Type|URI|)Error): )?(.*)$/i;
+        // If 'message' is ErrorEvent, get real message from inside
+        var message = isErrorEvent(msg) ? msg.message : msg;
+        var name;
+        if (isString(message)) {
+            var groups = message.match(ERROR_TYPES_RE);
+            if (groups) {
+                name = groups[1];
+                message = groups[2];
+            }
+        }
+        var event = {
+            exception: {
+                values: [
+                    {
+                        type: name || 'Error',
+                        value: message,
+                    },
+                ],
+            },
+        };
+        return this._enhanceEventWithInitialFrame(event, url, line, column);
+    };
+    GlobalHandlers.prototype._eventFromIncompleteRejection = function (error) {
+        return {
+            exception: {
+                values: [
+                    {
+                        type: 'UnhandledRejection',
+                        value: "Non-Error promise rejection captured with value: " + error,
+                    },
+                ],
+            },
+        };
+    };
+    GlobalHandlers.prototype._enhanceEventWithInitialFrame = function (event, url, line, column) {
+        event.exception = event.exception || {};
+        event.exception.values = event.exception.values || [];
+        event.exception.values[0] = event.exception.values[0] || {};
+        event.exception.values[0].stacktrace = event.exception.values[0].stacktrace || {};
+        event.exception.values[0].stacktrace.frames = event.exception.values[0].stacktrace.frames || [];
+        var colno = isNaN(parseInt(column, 10)) ? undefined : column;
+        var lineno = isNaN(parseInt(line, 10)) ? undefined : line;
+        var filename = isString(url) && url.length > 0 ? url : getLocationHref();
+        if (event.exception.values[0].stacktrace.frames.length === 0) {
+            event.exception.values[0].stacktrace.frames.push({
+                colno: colno,
+                filename: filename,
+                function: '?',
+                in_app: true,
+                lineno: lineno,
+            });
+        }
+        return event;
+    };
     return GlobalHandlers;
 }());
 /* harmony default export */ var src_GlobalHandlers = (GlobalHandlers_GlobalHandlers);
@@ -1264,8 +1318,6 @@ var src_assign = (undefined && undefined.__assign) || function () {
 
 
 
-var base = new Base();
-var src_logger = new src_Log();
 var init = function (options) {
     if (options === void 0) { options = {}; }
     var defaultOptions = {
@@ -1276,7 +1328,7 @@ var init = function (options) {
     if (!combineOptions.url) {
         src_logger.warn('There is no upload data url!');
     }
-    base.bindOptions(combineOptions, src_logger);
+    var base = new src_Base(combineOptions);
     var hub = getCurrentHub();
     hub.bindClient(base);
     new src_GlobalHandlers(combineOptions);

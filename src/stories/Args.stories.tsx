@@ -6,7 +6,7 @@ import {Button,ButtonProps} from './Button'
 
 
 export default {
-  title: 'Args',
+  title: 'React Args',
   component: Button,
   argTypes: {
     backgroundColor: { control: 'color' },
@@ -16,25 +16,29 @@ export default {
 
 const Template: Story<ButtonProps> = (args) => <Button {...args} />;
 
-export const Primary = Template.bind({});
-Primary.args = {
+export const Test = Template.bind({});
+Test.args = {
   primary: true,
-  label: 'Button',
+  label: 'Try React Error',
+  onClick: ()=>{
+    console.info('primary Button')
+    throw new Error(`primary Button`);
+  }
 };
 
-export const Secondary = Template.bind({});
-Secondary.args = {
-  label: 'Button',
-};
+// export const Secondary = Template.bind({});
+// Secondary.args = {
+//   label: 'Button',
+// };
 
-export const Large = Template.bind({});
-Large.args = {
-  size: 'large',
-  label: 'Button',
-};
+// export const Large = Template.bind({});
+// Large.args = {
+//   size: 'large',
+//   label: 'Button',
+// };
 
-export const Small = Template.bind({});
-Small.args = {
-  size: 'small',
-  label: 'Button',
-};
+// export const Small = Template.bind({});
+// Small.args = {
+//   size: 'small',
+//   label: 'Button',
+// };
