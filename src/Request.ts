@@ -1,8 +1,7 @@
-import { getGlobalObject,supportsFetch } from './helper'
-import { fromHttpCode,Status } from './utils'
+import { isSupportsFetch } from './is'
+import { fromHttpCode,Status,getGlobalObject } from './utils'
 
-
-
+const ignoreMark = '__ignore__';
 
 
 interface RequestOptions {
@@ -18,12 +17,10 @@ export class Request {
 
   constructor(options={}) {
     this.options = {...this.options,...options};
-    const {maxRequest} = this.options;
-    this.tasks = Array.from({length:Number(maxRequest)});
   }
 
   isReady() {
-    return this.tasks.length < this.options.maxRequest;
+    return this.tasks.length <= this.options.maxRequest;
   }
 
   remove(task) {
@@ -50,7 +47,7 @@ export class Request {
 }
 
 export const sendData = (data,options) => {
-  if(supportsFetch()) {
+  if(!isSupportsFetch()) {
     return createFetch(data,options);
   }
   return createXHR(data,options);
@@ -69,8 +66,23 @@ function createFetch(data,options) {
       headers:{...headers}
     }
     return fetch(url,{...reqOptions}).then(response => {
-      resolve()
-    }).catch(reject);
+      const status = fromHttpCode(response.status);
+
+      if (status === Status.Success) {
+        resolve({ status });
+        return;
+      }
+
+      if (status === Status.RateLimit) {
+        console.warn('Too many requests');
+      }
+
+      reject(response);
+
+    }).catch((ex) => {
+      //上传的请求报错了，就不要抛到全局捕获了，直接在这里截断
+      reject(ex)
+    });
   })
 }
 
@@ -94,7 +106,7 @@ function createXHR(data,options) {
         resolve({ status });
         return;
       }
-
+      // 上传的请求报错了，就不要抛到全局捕获了，直接在这里截断
       reject(request);
     };
     request.open('POST', url);

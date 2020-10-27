@@ -1,4 +1,4 @@
-import { isEvent } from './helper';
+import { isEvent } from './is';
 
 import { computeStackTrace, StackFrame as TraceKitStackFrame, StackTrace as TraceKitStackTrace } from './tracekit';
 

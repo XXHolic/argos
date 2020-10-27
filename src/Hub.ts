@@ -2,8 +2,7 @@
  * 建立方法之间的全局调用桥梁
  * 例如 在 try-catch 中捕获的错误，onerror 无法拿到，需要一个公用的方法，可以调用已存在的公共方法
  */
-import {uuid4} from './utils'
-import {getGlobalObject} from './helper'
+import {uuid4,getGlobalObject} from './utils'
 
 const globalMark = '__ARGOS__'
 export class Hub {

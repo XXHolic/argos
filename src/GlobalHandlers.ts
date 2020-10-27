@@ -2,51 +2,57 @@
  * 对原生方法的重新包装，为错误捕获提供另外一个角度
  * 比如本地无服务情况下，chrome 由于同源策略，看不到错误相关信息，这个时候，对原生方法重新包装就有效果
  */
-import { addHandler,triggerHandler,uuid4,fill,wrap } from './utils'
-import { getGlobalObject } from './helper'
+import { addHandler,triggerHandler,uuid4,fill,wrap,getGlobalObject } from './utils'
+import { isSupportsFetch,isString,isSupportsXMR } from './is'
 
+const global:any = getGlobalObject();
 interface GlobalHandlersOptions {
-  onerrorMark?: boolean,
-  onunhandledrejectionMark?: boolean,
-  eventTargetMark?: boolean,
+  onerror?: boolean,
+  onunhandledrejection?: boolean,
+  eventTarget?: boolean,
+  // xhr?: boolean,
+  // fetch?: boolean,
 }
 
 class GlobalHandlers {
   options: GlobalHandlersOptions = {
-    onerrorMark:true,
-    onunhandledrejectionMark:true,
-    eventTargetMark: true,
+    onerror:true,
+    onunhandledrejection:true,
+    eventTarget: true,
+    // xhr: true,
+    // fetch: true,
   };
-  global: object;
   baseClient: object;
   logger: object;
 
-  constructor() {
-    this.global = getGlobalObject();
+  constructor(options) {
+    this.options = {...this.options,...options};
+    this.setUp()
   }
 
   bindOptions(options,baseClient,logger) {
-    this.options = {...this.options,...options};
-    this.baseClient = baseClient;
-    this.logger = logger;
-    this.init();
+
+    // this.logger = logger;
+    // this.init();
   };
 
-  init() {
-    const {onerrorMark,onunhandledrejectionMark,eventTargetMark} = this.options;
-    if (onerrorMark) {
-      this.wrapOnerror()
+  setUp() {
+    const {onerror,onunhandledrejection,eventTarget} = this.options;
+    if (onerror) {
+      this._wrapOnerror()
     }
-    if (onunhandledrejectionMark) {
-      this.wrapOnunhandledrejection()
+    if (onunhandledrejection) {
+      this._wrapOnunhandledrejection()
     }
-    if (eventTargetMark) {
-      this.wrapEventTarget()
+    if (eventTarget) {
+      this._wrapEventTarget()
     }
+    // if (xhr) {
+    //   this._wrapXHR()
+    // }
   }
 
-  wrapOnerror() {
-    const global: any = this.global;
+  private _wrapOnerror() {
     const baseClient: any = this.baseClient;
     const logger: any = this.logger;
     // 有可能已有被重写了，所以要暂存下来
@@ -77,8 +83,7 @@ class GlobalHandlers {
 
   }
 
-  wrapOnunhandledrejection() {
-    const global:any = this.global;
+  private _wrapOnunhandledrejection() {
     const baseClient: any = this.baseClient;
     const logger: any = this.logger;
     // 有可能已有被重写了，所以要暂存下来
@@ -100,8 +105,7 @@ class GlobalHandlers {
 
   }
 
-  wrapEventTarget() {
-    const global:any = this.global;
+  private _wrapEventTarget() {
     const baseClient: any = this.baseClient;
 
     if (!('document' in global)) {
@@ -126,6 +130,61 @@ class GlobalHandlers {
         return original.call(this,eventName,wrapFn,options);
       }
     });
+
+  }
+
+  // 暂时用不到
+  private _wrapXHR() {
+    if (!isSupportsXMR()) {
+      return;
+    }
+  }
+
+  // 暂时用不到
+  private _wrapFetch() {
+
+    fill(global, 'fetch', function(originalFetch: () => void): () => void {
+      return function(...args: any[]): void {
+        const fetchInput = args[0];
+        let method = 'GET';
+        let url;
+
+        if (typeof fetchInput === 'string') {
+          url = fetchInput;
+        } else if ('Request' in global && fetchInput instanceof Request) {
+          url = fetchInput.url;
+          if (fetchInput.method) {
+            method = fetchInput.method;
+          }
+        } else {
+          url = String(fetchInput);
+        }
+
+        if (args[1] && args[1].method) {
+          method = args[1].method;
+        }
+
+        const fetchData: {
+          method: string;
+          url: string;
+          status_code?: number;
+        } = {
+          method: isString(method) ? method.toUpperCase() : method,
+          url,
+        };
+
+        return originalFetch
+          .apply(global, args)
+          .then((response: Response) => {
+            fetchData.status_code = response.status;
+            return response;
+          })
+          .then(null, (error: Error) => {
+            throw error;
+          });
+      };
+    });
+
 
   }
 

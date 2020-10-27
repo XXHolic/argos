@@ -1,5 +1,4 @@
-import { getGlobalObject,supportsFetch } from './helper';
-import { exceptionCheck } from './utils';
+import { exceptionCheck,getGlobalObject } from './utils';
 import {Request,sendData} from './Request';
 
 
@@ -32,11 +31,11 @@ class BaseClient {
     exceptionFormat.eventId = eventId;
     const allData = this.combineData(exceptionFormat)
     logger.info('allData',allData);
-    // this.request.add(() => {
-    //   return new Promise(()=>{
-    //     sendData(allData,this.options)
-    //   })
-    // })
+    this.request.add(
+      new Promise(() => {
+        sendData(allData,this.options);
+      })
+    )
   }
 
   // 获取环境基本信息

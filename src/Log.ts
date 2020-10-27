@@ -1,4 +1,4 @@
-import { getGlobalObject } from './helper'
+import { getGlobalObject } from './utils'
 
 interface LogOptions {
   enableLog?:boolean,

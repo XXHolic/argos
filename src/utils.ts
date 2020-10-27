@@ -1,11 +1,17 @@
 
-import { getGlobalObject,isErrorEvent,isDOMException,isError,isPlainObject,isEvent } from './helper';
+import { isErrorEvent,isDOMException,isError,isPlainObject,isEvent } from './is';
 import { captureException } from './Hub';
 import {computeStackTrace} from './tracekit'
 import {eventFromStacktrace,prepareFramesForEvent,eventFromPlainObject} from './parsers'
 
 const originMark = '__argos_original__';
 const wrapMark = '__argos_wrapped__';
+
+const fallbackGlobalObject = {};
+// 获取全局属性，在其它的一些环境（例如 node）中，可能没有 window 对象
+export const getGlobalObject = ()=> {
+  return typeof window !== 'undefined' ? window : fallbackGlobalObject;
+}
 
 /**
  * 扩展属性，避免覆盖已存在的方法

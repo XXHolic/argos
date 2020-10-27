@@ -1,12 +1,15 @@
+import {getGlobalObject} from './utils'
 
-const fallbackGlobalObject = {};
-// 获取全局属性，在其它的一些环境（例如 node）中，可能没有 window 对象
-export const getGlobalObject = ()=> {
-  return typeof window !== 'undefined' ? window : fallbackGlobalObject;
+
+export const isSupportsFetch = () => {
+  if (!('fetch' in getGlobalObject())) {
+      return false;
+  }
+  return true;
 }
 
-export const supportsFetch = () => {
-  if (!('fetch' in getGlobalObject())) {
+export const isSupportsXMR = () => {
+  if (!('XMLHttpRequest' in getGlobalObject())) {
       return false;
   }
   return true;

@@ -107,14 +107,16 @@ __webpack_require__.d(__webpack_exports__, "init", function() { return /* bindin
 __webpack_require__.d(__webpack_exports__, "captureException", function() { return /* reexport */ captureException; });
 __webpack_require__.d(__webpack_exports__, "getCurrentHub", function() { return /* reexport */ getCurrentHub; });
 
-// CONCATENATED MODULE: ./src/helper.ts
-var fallbackGlobalObject = {};
-// 获取全局属性，在其它的一些环境（例如 node）中，可能没有 window 对象
-var getGlobalObject = function () {
-    return typeof window !== 'undefined' ? window : fallbackGlobalObject;
-};
-var supportsFetch = function () {
+// CONCATENATED MODULE: ./src/is.ts
+
+var isSupportsFetch = function () {
     if (!('fetch' in getGlobalObject())) {
+        return false;
+    }
+    return true;
+};
+var isSupportsXMR = function () {
+    if (!('XMLHttpRequest' in getGlobalObject())) {
         return false;
     }
     return true;
@@ -485,6 +487,11 @@ function prepareFramesForEvent(stack) {
 
 var originMark = '__argos_original__';
 var wrapMark = '__argos_wrapped__';
+var fallbackGlobalObject = {};
+// 获取全局属性，在其它的一些环境（例如 node）中，可能没有 window 对象
+var getGlobalObject = function () {
+    return typeof window !== 'undefined' ? window : fallbackGlobalObject;
+};
 /**
  * 扩展属性，避免覆盖已存在的方法
  * @param source 原方法
@@ -677,13 +684,42 @@ function eventFromString(input, syntheticException, options) {
     }
     return event;
 }
+var Status;
+(function (Status) {
+    /** The status could not be determined. */
+    Status["Unknown"] = "unknown";
+    /** The event was skipped due to configuration or callbacks. */
+    // Skipped = 'skipped',
+    /** The event was sent to Sentry successfully. */
+    Status["Success"] = "success";
+    /** The client is currently rate limited and will try again later. */
+    Status["RateLimit"] = "rate_limit";
+    /** The event could not be processed. */
+    Status["Invalid"] = "invalid";
+    /** A server-side error ocurred during submission. */
+    Status["Failed"] = "failed";
+})(Status || (Status = {}));
+function fromHttpCode(code) {
+    if (code >= 200 && code < 300) {
+        return Status.Success;
+    }
+    if (code === 429) {
+        return Status.RateLimit;
+    }
+    if (code >= 400 && code < 500) {
+        return Status.Invalid;
+    }
+    if (code >= 500) {
+        return Status.Failed;
+    }
+    return Status.Unknown;
+}
 
 // CONCATENATED MODULE: ./src/Hub.ts
 /**
  * 建立方法之间的全局调用桥梁
  * 例如 在 try-catch 中捕获的错误，onerror 无法拿到，需要一个公用的方法，可以调用已存在的公共方法
  */
-
 
 var globalMark = '__ARGOS__';
 var Hub_Hub = /** @class */ (function () {
@@ -858,7 +894,9 @@ var Request_assign = (undefined && undefined.__assign) || function () {
     return Request_assign.apply(this, arguments);
 };
 
-var Request = /** @class */ (function () {
+
+var ignoreMark = '__ignore__';
+var Request_Request = /** @class */ (function () {
     function Request(options) {
         if (options === void 0) { options = {}; }
         this.tasks = [];
@@ -866,11 +904,9 @@ var Request = /** @class */ (function () {
             maxRequest: 20
         };
         this.options = Request_assign(Request_assign({}, this.options), options);
-        var maxRequest = this.options.maxRequest;
-        this.tasks = Array.from({ length: Number(maxRequest) });
     }
     Request.prototype.isReady = function () {
-        return this.tasks.length < this.options.maxRequest;
+        return this.tasks.length <= this.options.maxRequest;
     };
     Request.prototype.remove = function (task) {
         var removedTask = this.tasks.splice(this.tasks.indexOf(task), 1)[0];
@@ -894,43 +930,68 @@ var Request = /** @class */ (function () {
     return Request;
 }());
 
-var sendData = function (data, options) {
-    if (supportsFetch()) {
-        createFetch(data, options);
-        return;
+var Request_sendData = function (data, options) {
+    if (!isSupportsFetch()) {
+        return createFetch(data, options);
     }
-    createXHR(data, options);
+    return createXHR(data, options);
 };
 function createFetch(data, options) {
-    var url = options.url, headers = options.headers;
-    if (!url) {
-        console.error('There is no upload data url!');
-        return;
-    }
-    var reqOptions = {
-        body: JSON.stringify(data),
-        method: 'POST',
-        headers: Request_assign({}, headers)
-    };
-    fetch(url, Request_assign({}, reqOptions));
+    return new Promise(function (resolve, reject) {
+        var url = options.url, headers = options.headers;
+        if (!url) {
+            console.error('There is no upload data url!');
+            return;
+        }
+        var reqOptions = {
+            body: JSON.stringify(data),
+            method: 'POST',
+            headers: Request_assign({}, headers)
+        };
+        return fetch(url, Request_assign({}, reqOptions)).then(function (response) {
+            var status = fromHttpCode(response.status);
+            if (status === Status.Success) {
+                resolve({ status: status });
+                return;
+            }
+            if (status === Status.RateLimit) {
+                console.warn('Too many requests');
+            }
+            reject(response);
+        }).catch(function (ex) {
+            //上传的请求报错了，就不要捕获了
+            // reject(ex)
+        });
+    });
 }
 function createXHR(data, options) {
-    var url = options.url, headers = options.headers;
-    if (!url) {
-        console.error('There is no upload data url!');
-        return;
-    }
-    var request = new XMLHttpRequest();
-    // request.onreadystatechange = () => {
-    // };
-    request.open('POST', url);
-    for (var header in headers) {
-        if (headers.hasOwnProperty(header)) {
-            request.setRequestHeader(header, headers[header]);
+    return new Promise(function (resolve, reject) {
+        var url = options.url, headers = options.headers;
+        if (!url) {
+            console.error('There is no upload data url!');
+            return;
         }
-    }
-    var sendData = JSON.stringify(data);
-    request.send(sendData);
+        var request = new XMLHttpRequest();
+        request.onreadystatechange = function () {
+            if (request.readyState !== 4) {
+                return;
+            }
+            var status = fromHttpCode(request.status);
+            if (status === Status.Success) {
+                resolve({ status: status });
+                return;
+            }
+            reject(request);
+        };
+        request.open('POST', url);
+        for (var header in headers) {
+            if (headers.hasOwnProperty(header)) {
+                request.setRequestHeader(header, headers[header]);
+            }
+        }
+        var sendData = JSON.stringify(data);
+        request.send(sendData);
+    });
 }
 
 // CONCATENATED MODULE: ./src/Base.ts
@@ -947,7 +1008,6 @@ var Base_assign = (undefined && undefined.__assign) || function () {
 };
 
 
-
 var Base_BaseClient = /** @class */ (function () {
     function BaseClient() {
         this.options = {
@@ -959,19 +1019,20 @@ var Base_BaseClient = /** @class */ (function () {
     BaseClient.prototype.bindOptions = function (options, logger) {
         this.options = Base_assign(Base_assign({}, this.options), options);
         this.logger = logger;
-        this.request = new Request();
+        this.request = new Request_Request();
     };
-    BaseClient.prototype.captureException = function (exception) {
+    BaseClient.prototype.captureException = function (exception, otherMsg) {
+        var _this = this;
+        var eventId = otherMsg && otherMsg.eventId;
         var logger = this.logger;
         logger.info('exception origin', exception);
         var exceptionFormat = exceptionCheck(exception);
+        exceptionFormat.eventId = eventId;
         var allData = this.combineData(exceptionFormat);
         logger.info('allData', allData);
-        // this.request.add(() => {
-        //   return new Promise(()=>{
-        //     sendData(allData,this.options)
-        //   })
-        // })
+        this.request.add(new Promise(function () {
+            Request_sendData(allData, _this.options);
+        }));
     };
     // 获取环境基本信息
     BaseClient.prototype.getUserAgent = function () {
@@ -1036,40 +1097,42 @@ var GlobalHandlers_assign = (undefined && undefined.__assign) || function () {
  */
 
 
+var GlobalHandlers_global = getGlobalObject();
 var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
-    function GlobalHandlers() {
+    function GlobalHandlers(options) {
         this.options = {
-            onerrorMark: true,
-            onunhandledrejectionMark: true,
-            eventTargetMark: true,
+            onerror: true,
+            onunhandledrejection: true,
+            eventTarget: true,
         };
-        this.global = getGlobalObject();
+        this.options = GlobalHandlers_assign(GlobalHandlers_assign({}, this.options), options);
+        this.setUp();
     }
     GlobalHandlers.prototype.bindOptions = function (options, baseClient, logger) {
-        this.options = GlobalHandlers_assign(GlobalHandlers_assign({}, this.options), options);
-        this.baseClient = baseClient;
-        this.logger = logger;
-        this.init();
+        // this.logger = logger;
+        // this.init();
     };
     ;
-    GlobalHandlers.prototype.init = function () {
-        var _a = this.options, onerrorMark = _a.onerrorMark, onunhandledrejectionMark = _a.onunhandledrejectionMark, eventTargetMark = _a.eventTargetMark;
-        if (onerrorMark) {
-            this.wrapOnerror();
+    GlobalHandlers.prototype.setUp = function () {
+        var _a = this.options, onerror = _a.onerror, onunhandledrejection = _a.onunhandledrejection, eventTarget = _a.eventTarget;
+        if (onerror) {
+            this._wrapOnerror();
         }
-        if (onunhandledrejectionMark) {
-            this.wrapOnunhandledrejection();
+        if (onunhandledrejection) {
+            this._wrapOnunhandledrejection();
         }
-        if (eventTargetMark) {
-            this.wrapEventTarget();
+        if (eventTarget) {
+            this._wrapEventTarget();
         }
+        // if (xhr) {
+        //   this._wrapXHR()
+        // }
     };
-    GlobalHandlers.prototype.wrapOnerror = function () {
-        var global = this.global;
+    GlobalHandlers.prototype._wrapOnerror = function () {
         var baseClient = this.baseClient;
         var logger = this.logger;
         // 有可能已有被重写了，所以要暂存下来
-        var oldOnError = global.onerror;
+        var oldOnError = GlobalHandlers_global.onerror;
         addHandler({
             type: 'error',
             fn: function (data) {
@@ -1077,7 +1140,7 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
                 baseClient.send({ type: 'error', eventId: eventId, exception: data });
             }
         });
-        global.onerror = function (msg, url, line, column, error) {
+        GlobalHandlers_global.onerror = function (msg, url, line, column, error) {
             logger.info('onerror event: ', { msg: msg, url: url, line: line, column: column, error: error });
             triggerHandler('error', {
                 column: column,
@@ -1092,17 +1155,16 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
             return false;
         };
     };
-    GlobalHandlers.prototype.wrapOnunhandledrejection = function () {
-        var global = this.global;
+    GlobalHandlers.prototype._wrapOnunhandledrejection = function () {
         var baseClient = this.baseClient;
         var logger = this.logger;
         // 有可能已有被重写了，所以要暂存下来
-        var oldOnError = global.onunhandledrejection;
+        var oldOnError = GlobalHandlers_global.onunhandledrejection;
         addHandler({ type: 'unhandledrejection', fn: function (data) {
                 var eventId = uuid4();
                 baseClient.send({ type: 'unhandledrejection', eventId: eventId, exception: data });
             } });
-        global.onunhandledrejection = function (e) {
+        GlobalHandlers_global.onunhandledrejection = function (e) {
             logger.info('unhandledrejection event: ', e);
             triggerHandler('unhandledrejection', e);
             if (oldOnError) {
@@ -1111,10 +1173,9 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
             return true;
         };
     };
-    GlobalHandlers.prototype.wrapEventTarget = function () {
-        var global = this.global;
+    GlobalHandlers.prototype._wrapEventTarget = function () {
         var baseClient = this.baseClient;
-        if (!('document' in global)) {
+        if (!('document' in GlobalHandlers_global)) {
             return;
         }
         addHandler({
@@ -1124,7 +1185,7 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
                 baseClient.send({ type: 'dom', eventId: eventId, exception: data });
             }
         });
-        var proto = global.EventTarget && global.EventTarget.prototype;
+        var proto = GlobalHandlers_global.EventTarget && GlobalHandlers_global.EventTarget.prototype;
         if (!proto || !proto.hasOwnProperty || !proto.hasOwnProperty('addEventListener')) {
             return;
         }
@@ -1132,6 +1193,54 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
             return function (eventName, fn, options) {
                 var wrapFn = wrap(fn, options);
                 return original.call(this, eventName, wrapFn, options);
+            };
+        });
+    };
+    // 暂时用不到
+    GlobalHandlers.prototype._wrapXHR = function () {
+        if (!isSupportsXMR()) {
+            return;
+        }
+    };
+    // 暂时用不到
+    GlobalHandlers.prototype._wrapFetch = function () {
+        fill(GlobalHandlers_global, 'fetch', function (originalFetch) {
+            return function () {
+                var args = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                    args[_i] = arguments[_i];
+                }
+                var fetchInput = args[0];
+                var method = 'GET';
+                var url;
+                if (typeof fetchInput === 'string') {
+                    url = fetchInput;
+                }
+                else if ('Request' in GlobalHandlers_global && fetchInput instanceof Request) {
+                    url = fetchInput.url;
+                    if (fetchInput.method) {
+                        method = fetchInput.method;
+                    }
+                }
+                else {
+                    url = String(fetchInput);
+                }
+                if (args[1] && args[1].method) {
+                    method = args[1].method;
+                }
+                var fetchData = {
+                    method: isString(method) ? method.toUpperCase() : method,
+                    url: url,
+                };
+                return originalFetch
+                    .apply(GlobalHandlers_global, args)
+                    .then(function (response) {
+                    fetchData.status_code = response.status;
+                    return response;
+                })
+                    .then(null, function (error) {
+                    throw error;
+                });
             };
         });
     };
@@ -1156,7 +1265,6 @@ var src_assign = (undefined && undefined.__assign) || function () {
 
 
 var base = new Base();
-var globalHandlers = new src_GlobalHandlers();
 var src_logger = new src_Log();
 var init = function (options) {
     if (options === void 0) { options = {}; }
@@ -1171,7 +1279,8 @@ var init = function (options) {
     base.bindOptions(combineOptions, src_logger);
     var hub = getCurrentHub();
     hub.bindClient(base);
-    globalHandlers.bindOptions(combineOptions, base, src_logger);
+    new src_GlobalHandlers(combineOptions);
+    // globalHandlers.bindOptions(combineOptions,base,logger);
 };
 
 

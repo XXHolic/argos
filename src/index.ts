@@ -4,7 +4,6 @@ import Base from './Base';
 import GlobalHandlers from './GlobalHandlers';
 
 const base = new Base();
-const globalHandlers = new GlobalHandlers();
 const logger = new Log();
 
 const init = (options={}) => {
@@ -19,7 +18,8 @@ const init = (options={}) => {
   base.bindOptions(combineOptions,logger);
   const hub = getCurrentHub();
   hub.bindClient(base);
-  globalHandlers.bindOptions(combineOptions,base,logger);
+  new GlobalHandlers(combineOptions);
+  // globalHandlers.bindOptions(combineOptions,base,logger);
 };
 
 
