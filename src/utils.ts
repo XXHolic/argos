@@ -6,6 +6,7 @@ import {eventFromStacktrace,prepareFramesForEvent,eventFromPlainObject} from './
 
 const originMark = '__argos_original__';
 const wrapMark = '__argos_wrapped__';
+export const globalMark = '__ARGOS__'
 
 const fallbackGlobalObject = {};
 // 获取全局属性，在其它的一些环境（例如 node）中，可能没有 window 对象
@@ -249,4 +250,15 @@ export function fromHttpCode(code: number) {
   }
 
   return Status.Unknown;
+}
+
+/**
+ * A safe form of location.href
+ */
+export function getLocationHref(): string {
+  try {
+    return document.location.href;
+  } catch (oO) {
+    return '';
+  }
 }

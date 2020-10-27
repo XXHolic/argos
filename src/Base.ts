@@ -1,36 +1,31 @@
 import { exceptionCheck,getGlobalObject } from './utils';
 import {Request,sendData} from './Request';
+import logger from './logger'
 
-
-interface BaseClientOptions {
+interface BaseOptions {
   headers?: object,
   url?: string
 }
 
-class BaseClient {
-  options: BaseClientOptions = {
+class Base {
+  options: BaseOptions = {
     headers:{
       'Content-Type': 'application/json'
     }
   };
-  logger: object;
   request: any;
 
-
-  bindOptions(options,logger) {
+  constructor(options) {
     this.options = {...this.options,...options};
-    this.logger = logger;
     this.request = new Request();
   }
 
   captureException(exception,otherMsg) {
     const eventId = otherMsg && otherMsg.eventId;
-    const logger: any = this.logger;
-    logger.info('exception origin',exception);
     let exceptionFormat = exceptionCheck(exception);
     exceptionFormat.eventId = eventId;
     const allData = this.combineData(exceptionFormat)
-    logger.info('allData',allData);
+    logger.info('exception data',allData);
     this.request.add(
       new Promise(() => {
         sendData(allData,this.options);
@@ -86,4 +81,4 @@ class BaseClient {
 
 }
 
-export default BaseClient
+export default Base

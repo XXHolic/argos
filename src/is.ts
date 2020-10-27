@@ -67,3 +67,10 @@ export const isString = (value) => {
 export const isPlainObject = (value) => {
   return Object.prototype.toString.call(value) === '[object Object]';
 }
+/**
+ * Checks whether given value's is a primitive (undefined, null, number, boolean, string)
+ * @param value
+ */
+export const isPrimitive = (value) => {
+  return value === null || (typeof value !== 'object' && typeof value !== 'function');
+}

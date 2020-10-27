@@ -1,10 +1,8 @@
 import {captureException,getCurrentHub} from './Hub';
-import Log from './Log';
+import logger from './logger';
 import Base from './Base';
 import GlobalHandlers from './GlobalHandlers';
 
-const base = new Base();
-const logger = new Log();
 
 const init = (options={}) => {
   const defaultOptions = {
@@ -15,7 +13,7 @@ const init = (options={}) => {
   if (!combineOptions.url) {
     logger.warn('There is no upload data url!');
   }
-  base.bindOptions(combineOptions,logger);
+  const base = new Base(combineOptions)
   const hub = getCurrentHub();
   hub.bindClient(base);
   new GlobalHandlers(combineOptions);

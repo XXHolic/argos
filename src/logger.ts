@@ -1,5 +1,6 @@
-import { getGlobalObject } from './utils'
+import { getGlobalObject,globalMark } from './utils'
 
+const global:any = getGlobalObject();
 interface LogOptions {
   enableLog?:boolean,
   showLog?: boolean,
@@ -17,16 +18,13 @@ class Log {
     showError: true,
   }
 
-  globalObj:object = null
 
   bindOptions(options) {
     this.options = {...this.options,...options};
-    this.globalObj = getGlobalObject();
   }
 
   log(...args) {
     const {enableLog,showLog} = this.options;
-    const global: any = this.globalObj
     if (!enableLog || !showLog) {
       return;
     }
@@ -35,7 +33,6 @@ class Log {
 
   warn(...args) {
     const {enableLog,showWarn} = this.options;
-    const global: any = this.globalObj
     if (!enableLog || !showWarn) {
       return;
     }
@@ -44,7 +41,6 @@ class Log {
 
   info(...args) {
     const {enableLog,showInfo} = this.options;
-    const global: any = this.globalObj
     if (!enableLog || !showInfo) {
       return;
     }
@@ -53,14 +49,15 @@ class Log {
 
   error(...args) {
     const {enableLog,showError} = this.options;
-    const global: any = this.globalObj
     if (!enableLog || !showError) {
       return;
     }
-    const msg = args.join(' ')
     global.console.error(`[${prefix}]`,...args)
   }
 
 }
 
-export default Log
+global[globalMark] = global[globalMark] || {};
+const logger = global[globalMark].logger || (global[globalMark].logger = new Log());
+
+export default logger
