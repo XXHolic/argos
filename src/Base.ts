@@ -1,10 +1,12 @@
 import { exceptionCheck,getGlobalObject } from './utils';
+import { isPlainObject } from './is';
 import {Request,sendData} from './Request';
 import logger from './logger'
 
 interface BaseOptions {
   headers?: object,
-  url?: string
+  url?: string,
+  integrations?: Array<any>
 }
 
 class Base {
@@ -18,6 +20,19 @@ class Base {
   constructor(options) {
     this.options = {...this.options,...options};
     this.request = new Request();
+    const {integrations} = this.options;
+    if (integrations) {
+      this.setUpIntegrations(integrations)
+    }
+
+  }
+
+  setUpIntegrations(integrations) {
+    integrations.forEach(ele => {
+      if (ele && ele.setUp) {
+        ele.setUp()
+      }
+    });
   }
 
   captureException(exception,otherMsg) {

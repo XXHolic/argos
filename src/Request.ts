@@ -1,4 +1,5 @@
 import { isSupportsFetch } from './is'
+import logger from './logger';
 import { fromHttpCode,Status,getGlobalObject } from './utils'
 
 const ignoreMark = '__ignore__';
@@ -106,6 +107,8 @@ function createXHR(data,options) {
         resolve({ status });
         return;
       }
+      logger.error(request);
+
       // 上传的请求报错了，就不要抛到全局捕获了，直接在这里截断
       reject(request);
     };

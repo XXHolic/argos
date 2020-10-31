@@ -1856,7 +1856,8 @@ var Sentry = (function (exports) {
           /* eslint-enable @typescript-eslint/no-unsafe-member-access */
           fill(proto, 'addEventListener', function (original) {
               return function (eventName, fn, options) {
-                  if (fn && fn.handleEvent) {
+// debugger
+    if (fn && fn.handleEvent) {
                       if (eventName === 'click') {
                           fill(fn, 'handleEvent', function (innerOriginal) {
                               return function (event) {

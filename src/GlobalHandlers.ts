@@ -125,7 +125,10 @@ class GlobalHandlers {
 
     fill(proto,'addEventListener',function(original: () => void){
       return function(eventName,fn,options) {
-        const wrapFn = wrap(fn,options);
+        let wrapFn = fn;
+        if (eventName === 'click') {
+          wrapFn = wrap(fn,options);
+        }
         return original.call(this,eventName,wrapFn,options);
       }
     });

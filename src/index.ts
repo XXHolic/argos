@@ -2,6 +2,7 @@ import {captureException,getCurrentHub} from './Hub';
 import logger from './logger';
 import Base from './Base';
 import GlobalHandlers from './GlobalHandlers';
+import {VueIntegration} from './integrations';
 
 
 const init = (options={}) => {
@@ -17,8 +18,12 @@ const init = (options={}) => {
   const hub = getCurrentHub();
   hub.bindClient(base);
   new GlobalHandlers(combineOptions);
-  // globalHandlers.bindOptions(combineOptions,base,logger);
 };
 
 
-export {init,captureException,getCurrentHub}
+export {
+  init,
+  captureException,
+  getCurrentHub,
+  VueIntegration
+}

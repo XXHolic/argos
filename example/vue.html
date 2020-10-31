@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Argos example</title>
+  <style>
+    button {
+      display: block;
+      margin-bottom: 10px;
+    }
+  </style>
+  <script src="./vue.js"></script>
+  <script src="./sentry.js"></script>
+  <script src="./args.js?v=32324221421"></script>
+</head>
+<body>
+  <div id="app">
+    {{ message }}
+    <button v-on:click="regularException" >regular exception</button>
+    <button v-on:click="eventException">event exception</button>
+  </div>
+  <script src="./vue.index.js"></script>
+</body>
+</html>

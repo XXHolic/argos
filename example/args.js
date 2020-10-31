@@ -106,6 +106,7 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.d(__webpack_exports__, "init", function() { return /* binding */ init; });
 __webpack_require__.d(__webpack_exports__, "captureException", function() { return /* reexport */ captureException; });
 __webpack_require__.d(__webpack_exports__, "getCurrentHub", function() { return /* reexport */ getCurrentHub; });
+__webpack_require__.d(__webpack_exports__, "VueIntegration", function() { return /* reexport */ integrations_VueIntegration; });
 
 // CONCATENATED MODULE: ./src/is.ts
 
@@ -603,7 +604,9 @@ var wrap = function (fn, options) {
             return fn.apply(this, args);
         }
         catch (ex) {
+            ignoreNextOnError();
             captureException(ex);
+            throw ex;
         }
     };
     try {
@@ -732,6 +735,27 @@ function getLocationHref() {
     catch (oO) {
         return '';
     }
+}
+/**
+ * wrap 方法包裹的方法，如果里面报错了，除了自身会捕获，onerror 也会捕获到，
+ * 这个时候，不应该重复的捕获，于是用了下面的方法
+ */
+var ignoreOnError = 0;
+/**
+ * @hidden
+ */
+function shouldIgnoreOnError() {
+    return ignoreOnError > 0;
+}
+/**
+ * @hidden
+ */
+function ignoreNextOnError() {
+    // onerror should trigger before setTimeout
+    ignoreOnError += 1;
+    setTimeout(function () {
+        ignoreOnError -= 1;
+    });
 }
 
 // CONCATENATED MODULE: ./src/Hub.ts
@@ -909,6 +933,7 @@ var Request_assign = (undefined && undefined.__assign) || function () {
 };
 
 
+
 var ignoreMark = '__ignore__';
 var Request_Request = /** @class */ (function () {
     function Request(options) {
@@ -995,6 +1020,7 @@ function createXHR(data, options) {
                 resolve({ status: status });
                 return;
             }
+            src_logger.error(request);
             // 上传的请求报错了，就不要抛到全局捕获了，直接在这里截断
             reject(request);
         };
@@ -1033,7 +1059,18 @@ var Base_Base = /** @class */ (function () {
         };
         this.options = Base_assign(Base_assign({}, this.options), options);
         this.request = new Request_Request();
+        var integrations = this.options.integrations;
+        if (integrations) {
+            this.setUpIntegrations(integrations);
+        }
     }
+    Base.prototype.setUpIntegrations = function (integrations) {
+        integrations.forEach(function (ele) {
+            if (ele && ele.setUp) {
+                ele.setUp();
+            }
+        });
+    };
     Base.prototype.captureException = function (exception, otherMsg) {
         var _this = this;
         var eventId = otherMsg && otherMsg.eventId;
@@ -1147,6 +1184,9 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
         var oldOnError = GlobalHandlers_global.onerror;
         GlobalHandlers_global.onerror = function (msg, url, line, column, error) {
             src_logger.info('onerror event: ', { msg: msg, url: url, line: line, column: column, error: error });
+            if (shouldIgnoreOnError()) {
+                return;
+            }
             var ex = isPrimitive(error)
                 ? self._eventFromIncompleteOnError(msg, url, line, column)
                 : self._enhanceEventWithInitialFrame(exceptionCheck(error), url, line, column);
@@ -1170,6 +1210,9 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
             catch (ex) {
                 // no-empty
             }
+            if (shouldIgnoreOnError()) {
+                return;
+            }
             var ex = isPrimitive(error)
                 ? self._eventFromIncompleteRejection(error)
                 : exceptionCheck(error);
@@ -1189,7 +1232,10 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
         }
         fill(proto, 'addEventListener', function (original) {
             return function (eventName, fn, options) {
-                var wrapFn = wrap(fn, options);
+                var wrapFn = fn;
+                if (eventName === 'click') {
+                    wrapFn = wrap(fn, options);
+                }
                 return original.call(this, eventName, wrapFn, options);
             };
         });
@@ -1302,6 +1348,47 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
 }());
 /* harmony default export */ var src_GlobalHandlers = (GlobalHandlers_GlobalHandlers);
 
+// CONCATENATED MODULE: ./src/integrations.ts
+/**
+ * 针对一些框架异常捕获的钩子
+ */
+
+
+
+/**
+ * Vue 中全局错误配置 errorHandler
+ * https://cn.vuejs.org/v2/api/#errorHandler
+ */
+var integrations_VueIntegration = /** @class */ (function () {
+    function VueIntegration(options) {
+        this._hasSet = false;
+        var globalObj = getGlobalObject();
+        this._vue = options.Vue || globalObj.Vue;
+        this.setUp();
+    }
+    VueIntegration.prototype.setUp = function () {
+        var _this = this;
+        if (this._hasSet) {
+            src_logger.info('VueIntegration installed');
+            return;
+        }
+        if (!this._vue || !this._vue.config) {
+            src_logger.error('VueIntegration is missing a Vue instance');
+            return;
+        }
+        var oldOnError = this._vue.config.errorHandler;
+        this._vue.config.errorHandler = function (error, vm, info) {
+            captureException(error);
+            if (typeof oldOnError === 'function') {
+                oldOnError.call(_this._vue, error, vm, info);
+            }
+        };
+        this._hasSet = true;
+    };
+    return VueIntegration;
+}());
+
+
 // CONCATENATED MODULE: ./src/index.ts
 var src_assign = (undefined && undefined.__assign) || function () {
     src_assign = Object.assign || function(t) {
@@ -1314,6 +1401,7 @@ var src_assign = (undefined && undefined.__assign) || function () {
     };
     return src_assign.apply(this, arguments);
 };
+
 
 
 
@@ -1332,7 +1420,6 @@ var init = function (options) {
     var hub = getCurrentHub();
     hub.bindClient(base);
     new src_GlobalHandlers(combineOptions);
-    // globalHandlers.bindOptions(combineOptions,base,logger);
 };
 
 
