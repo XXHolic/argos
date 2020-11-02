@@ -757,6 +757,23 @@ function ignoreNextOnError() {
         ignoreOnError -= 1;
     });
 }
+/**
+ * 在一些环境下面可能没有 console 相关的对象和方法，需要统一先做检查
+ * @param type
+ * @param callback
+ */
+function consoleSandbox(type, callback) {
+    var global = getGlobalObject();
+    if (!('console' in global)) {
+        return;
+    }
+    var originalConsole = global.console;
+    if (originalConsole[type]) {
+        var result = callback();
+        return result;
+    }
+    return;
+}
 
 // CONCATENATED MODULE: ./src/Hub.ts
 /**
@@ -852,7 +869,7 @@ var __spreadArrays = (undefined && undefined.__spreadArrays) || function () {
 
 var logger_global = getGlobalObject();
 var prefix = 'Argos Log';
-var Log = /** @class */ (function () {
+var logger_Log = /** @class */ (function () {
     function Log() {
         this.options = {
             enableLog: false,
@@ -866,57 +883,65 @@ var Log = /** @class */ (function () {
         this.options = logger_assign(logger_assign({}, this.options), options);
     };
     Log.prototype.log = function () {
-        var _a;
         var args = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i] = arguments[_i];
         }
-        var _b = this.options, enableLog = _b.enableLog, showLog = _b.showLog;
+        var _a = this.options, enableLog = _a.enableLog, showLog = _a.showLog;
         if (!enableLog || !showLog) {
             return;
         }
-        (_a = logger_global.console).log.apply(_a, __spreadArrays(["[" + prefix + "]"], args));
+        consoleSandbox('log', function () {
+            var _a;
+            (_a = logger_global.console).log.apply(_a, __spreadArrays(["[" + prefix + "]"], args));
+        });
     };
     Log.prototype.warn = function () {
-        var _a;
         var args = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i] = arguments[_i];
         }
-        var _b = this.options, enableLog = _b.enableLog, showWarn = _b.showWarn;
+        var _a = this.options, enableLog = _a.enableLog, showWarn = _a.showWarn;
         if (!enableLog || !showWarn) {
             return;
         }
-        (_a = logger_global.console).warn.apply(_a, __spreadArrays(["[" + prefix + "]"], args));
+        consoleSandbox('warn', function () {
+            var _a;
+            (_a = logger_global.console).warn.apply(_a, __spreadArrays(["[" + prefix + "]"], args));
+        });
     };
     Log.prototype.info = function () {
-        var _a;
         var args = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i] = arguments[_i];
         }
-        var _b = this.options, enableLog = _b.enableLog, showInfo = _b.showInfo;
+        var _a = this.options, enableLog = _a.enableLog, showInfo = _a.showInfo;
         if (!enableLog || !showInfo) {
             return;
         }
-        (_a = logger_global.console).info.apply(_a, __spreadArrays(["[" + prefix + "]"], args));
+        consoleSandbox('info', function () {
+            var _a;
+            (_a = logger_global.console).info.apply(_a, __spreadArrays(["[" + prefix + "]"], args));
+        });
     };
     Log.prototype.error = function () {
-        var _a;
         var args = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i] = arguments[_i];
         }
-        var _b = this.options, enableLog = _b.enableLog, showError = _b.showError;
+        var _a = this.options, enableLog = _a.enableLog, showError = _a.showError;
         if (!enableLog || !showError) {
             return;
         }
-        (_a = logger_global.console).error.apply(_a, __spreadArrays(["[" + prefix + "]"], args));
+        consoleSandbox('error', function () {
+            var _a;
+            (_a = logger_global.console).error.apply(_a, __spreadArrays(["[" + prefix + "]"], args));
+        });
     };
     return Log;
 }());
 logger_global[globalMark] = logger_global[globalMark] || {};
-var logger = logger_global[globalMark].logger || (logger_global[globalMark].logger = new Log());
+var logger = logger_global[globalMark].logger || (logger_global[globalMark].logger = new logger_Log());
 /* harmony default export */ var src_logger = (logger);
 
 // CONCATENATED MODULE: ./src/Request.ts
@@ -1414,7 +1439,8 @@ var init = function (options) {
     var combineOptions = src_assign(src_assign({}, defaultOptions), options);
     src_logger.bindOptions(combineOptions);
     if (!combineOptions.url) {
-        src_logger.warn('There is no upload data url!');
+        src_logger.error('There is no upload data url!');
+        return;
     }
     var base = new src_Base(combineOptions);
     var hub = getCurrentHub();

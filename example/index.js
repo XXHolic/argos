@@ -1,5 +1,5 @@
 Argos.init({
-  url:'http://localhost:2233/',
+  // url:'http://localhost:2233/',
   enableLog: true
 })
 

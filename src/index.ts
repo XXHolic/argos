@@ -12,7 +12,8 @@ const init = (options={}) => {
   const combineOptions = {...defaultOptions,...options}
   logger.bindOptions(combineOptions);
   if (!combineOptions.url) {
-    logger.warn('There is no upload data url!');
+    logger.error('There is no upload data url!');
+    return;
   }
   const base = new Base(combineOptions)
   const hub = getCurrentHub();

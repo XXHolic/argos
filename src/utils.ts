@@ -286,3 +286,22 @@ export function ignoreNextOnError() {
         ignoreOnError -= 1;
     });
 }
+
+/**
+ * 在一些环境下面可能没有 console 相关的对象和方法，需要统一先做检查
+ * @param type
+ * @param callback
+ */
+export function consoleSandbox(type,callback) {
+  var global: any = getGlobalObject();
+  if (!('console' in global)) {
+      return;
+  }
+  var originalConsole = global.console;
+  if (originalConsole[type]) {
+    var result = callback();
+    return result;
+  }
+
+  return;
+}

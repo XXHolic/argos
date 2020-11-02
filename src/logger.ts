@@ -1,4 +1,4 @@
-import { getGlobalObject,globalMark } from './utils'
+import { getGlobalObject,globalMark,consoleSandbox } from './utils'
 
 const global:any = getGlobalObject();
 interface LogOptions {
@@ -28,7 +28,9 @@ class Log {
     if (!enableLog || !showLog) {
       return;
     }
-    global.console.log(`[${prefix}]`,...args)
+    consoleSandbox('log',() => {
+      global.console.log(`[${prefix}]`,...args)
+    })
   }
 
   warn(...args) {
@@ -36,7 +38,9 @@ class Log {
     if (!enableLog || !showWarn) {
       return;
     }
-    global.console.warn(`[${prefix}]`,...args)
+    consoleSandbox('warn',()=>{
+      global.console.warn(`[${prefix}]`,...args)
+    })
   }
 
   info(...args) {
@@ -44,7 +48,9 @@ class Log {
     if (!enableLog || !showInfo) {
       return;
     }
-    global.console.info(`[${prefix}]`,...args)
+    consoleSandbox('info',() => {
+      global.console.info(`[${prefix}]`,...args)
+    })
   }
 
   error(...args) {
@@ -52,7 +58,9 @@ class Log {
     if (!enableLog || !showError) {
       return;
     }
-    global.console.error(`[${prefix}]`,...args)
+    consoleSandbox('error',() => {
+      global.console.error(`[${prefix}]`,...args)
+    })
   }
 
 }
