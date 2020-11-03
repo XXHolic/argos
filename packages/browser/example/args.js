@@ -877,6 +877,7 @@ var logger_Log = /** @class */ (function () {
             showInfo: true,
             showWarn: true,
             showError: true,
+            isXCX: false,
         };
     }
     Log.prototype.bindOptions = function (options) {
@@ -887,8 +888,12 @@ var logger_Log = /** @class */ (function () {
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i] = arguments[_i];
         }
-        var _a = this.options, enableLog = _a.enableLog, showLog = _a.showLog;
+        var _a = this.options, enableLog = _a.enableLog, showLog = _a.showLog, isXCX = _a.isXCX;
         if (!enableLog || !showLog) {
+            return;
+        }
+        if (isXCX) {
+            console.log.apply(console, __spreadArrays(["[" + prefix + "]"], args));
             return;
         }
         consoleSandbox('log', function () {
@@ -901,8 +906,12 @@ var logger_Log = /** @class */ (function () {
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i] = arguments[_i];
         }
-        var _a = this.options, enableLog = _a.enableLog, showWarn = _a.showWarn;
+        var _a = this.options, enableLog = _a.enableLog, showWarn = _a.showWarn, isXCX = _a.isXCX;
         if (!enableLog || !showWarn) {
+            return;
+        }
+        if (isXCX) {
+            console.warn.apply(console, __spreadArrays(["[" + prefix + "]"], args));
             return;
         }
         consoleSandbox('warn', function () {
@@ -915,8 +924,12 @@ var logger_Log = /** @class */ (function () {
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i] = arguments[_i];
         }
-        var _a = this.options, enableLog = _a.enableLog, showInfo = _a.showInfo;
+        var _a = this.options, enableLog = _a.enableLog, showInfo = _a.showInfo, isXCX = _a.isXCX;
         if (!enableLog || !showInfo) {
+            return;
+        }
+        if (isXCX) {
+            console.info.apply(console, __spreadArrays(["[" + prefix + "]"], args));
             return;
         }
         consoleSandbox('info', function () {
@@ -929,8 +942,12 @@ var logger_Log = /** @class */ (function () {
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i] = arguments[_i];
         }
-        var _a = this.options, enableLog = _a.enableLog, showError = _a.showError;
+        var _a = this.options, enableLog = _a.enableLog, showError = _a.showError, isXCX = _a.isXCX;
         if (!enableLog || !showError) {
+            return;
+        }
+        if (isXCX) {
+            console.error.apply(console, __spreadArrays(["[" + prefix + "]"], args));
             return;
         }
         consoleSandbox('error', function () {
@@ -965,7 +982,7 @@ var Request_Request = /** @class */ (function () {
         if (options === void 0) { options = {}; }
         this.tasks = [];
         this.options = {
-            maxRequest: 20
+            maxRequest: 20,
         };
         this.options = Request_assign(Request_assign({}, this.options), options);
     }
@@ -979,7 +996,7 @@ var Request_Request = /** @class */ (function () {
     Request.prototype.add = function (task) {
         var _this = this;
         if (!this.isReady()) {
-            console.warn('too many request');
+            src_logger.warn('too many request');
             return;
         }
         this.tasks.push(task);
@@ -995,6 +1012,10 @@ var Request_Request = /** @class */ (function () {
 }());
 
 var Request_sendData = function (data, options) {
+    var isXCX = options.isXCX;
+    if (isXCX) {
+        return createWXRequest(data, options);
+    }
     if (!isSupportsFetch()) {
         return createFetch(data, options);
     }
@@ -1057,6 +1078,21 @@ function createXHR(data, options) {
         }
         var sendData = JSON.stringify(data);
         request.send(sendData);
+    });
+}
+function createWXRequest(data, options) {
+    var url = options.url;
+    if (!url) {
+        console.error('There is no upload data url!');
+        return;
+    }
+    return new Promise(function (resolve, reject) {
+        // @ts-ignore
+        wx.request({
+            url: url,
+            method: 'POST',
+            data: data
+        });
     });
 }
 
