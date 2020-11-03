@@ -5,7 +5,7 @@ const outPath = filterArgv('--outPath') || 'dist';
 const filename = filterArgv('--filename') || 'index';
 
 module.exports =  {
-  entry: path.resolve(basePath, "src/index.ts"),
+  entry: path.resolve(basePath, "packages/browser/src/index.ts"),
   mode: 'production',
   devtool: 'source-map',
   module: {
