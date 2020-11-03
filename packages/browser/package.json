@@ -1,0 +1,50 @@
+{
+  "name": "@thynpm/argos",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "run-s build:dist build:es6 build:example",
+    "build:dist": "webpack --config script/webpack.prod.js",
+    "build:example": "webpack --outPath=example --filename=args --config script/webpack.prod.js",
+    "build:es6": "tsc -p tsconfig.es6.json",
+    "watch": "webpack --watch",
+    "start": "webpack-dev-server --open --config script/webpack.dev.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/XXHolic/argos.git"
+  },
+  "files": [
+    "dist",
+    "es6"
+  ],
+  "author": "argos",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/XXHolic/argos/issues"
+  },
+  "homepage": "https://github.com/XXHolic/argos#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.12.1",
+    "@babel/core": "^7.12.3",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/plugin-transform-classes": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
+    "@babel/preset-typescript": "^7.12.1",
+    "babel-loader": "^8.1.0",
+    "clean-webpack-plugin": "^3.0.0",
+    "html-webpack-plugin": "^4.4.1",
+    "npm-run-all": "^4.1.5",
+    "ts-loader": "^8.0.4",
+    "typescript": "^4.0.3",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0",
+    "webpack-merge": "^5.1.4"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  }
+}
