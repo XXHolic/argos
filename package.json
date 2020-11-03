@@ -10,10 +10,7 @@
     "build:example": "webpack --outPath=example --filename=args --config ./script/webpack.prod.js",
     "build:es6": "tsc -p tsconfig.es6.json",
     "watch": "webpack --watch",
-    "start:webpack": "webpack-dev-server --open --config ./script/webpack.dev.js",
-    "start": "npm run storybook",
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "start": "webpack-dev-server --open --config ./script/webpack.dev.js"
   },
   "repository": {
     "type": "git",
@@ -41,10 +38,6 @@
     "@sentry/browser": "^5.27.1",
     "@sentry/integrations": "^5.27.1",
     "@sentry/react": "^5.27.1",
-    "@storybook/addon-actions": "^6.0.27",
-    "@storybook/addon-essentials": "^6.0.27",
-    "@storybook/addon-links": "^6.0.27",
-    "@storybook/html": "^6.0.27",
     "@tsconfig/recommended": "^1.0.1",
     "babel-loader": "^8.1.0",
     "clean-webpack-plugin": "^3.0.0",
