@@ -26,5 +26,5 @@ export {
   init,
   captureException,
   getCurrentHub,
-  VueIntegration
+  VueIntegration,
 }

@@ -13,7 +13,7 @@ export class Request {
   private tasks = [];
 
   options: RequestOptions = {
-    maxRequest: 20
+    maxRequest: 20,
   }
 
   constructor(options={}) {
@@ -31,7 +31,7 @@ export class Request {
 
   add(task) {
     if(!this.isReady()) {
-      console.warn('too many request')
+      logger.warn('too many request')
       return;
     }
     this.tasks.push(task);
@@ -48,6 +48,11 @@ export class Request {
 }
 
 export const sendData = (data,options) => {
+  const {isXCX} = options;
+  if (isXCX) {
+    return createWXRequest(data,options);
+  }
+
   if(!isSupportsFetch()) {
     return createFetch(data,options);
   }
@@ -120,5 +125,22 @@ function createXHR(data,options) {
     }
     const sendData = JSON.stringify(data);
     request.send(sendData);
+  })
+}
+
+function createWXRequest(data,options) {
+  const {url} = options;
+  if (!url) {
+    console.error('There is no upload data url!');
+    return;
+  }
+
+  return new Promise((resolve,reject) => {
+    // @ts-ignore
+    wx.request({
+      url: url,
+      method: 'POST',
+      data: data
+    })
   })
 }
