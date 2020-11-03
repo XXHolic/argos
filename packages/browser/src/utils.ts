@@ -266,7 +266,7 @@ export function getLocationHref(): string {
 }
 
 /**
- * wrap 方法包裹的方法，如果里面报错了，除了自身会捕获，onerror 也会捕获到，
+ * wrap 包裹的方法，如果里面报错了，除了自身会捕获，onerror 也会捕获到，
  * 这个时候，不应该重复的捕获，于是用了下面的方法
  */
 let ignoreOnError = 0;

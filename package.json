@@ -1,5 +1,5 @@
 {
-  "name": "@thynpm/argos",
+  "name": "argos",
   "version": "1.0.0",
   "description": "",
   "main": "./dist/index.js",
