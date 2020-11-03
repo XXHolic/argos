@@ -15,8 +15,7 @@
     "url": "git+https://github.com/XXHolic/argos.git"
   },
   "files": [
-    "dist",
-    "es6"
+    "dist"
   ],
   "author": "argos",
   "license": "ISC",
