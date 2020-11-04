@@ -1,30 +1,10 @@
-import {captureException,getCurrentHub} from './Hub';
-import logger from './logger';
-import Base from './Base';
-import GlobalHandlers from './GlobalHandlers';
-import {VueIntegration} from './integrations';
+// import {isSupportsFetch} from '../packages/utils/src/index'
+// import {isSupportsFetch} from '@thynpm/argos-utils'
+// import {captureException} from '../packages/hub/src/index'
 
 
 const init = (options={}) => {
-  const defaultOptions = {
-    url:'' // 上报的请求
-  }
-  const combineOptions = {...defaultOptions,...options}
-  logger.bindOptions(combineOptions);
-  if (!combineOptions.url) {
-    logger.error('There is no upload data url!');
-    return;
-  }
-  const base = new Base(combineOptions)
-  const hub = getCurrentHub();
-  hub.bindClient(base);
-  new GlobalHandlers(combineOptions);
+  // console.info('utils-dd',captureException)
 };
 
-
-export {
-  init,
-  captureException,
-  getCurrentHub,
-  VueIntegration,
-}
+init()

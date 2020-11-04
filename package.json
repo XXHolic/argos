@@ -10,7 +10,8 @@
     "build:example": "webpack --outPath=example --filename=args --config ./script/webpack.prod.js",
     "build:es6": "tsc -p tsconfig.es6.json",
     "watch": "webpack --watch",
-    "start": "webpack-dev-server --open --config ./script/webpack.dev.js"
+    "start": "webpack-dev-server --open --config ./script/webpack.dev.js",
+    "publish": "lerna"
   },
   "repository": {
     "type": "git",
@@ -60,5 +61,8 @@
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
+  },
+  "dependencies": {
+    "@thynpm/argos-utils": "^1.0.0"
   }
 }
