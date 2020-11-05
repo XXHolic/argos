@@ -19,6 +19,7 @@ export {
   uuid4,
   addHandler,
   triggerHandler,
+  requestStatus,
   fromHttpCode,
   getLocationHref,
   shouldIgnoreOnError,

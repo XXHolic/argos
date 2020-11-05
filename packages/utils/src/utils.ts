@@ -97,7 +97,7 @@ export const triggerHandler = (type: string, data) => {
 
 
 
-export enum Status {
+export enum requestStatus {
   /** The status could not be determined. */
   Unknown = 'unknown',
   /** The event was skipped due to configuration or callbacks. */
@@ -114,22 +114,22 @@ export enum Status {
 
 export function fromHttpCode(code: number) {
   if (code >= 200 && code < 300) {
-    return Status.Success;
+    return requestStatus.Success;
   }
 
   if (code === 429) {
-    return Status.RateLimit;
+    return requestStatus.RateLimit;
   }
 
   if (code >= 400 && code < 500) {
-    return Status.Invalid;
+    return requestStatus.Invalid;
   }
 
   if (code >= 500) {
-    return Status.Failed;
+    return requestStatus.Failed;
   }
 
-  return Status.Unknown;
+  return requestStatus.Unknown;
 }
 
 /**
