@@ -1,6 +1,6 @@
 {
   "name": "@thynpm/argos",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -36,6 +36,6 @@
   },
   "dependencies": {
     "@thynpm/argos-hub": "^1.0.0",
-    "@thynpm/argos-utils": "^1.0.0"
+    "@thynpm/argos-utils": "^1.0.2"
   }
 }

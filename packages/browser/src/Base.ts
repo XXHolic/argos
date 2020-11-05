@@ -39,7 +39,6 @@ class Base {
     let exceptionFormat = exceptionCheck(exception);
     exceptionFormat.eventId = eventId;
     const allData = this.combineData(exceptionFormat)
-    debugger
     logger.info('exception data',allData);
     this.request.add(
       new Promise(() => {

@@ -1,4 +1,4 @@
-import { isSupportsFetch,logger,fromHttpCode,Status } from '@thynpm/argos-utils'
+import { isSupportsFetch,logger,fromHttpCode,requestStatus } from '@thynpm/argos-utils'
 
 const ignoreMark = '__ignore__';
 
@@ -72,12 +72,12 @@ function createFetch(data,options) {
     return fetch(url,{...reqOptions}).then(response => {
       const status = fromHttpCode(response.status);
 
-      if (status === Status.Success) {
+      if (status === requestStatus.Success) {
         resolve({ status });
         return;
       }
 
-      if (status === Status.RateLimit) {
+      if (status === requestStatus.RateLimit) {
         console.warn('Too many requests');
       }
 
@@ -106,7 +106,7 @@ function createXHR(data,options) {
 
       const status = fromHttpCode(request.status);
 
-      if (status === Status.Success) {
+      if (status === requestStatus.Success) {
         resolve({ status });
         return;
       }
