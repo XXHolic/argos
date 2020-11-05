@@ -1,5 +1,5 @@
-import {captureException,getCurrentHub} from './Hub';
-import logger from './logger';
+import {captureException,getCurrentHub} from '@thynpm/argos-hub';
+import {logger} from '@thynpm/argos-utils';
 import Base from './Base';
 import GlobalHandlers from './GlobalHandlers';
 import {VueIntegration} from './integrations';

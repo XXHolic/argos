@@ -1,9 +1,8 @@
 /**
  * 针对一些框架异常捕获的钩子
  */
-import { captureException } from './Hub';
-import { getGlobalObject } from './utils'
-import logger from './logger'
+import { captureException } from '@thynpm/argos-hub';
+import { getGlobalObject,logger } from '@thynpm/argos-utils'
 
 /**
  * Vue 中全局错误配置 errorHandler

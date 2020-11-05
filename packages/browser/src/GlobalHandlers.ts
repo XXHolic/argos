@@ -2,10 +2,9 @@
  * 对原生方法的重新包装，为错误捕获提供另外一个角度
  * 比如本地无服务情况下，chrome 由于同源策略，看不到错误相关信息，这个时候，对原生方法重新包装就有效果
  */
-import { captureException } from './Hub';
-import { fill,wrap,getGlobalObject,exceptionCheck,getLocationHref,shouldIgnoreOnError } from './utils'
-import { isString,isSupportsXMR,isPrimitive,isErrorEvent } from './is'
-import logger from './logger'
+import { captureException } from '@thynpm/argos-hub';
+import { fill,getGlobalObject,getLocationHref,shouldIgnoreOnError,logger,isString,isSupportsXMR,isPrimitive,isErrorEvent } from '@thynpm/argos-utils'
+import { exceptionCheck,wrap } from './utils'
 
 const global:any = getGlobalObject();
 interface GlobalHandlersOptions {

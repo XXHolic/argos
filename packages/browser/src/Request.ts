@@ -1,6 +1,4 @@
-import { isSupportsFetch } from './is'
-import logger from './logger';
-import { fromHttpCode,Status,getGlobalObject } from './utils'
+import { isSupportsFetch,logger,fromHttpCode,Status } from '@thynpm/argos-utils'
 
 const ignoreMark = '__ignore__';
 

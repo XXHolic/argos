@@ -1,4 +1,4 @@
-import { isEvent } from './is';
+import { isEvent } from '@thynpm/argos-utils';
 
 import { computeStackTrace, StackFrame as TraceKitStackFrame, StackTrace as TraceKitStackTrace } from './tracekit';
 
