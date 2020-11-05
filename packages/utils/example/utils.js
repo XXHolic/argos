@@ -118,6 +118,7 @@ __webpack_require__.d(__webpack_exports__, "fill", function() { return /* reexpo
 __webpack_require__.d(__webpack_exports__, "uuid4", function() { return /* reexport */ uuid4; });
 __webpack_require__.d(__webpack_exports__, "addHandler", function() { return /* reexport */ addHandler; });
 __webpack_require__.d(__webpack_exports__, "triggerHandler", function() { return /* reexport */ triggerHandler; });
+__webpack_require__.d(__webpack_exports__, "requestStatus", function() { return /* reexport */ requestStatus; });
 __webpack_require__.d(__webpack_exports__, "fromHttpCode", function() { return /* reexport */ fromHttpCode; });
 __webpack_require__.d(__webpack_exports__, "getLocationHref", function() { return /* reexport */ getLocationHref; });
 __webpack_require__.d(__webpack_exports__, "shouldIgnoreOnError", function() { return /* reexport */ shouldIgnoreOnError; });
@@ -213,35 +214,35 @@ var triggerHandler = function (type, data) {
         }
     }
 };
-var Status;
-(function (Status) {
+var requestStatus;
+(function (requestStatus) {
     /** The status could not be determined. */
-    Status["Unknown"] = "unknown";
+    requestStatus["Unknown"] = "unknown";
     /** The event was skipped due to configuration or callbacks. */
     // Skipped = 'skipped',
     /** The event was sent to Sentry successfully. */
-    Status["Success"] = "success";
+    requestStatus["Success"] = "success";
     /** The client is currently rate limited and will try again later. */
-    Status["RateLimit"] = "rate_limit";
+    requestStatus["RateLimit"] = "rate_limit";
     /** The event could not be processed. */
-    Status["Invalid"] = "invalid";
+    requestStatus["Invalid"] = "invalid";
     /** A server-side error ocurred during submission. */
-    Status["Failed"] = "failed";
-})(Status || (Status = {}));
+    requestStatus["Failed"] = "failed";
+})(requestStatus || (requestStatus = {}));
 function fromHttpCode(code) {
     if (code >= 200 && code < 300) {
-        return Status.Success;
+        return requestStatus.Success;
     }
     if (code === 429) {
-        return Status.RateLimit;
+        return requestStatus.RateLimit;
     }
     if (code >= 400 && code < 500) {
-        return Status.Invalid;
+        return requestStatus.Invalid;
     }
     if (code >= 500) {
-        return Status.Failed;
+        return requestStatus.Failed;
     }
-    return Status.Unknown;
+    return requestStatus.Unknown;
 }
 /**
  * A safe form of location.href
@@ -486,4 +487,4 @@ var isPrimitive = function (value) {
 /***/ })
 /******/ ]);
 });
-//# sourceMappingURL=args.js.map
+//# sourceMappingURL=utils.js.map
