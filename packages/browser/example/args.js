@@ -91,11 +91,25 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+!function(n,t){ true?module.exports=t():undefined}(window,(function(){return function(n){var t={};function r(o){if(t[o])return t[o].exports;var e=t[o]={i:o,l:!1,exports:{}};return n[o].call(e.exports,e,e.exports,r),e.l=!0,e.exports}return r.m=n,r.c=t,r.d=function(n,t,o){r.o(n,t)||Object.defineProperty(n,t,{enumerable:!0,get:o})},r.r=function(n){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(n,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(n,"__esModule",{value:!0})},r.t=function(n,t){if(1&t&&(n=r(n)),8&t)return n;if(4&t&&"object"==typeof n&&n&&n.__esModule)return n;var o=Object.create(null);if(r.r(o),Object.defineProperty(o,"default",{enumerable:!0,value:n}),2&t&&"string"!=typeof n)for(var e in n)r.d(o,e,function(t){return n[t]}.bind(null,e));return o},r.n=function(n){var t=n&&n.__esModule?function(){return n.default}:function(){return n};return r.d(t,"a",t),t},r.o=function(n,t){return Object.prototype.hasOwnProperty.call(n,t)},r.p="",r(r.s=0)}([function(n,t,r){"use strict";r.r(t),r.d(t,"isSupportsFetch",(function(){return S})),r.d(t,"isSupportsXMR",(function(){return E})),r.d(t,"isError",(function(){return L})),r.d(t,"isErrorEvent",(function(){return X})),r.d(t,"isDOMException",(function(){return M})),r.d(t,"isEvent",(function(){return P})),r.d(t,"isString",(function(){return C})),r.d(t,"isPlainObject",(function(){return R})),r.d(t,"isPrimitive",(function(){return A})),r.d(t,"getGlobalObject",(function(){return u})),r.d(t,"globalMark",(function(){return e})),r.d(t,"fill",(function(){return c})),r.d(t,"uuid4",(function(){return f})),r.d(t,"addHandler",(function(){return l})),r.d(t,"triggerHandler",(function(){return s})),r.d(t,"requestStatus",(function(){return o})),r.d(t,"fromHttpCode",(function(){return p})),r.d(t,"getLocationHref",(function(){return d})),r.d(t,"shouldIgnoreOnError",(function(){return y})),r.d(t,"ignoreNextOnError",(function(){return v})),r.d(t,"consoleSandbox",(function(){return x})),r.d(t,"logger",(function(){return m}));var o,e="__ARGOS__",i={},u=function(){return"undefined"!=typeof window?window:i},c=function(n,t,r){var o;if(t in n){var e=n[t],i=r(e);if("function"==typeof i)try{i.prototype=i.prototype||{},Object.defineProperties(i,((o={}).__argos_original__={enumerable:!1,value:e},o))}catch(n){console.warn("multiple fill may cause error")}n[t]=i}},f=function(){var n=u(),t=n.crypto||n.msCrypto;if(void 0!==t&&t.getRandomValues){var r=new Uint16Array(8);t.getRandomValues(r),r[3]=4095&r[3]|16384,r[4]=16383&r[4]|32768;var o=function(n){for(var t=n.toString(16);t.length<4;)t="0"+t;return t};return o(r[0])+o(r[1])+o(r[2])+o(r[3])+o(r[4])+o(r[5])+o(r[6])+o(r[7])}return"xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx".replace(/[xy]/g,(function(n){var t=16*Math.random()|0;return("x"===n?t:3&t|8).toString(16)}))},a={},l=function(n){n&&"string"==typeof n.type&&(a[n.type]=a[n.type]||[],a[n.type].push(n.fn))},s=function(n,t){if(n&&a[n])for(var r=0,o=a[n]||[];r<o.length;r++){var e=o[r];try{e(t)}catch(n){console.error("Error while triggering handler")}}};function p(n){return n>=200&&n<300?o.Success:429===n?o.RateLimit:n>=400&&n<500?o.Invalid:n>=500?o.Failed:o.Unknown}function d(){try{return document.location.href}catch(n){return""}}!function(n){n.Unknown="unknown",n.Success="success",n.RateLimit="rate_limit",n.Invalid="invalid",n.Failed="failed"}(o||(o={}));var g=0;function y(){return g>0}function v(){g+=1,setTimeout((function(){g-=1}))}function x(n,t){var r=u();if("console"in r&&r.console[n])return t()}var b=function(){return(b=Object.assign||function(n){for(var t,r=1,o=arguments.length;r<o;r++)for(var e in t=arguments[r])Object.prototype.hasOwnProperty.call(t,e)&&(n[e]=t[e]);return n}).apply(this,arguments)},h=function(){for(var n=0,t=0,r=arguments.length;t<r;t++)n+=arguments[t].length;var o=Array(n),e=0;for(t=0;t<r;t++)for(var i=arguments[t],u=0,c=i.length;u<c;u++,e++)o[e]=i[u];return o},j=u(),w="Argos Log",O=function(){function n(){this.options={enableLog:!1,showLog:!0,showInfo:!0,showWarn:!0,showError:!0,isXCX:!1}}return n.prototype.bindOptions=function(n){this.options=b(b({},this.options),n)},n.prototype.log=function(){for(var n=[],t=0;t<arguments.length;t++)n[t]=arguments[t];var r=this.options,o=r.enableLog,e=r.showLog,i=r.isXCX;o&&e&&(i?console.log.apply(console,h(["["+w+"]"],n)):x("log",(function(){var t;(t=j.console).log.apply(t,h(["["+w+"]"],n))})))},n.prototype.warn=function(){for(var n=[],t=0;t<arguments.length;t++)n[t]=arguments[t];var r=this.options,o=r.enableLog,e=r.showWarn,i=r.isXCX;o&&e&&(i?console.warn.apply(console,h(["["+w+"]"],n)):x("warn",(function(){var t;(t=j.console).warn.apply(t,h(["["+w+"]"],n))})))},n.prototype.info=function(){for(var n=[],t=0;t<arguments.length;t++)n[t]=arguments[t];var r=this.options,o=r.enableLog,e=r.showInfo,i=r.isXCX;o&&e&&(i?console.info.apply(console,h(["["+w+"]"],n)):x("info",(function(){var t;(t=j.console).info.apply(t,h(["["+w+"]"],n))})))},n.prototype.error=function(){for(var n=[],t=0;t<arguments.length;t++)n[t]=arguments[t];var r=this.options,o=r.enableLog,e=r.showError,i=r.isXCX;o&&e&&(i?console.error.apply(console,h(["["+w+"]"],n)):x("error",(function(){var t;(t=j.console).error.apply(t,h(["["+w+"]"],n))})))},n}();j[e]=j[e]||{};var m=j[e].logger||(j[e].logger=new O),S=function(){return"fetch"in u()},E=function(){return"XMLHttpRequest"in u()};function _(n,t){try{return n instanceof t}catch(n){return!1}}var L=function(n){switch(Object.prototype.toString.call(n)){case"[object Error]":case"[object Exception]":case"[object DOMException]":return!0;default:return _(n,Error)}},X=function(n){return"[object ErrorEvent]"===Object.prototype.toString.call(n)},M=function(n){return"[object DOMException]"===Object.prototype.toString.call(n)},P=function(n){return"undefined"!=typeof Event&&_(n,Event)},C=function(n){return"[object String]"===Object.prototype.toString.call(n)},R=function(n){return"[object Object]"===Object.prototype.toString.call(n)},A=function(n){return null===n||"object"!=typeof n&&"function"!=typeof n}}])}));
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+!function(n,t){ true?module.exports=t():undefined}(window,(function(){return function(n){var t={};function r(e){if(t[e])return t[e].exports;var o=t[e]={i:e,l:!1,exports:{}};return n[e].call(o.exports,o,o.exports,r),o.l=!0,o.exports}return r.m=n,r.c=t,r.d=function(n,t,e){r.o(n,t)||Object.defineProperty(n,t,{enumerable:!0,get:e})},r.r=function(n){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(n,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(n,"__esModule",{value:!0})},r.t=function(n,t){if(1&t&&(n=r(n)),8&t)return n;if(4&t&&"object"==typeof n&&n&&n.__esModule)return n;var e=Object.create(null);if(r.r(e),Object.defineProperty(e,"default",{enumerable:!0,value:n}),2&t&&"string"!=typeof n)for(var o in n)r.d(e,o,function(t){return n[t]}.bind(null,o));return e},r.n=function(n){var t=n&&n.__esModule?function(){return n.default}:function(){return n};return r.d(t,"a",t),t},r.o=function(n,t){return Object.prototype.hasOwnProperty.call(n,t)},r.p="",r(r.s=1)}([function(n,t,r){window,n.exports=function(n){var t={};function r(e){if(t[e])return t[e].exports;var o=t[e]={i:e,l:!1,exports:{}};return n[e].call(o.exports,o,o.exports,r),o.l=!0,o.exports}return r.m=n,r.c=t,r.d=function(n,t,e){r.o(n,t)||Object.defineProperty(n,t,{enumerable:!0,get:e})},r.r=function(n){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(n,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(n,"__esModule",{value:!0})},r.t=function(n,t){if(1&t&&(n=r(n)),8&t)return n;if(4&t&&"object"==typeof n&&n&&n.__esModule)return n;var e=Object.create(null);if(r.r(e),Object.defineProperty(e,"default",{enumerable:!0,value:n}),2&t&&"string"!=typeof n)for(var o in n)r.d(e,o,function(t){return n[t]}.bind(null,o));return e},r.n=function(n){var t=n&&n.__esModule?function(){return n.default}:function(){return n};return r.d(t,"a",t),t},r.o=function(n,t){return Object.prototype.hasOwnProperty.call(n,t)},r.p="",r(r.s=0)}([function(n,t,r){"use strict";r.r(t),r.d(t,"isSupportsFetch",(function(){return _})),r.d(t,"isSupportsXMR",(function(){return E})),r.d(t,"isError",(function(){return M})),r.d(t,"isErrorEvent",(function(){return P})),r.d(t,"isDOMException",(function(){return L})),r.d(t,"isEvent",(function(){return X})),r.d(t,"isString",(function(){return k})),r.d(t,"isPlainObject",(function(){return C})),r.d(t,"isPrimitive",(function(){return H})),r.d(t,"getGlobalObject",(function(){return u})),r.d(t,"globalMark",(function(){return o})),r.d(t,"fill",(function(){return c})),r.d(t,"uuid4",(function(){return f})),r.d(t,"addHandler",(function(){return l})),r.d(t,"triggerHandler",(function(){return p})),r.d(t,"fromHttpCode",(function(){return s})),r.d(t,"getLocationHref",(function(){return d})),r.d(t,"shouldIgnoreOnError",(function(){return b})),r.d(t,"ignoreNextOnError",(function(){return y})),r.d(t,"consoleSandbox",(function(){return v})),r.d(t,"logger",(function(){return m}));var e,o="__ARGOS__",i={},u=function(){return"undefined"!=typeof window?window:i},c=function(n,t,r){var e;if(t in n){var o=n[t],i=r(o);if("function"==typeof i)try{i.prototype=i.prototype||{},Object.defineProperties(i,((e={}).__argos_original__={enumerable:!1,value:o},e))}catch(n){console.warn("multiple fill may cause error")}n[t]=i}},f=function(){var n=u(),t=n.crypto||n.msCrypto;if(void 0!==t&&t.getRandomValues){var r=new Uint16Array(8);t.getRandomValues(r),r[3]=4095&r[3]|16384,r[4]=16383&r[4]|32768;var e=function(n){for(var t=n.toString(16);t.length<4;)t="0"+t;return t};return e(r[0])+e(r[1])+e(r[2])+e(r[3])+e(r[4])+e(r[5])+e(r[6])+e(r[7])}return"xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx".replace(/[xy]/g,(function(n){var t=16*Math.random()|0;return("x"===n?t:3&t|8).toString(16)}))},a={},l=function(n){n&&"string"==typeof n.type&&(a[n.type]=a[n.type]||[],a[n.type].push(n.fn))},p=function(n,t){if(n&&a[n])for(var r=0,e=a[n]||[];r<e.length;r++){var o=e[r];try{o(t)}catch(n){console.error("Error while triggering handler")}}};function s(n){return n>=200&&n<300?e.Success:429===n?e.RateLimit:n>=400&&n<500?e.Invalid:n>=500?e.Failed:e.Unknown}function d(){try{return document.location.href}catch(n){return""}}!function(n){n.Unknown="unknown",n.Success="success",n.RateLimit="rate_limit",n.Invalid="invalid",n.Failed="failed"}(e||(e={}));var g=0;function b(){return g>0}function y(){g+=1,setTimeout((function(){g-=1}))}function v(n,t){var r=u();if("console"in r&&r.console[n])return t()}var h=function(){return(h=Object.assign||function(n){for(var t,r=1,e=arguments.length;r<e;r++)for(var o in t=arguments[r])Object.prototype.hasOwnProperty.call(t,o)&&(n[o]=t[o]);return n}).apply(this,arguments)},x=function(){for(var n=0,t=0,r=arguments.length;t<r;t++)n+=arguments[t].length;var e=Array(n),o=0;for(t=0;t<r;t++)for(var i=arguments[t],u=0,c=i.length;u<c;u++,o++)e[o]=i[u];return e},j=u(),w="Argos Log",O=function(){function n(){this.options={enableLog:!1,showLog:!0,showInfo:!0,showWarn:!0,showError:!0,isXCX:!1}}return n.prototype.bindOptions=function(n){this.options=h(h({},this.options),n)},n.prototype.log=function(){for(var n=[],t=0;t<arguments.length;t++)n[t]=arguments[t];var r=this.options,e=r.enableLog,o=r.showLog,i=r.isXCX;e&&o&&(i?console.log.apply(console,x(["["+w+"]"],n)):v("log",(function(){var t;(t=j.console).log.apply(t,x(["["+w+"]"],n))})))},n.prototype.warn=function(){for(var n=[],t=0;t<arguments.length;t++)n[t]=arguments[t];var r=this.options,e=r.enableLog,o=r.showWarn,i=r.isXCX;e&&o&&(i?console.warn.apply(console,x(["["+w+"]"],n)):v("warn",(function(){var t;(t=j.console).warn.apply(t,x(["["+w+"]"],n))})))},n.prototype.info=function(){for(var n=[],t=0;t<arguments.length;t++)n[t]=arguments[t];var r=this.options,e=r.enableLog,o=r.showInfo,i=r.isXCX;e&&o&&(i?console.info.apply(console,x(["["+w+"]"],n)):v("info",(function(){var t;(t=j.console).info.apply(t,x(["["+w+"]"],n))})))},n.prototype.error=function(){for(var n=[],t=0;t<arguments.length;t++)n[t]=arguments[t];var r=this.options,e=r.enableLog,o=r.showError,i=r.isXCX;e&&o&&(i?console.error.apply(console,x(["["+w+"]"],n)):v("error",(function(){var t;(t=j.console).error.apply(t,x(["["+w+"]"],n))})))},n}();j[o]=j[o]||{};var m=j[o].logger||(j[o].logger=new O),_=function(){return"fetch"in u()},E=function(){return"XMLHttpRequest"in u()};function S(n,t){try{return n instanceof t}catch(n){return!1}}var M=function(n){switch(Object.prototype.toString.call(n)){case"[object Error]":case"[object Exception]":case"[object DOMException]":return!0;default:return S(n,Error)}},P=function(n){return"[object ErrorEvent]"===Object.prototype.toString.call(n)},L=function(n){return"[object DOMException]"===Object.prototype.toString.call(n)},X=function(n){return"undefined"!=typeof Event&&S(n,Event)},k=function(n){return"[object String]"===Object.prototype.toString.call(n)},C=function(n){return"[object Object]"===Object.prototype.toString.call(n)},H=function(n){return null===n||"object"!=typeof n&&"function"!=typeof n}}])},function(n,t,r){"use strict";r.r(t),r.d(t,"Hub",(function(){return o})),r.d(t,"captureException",(function(){return u})),r.d(t,"getCurrentHub",(function(){return i}));var e=r(0),o=function(){function n(){this._bond=new Map}return n.prototype._dispatchClient=function(n,t){for(var r=[],e=2;e<arguments.length;e++)r[e-2]=arguments[e];var o=this.getBond().get(t);o&&o[n]&&o[n].apply(o,r)},n.prototype.getBond=function(){return this._bond},n.prototype.bindClient=function(n,t){void 0===t&&(t="client"),this.getBond().set(t,n)},n.prototype.captureException=function(n,t,r){var o=Object(e.uuid4)();this._dispatchClient("captureException",n,t,{eventId:o})},n}();var i=function(){var n;return function(n){var t=n[e.globalMark];if(t&&t.hub)return t.hub;return n[e.globalMark]=n[e.globalMark]||{},n[e.globalMark].hub=new o,n[e.globalMark].hub}(((n=Object(e.getGlobalObject)())[e.globalMark]=n[e.globalMark]||{hub:void 0},n))};function u(n,t){return void 0===t&&(t="client"),function(n){for(var t=[],r=1;r<arguments.length;r++)t[r-1]=arguments[r];var e=i();if(e&&e[n])return e[n].apply(e,t);throw new Error("No hub defined or "+n+" was not found on the hub, please open a bug report.")}("captureException",t,n,{originalException:n})}}])}));
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+/* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -104,84 +118,17 @@ __webpack_require__.r(__webpack_exports__);
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, "init", function() { return /* binding */ init; });
-__webpack_require__.d(__webpack_exports__, "captureException", function() { return /* reexport */ captureException; });
-__webpack_require__.d(__webpack_exports__, "getCurrentHub", function() { return /* reexport */ getCurrentHub; });
+__webpack_require__.d(__webpack_exports__, "captureException", function() { return /* reexport */ dist["captureException"]; });
+__webpack_require__.d(__webpack_exports__, "getCurrentHub", function() { return /* reexport */ dist["getCurrentHub"]; });
 __webpack_require__.d(__webpack_exports__, "VueIntegration", function() { return /* reexport */ integrations_VueIntegration; });
 
-// CONCATENATED MODULE: ./src/is.ts
+// EXTERNAL MODULE: ./node_modules/@thynpm/argos-hub/dist/index.js
+var dist = __webpack_require__(1);
 
-var isSupportsFetch = function () {
-    if (!('fetch' in getGlobalObject())) {
-        return false;
-    }
-    return true;
-};
-var isSupportsXMR = function () {
-    if (!('XMLHttpRequest' in getGlobalObject())) {
-        return false;
-    }
-    return true;
-};
-function isInstanceOf(obj, base) {
-    try {
-        return obj instanceof base;
-    }
-    catch (e) {
-        return false;
-    }
-}
-/**
- * 检查数据是否是异常类型
- * @param value
- */
-var isError = function (value) {
-    switch (Object.prototype.toString.call(value)) {
-        case '[object Error]':
-            return true;
-        case '[object Exception]':
-            return true;
-        case '[object DOMException]':
-            return true;
-        default:
-            return isInstanceOf(value, Error);
-    }
-};
-/**
- * ErrorEvent 事件对象在脚本发生错误时产生，它可以提供发生错误的脚本文件的文件名，以及发生错误时所在的行号等信息。
- * @param value
- */
-var isErrorEvent = function (value) {
-    return Object.prototype.toString.call(value) === '[object ErrorEvent]';
-};
-/**
- * 代表调用方法或访问 Web API 属性时发生的异常事，有 name 和 message 属性
- * @param value
- */
-var isDOMException = function (value) {
-    return Object.prototype.toString.call(value) === '[object DOMException]';
-};
-var isEvent = function (value) {
-    return typeof Event !== 'undefined' && isInstanceOf(value, Event);
-};
-var isString = function (value) {
-    return Object.prototype.toString.call(value) === '[object String]';
-};
-var isPlainObject = function (value) {
-    return Object.prototype.toString.call(value) === '[object Object]';
-};
-/**
- * Checks whether given value's is a primitive (undefined, null, number, boolean, string)
- * @param value
- */
-var isPrimitive = function (value) {
-    return value === null || (typeof value !== 'object' && typeof value !== 'function');
-};
+// EXTERNAL MODULE: ./node_modules/@thynpm/argos-utils/dist/index.js
+var argos_utils_dist = __webpack_require__(0);
 
-// CONCATENATED MODULE: ./src/tracekit.ts
-/**
- * This was originally forked from https://github.com/occ/TraceKit, but has since been
- * largely modified and is now maintained as part of Sentry JS SDK.
- */
+// CONCATENATED MODULE: ./src/Request.ts
 var __assign = (undefined && undefined.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -192,6 +139,143 @@ var __assign = (undefined && undefined.__assign) || function () {
         return t;
     };
     return __assign.apply(this, arguments);
+};
+
+var ignoreMark = '__ignore__';
+var Request_Request = /** @class */ (function () {
+    function Request(options) {
+        if (options === void 0) { options = {}; }
+        this.tasks = [];
+        this.options = {
+            maxRequest: 20,
+        };
+        this.options = __assign(__assign({}, this.options), options);
+    }
+    Request.prototype.isReady = function () {
+        return this.tasks.length <= this.options.maxRequest;
+    };
+    Request.prototype.remove = function (task) {
+        var removedTask = this.tasks.splice(this.tasks.indexOf(task), 1)[0];
+        return removedTask;
+    };
+    Request.prototype.add = function (task) {
+        var _this = this;
+        if (!this.isReady()) {
+            argos_utils_dist["logger"].warn('too many request');
+            return;
+        }
+        this.tasks.push(task);
+        task.then(function () { return _this.remove(task); }).then(null, function () {
+            return _this.remove(task).then(null, function () {
+                // We have to add this catch here otherwise we have an unhandledPromiseRejection
+                // because it's a new Promise chain.
+            });
+        });
+        return task;
+    };
+    return Request;
+}());
+
+var Request_sendData = function (data, options) {
+    var isXCX = options.isXCX;
+    if (isXCX) {
+        return createWXRequest(data, options);
+    }
+    if (!Object(argos_utils_dist["isSupportsFetch"])()) {
+        return createFetch(data, options);
+    }
+    return createXHR(data, options);
+};
+function createFetch(data, options) {
+    return new Promise(function (resolve, reject) {
+        var url = options.url, headers = options.headers;
+        if (!url) {
+            console.error('There is no upload data url!');
+            return;
+        }
+        var reqOptions = {
+            body: JSON.stringify(data),
+            method: 'POST',
+            headers: __assign({}, headers)
+        };
+        return fetch(url, __assign({}, reqOptions)).then(function (response) {
+            var status = Object(argos_utils_dist["fromHttpCode"])(response.status);
+            if (status === argos_utils_dist["requestStatus"].Success) {
+                resolve({ status: status });
+                return;
+            }
+            if (status === argos_utils_dist["requestStatus"].RateLimit) {
+                console.warn('Too many requests');
+            }
+            reject(response);
+        }).catch(function (ex) {
+            //上传的请求报错了，就不要抛到全局捕获了，直接在这里截断
+            reject(ex);
+        });
+    });
+}
+function createXHR(data, options) {
+    return new Promise(function (resolve, reject) {
+        var url = options.url, headers = options.headers;
+        if (!url) {
+            console.error('There is no upload data url!');
+            return;
+        }
+        var request = new XMLHttpRequest();
+        request.onreadystatechange = function () {
+            if (request.readyState !== 4) {
+                return;
+            }
+            var status = Object(argos_utils_dist["fromHttpCode"])(request.status);
+            if (status === argos_utils_dist["requestStatus"].Success) {
+                resolve({ status: status });
+                return;
+            }
+            argos_utils_dist["logger"].error(request);
+            // 上传的请求报错了，就不要抛到全局捕获了，直接在这里截断
+            reject(request);
+        };
+        request.open('POST', url);
+        for (var header in headers) {
+            if (headers.hasOwnProperty(header)) {
+                request.setRequestHeader(header, headers[header]);
+            }
+        }
+        var sendData = JSON.stringify(data);
+        request.send(sendData);
+    });
+}
+function createWXRequest(data, options) {
+    var url = options.url;
+    if (!url) {
+        console.error('There is no upload data url!');
+        return;
+    }
+    return new Promise(function (resolve, reject) {
+        // @ts-ignore
+        wx.request({
+            url: url,
+            method: 'POST',
+            data: data
+        });
+    });
+}
+
+// CONCATENATED MODULE: ./src/tracekit.ts
+/**
+ * This was originally forked from https://github.com/occ/TraceKit, but has since been
+ * largely modified and is now maintained as part of Sentry JS SDK.
+ */
+var tracekit_assign = (undefined && undefined.__assign) || function () {
+    tracekit_assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return tracekit_assign.apply(this, arguments);
 };
 // global reference to slice
 var UNKNOWN_FUNCTION = '?';
@@ -372,7 +456,7 @@ function computeStackTraceFromStacktraceProp(ex) {
 /** Remove N number of frames from the stack */
 function popFrames(stacktrace, popSize) {
     try {
-        return __assign(__assign({}, stacktrace), { stack: stacktrace.stack.slice(popSize) });
+        return tracekit_assign(tracekit_assign({}, stacktrace), { stack: stacktrace.stack.slice(popSize) });
     }
     catch (e) {
         return stacktrace;
@@ -427,7 +511,7 @@ function eventFromPlainObject(exception, syntheticException, rejection) {
         exception: {
             values: [
                 {
-                    type: isEvent(exception) ? exception.constructor.name : rejection ? 'UnhandledRejection' : 'Error',
+                    type: Object(argos_utils_dist["isEvent"])(exception) ? exception.constructor.name : rejection ? 'UnhandledRejection' : 'Error',
                     value: "Non-Error " + (rejection ? 'promise rejection' : 'exception') + " captured with keys: " + exception,
                 },
             ],
@@ -496,91 +580,6 @@ function prepareFramesForEvent(stack) {
 var originMark = '__argos_original__';
 var wrapMark = '__argos_wrapped__';
 var globalMark = '__ARGOS__';
-var fallbackGlobalObject = {};
-// 获取全局属性，在其它的一些环境（例如 node）中，可能没有 window 对象
-var getGlobalObject = function () {
-    return typeof window !== 'undefined' ? window : fallbackGlobalObject;
-};
-/**
- * 扩展属性，避免覆盖已存在的方法
- * @param source 原方法
- * @param name 属性名称
- * @param replacement 扩展的方法
- */
-var fill = function (source, name, replacement) {
-    var _a;
-    if (!(name in source)) {
-        return;
-    }
-    var original = source[name];
-    var wrapped = replacement(original);
-    if (typeof wrapped === 'function') {
-        try {
-            wrapped.prototype = wrapped.prototype || {};
-            Object.defineProperties(wrapped, (_a = {},
-                _a[originMark] = {
-                    enumerable: false,
-                    value: original,
-                },
-                _a));
-        }
-        catch (e) {
-            console.warn('multiple fill may cause error');
-        }
-    }
-    source[name] = wrapped;
-};
-/**
- * 生成唯一标志
- */
-var uuid4 = function () {
-    var global = getGlobalObject();
-    var crypto = global.crypto || global.msCrypto;
-    if (!(crypto === void 0) && crypto.getRandomValues) {
-        // Use window.crypto API if available
-        var arr = new Uint16Array(8);
-        crypto.getRandomValues(arr);
-        arr[3] = (arr[3] & 0xfff) | 0x4000;
-        arr[4] = (arr[4] & 0x3fff) | 0x8000;
-        var pad = function (num) {
-            var v = num.toString(16);
-            while (v.length < 4) {
-                v = "0" + v;
-            }
-            return v;
-        };
-        return (pad(arr[0]) + pad(arr[1]) + pad(arr[2]) + pad(arr[3]) + pad(arr[4]) + pad(arr[5]) + pad(arr[6]) + pad(arr[7]));
-    }
-    // http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/2117523#2117523
-    return 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        var r = (Math.random() * 16) | 0;
-        var v = c === 'x' ? r : (r & 0x3) | 0x8;
-        return v.toString(16);
-    });
-};
-// 事件统一发布订阅
-var handlers = {};
-var addHandler = function (handler) {
-    if (!handler || typeof handler.type !== 'string') {
-        return;
-    }
-    handlers[handler.type] = handlers[handler.type] || [];
-    handlers[handler.type].push(handler.fn);
-};
-var triggerHandler = function (type, data) {
-    if (!type || !handlers[type]) {
-        return;
-    }
-    for (var _i = 0, _a = handlers[type] || []; _i < _a.length; _i++) {
-        var handler = _a[_i];
-        try {
-            handler(data);
-        }
-        catch (e) {
-            console.error('Error while triggering handler');
-        }
-    }
-};
 var wrap = function (fn, options) {
     var _a;
     if (options === void 0) { options = {}; }
@@ -604,8 +603,8 @@ var wrap = function (fn, options) {
             return fn.apply(this, args);
         }
         catch (ex) {
-            ignoreNextOnError();
-            captureException(ex);
+            Object(argos_utils_dist["ignoreNextOnError"])();
+            Object(dist["captureException"])(ex);
             throw ex;
         }
     };
@@ -638,13 +637,13 @@ var wrap = function (fn, options) {
 // 异常类型检测
 function exceptionCheck(exception) {
     var event;
-    if (isErrorEvent(exception) && exception.error) {
+    if (Object(argos_utils_dist["isErrorEvent"])(exception) && exception.error) {
         var errorEvent = exception;
         exception = errorEvent.error;
         event = eventFromStacktrace(computeStackTrace(exception));
         return event;
     }
-    if (isDOMException(exception)) {
+    if (Object(argos_utils_dist["isDOMException"])(exception)) {
         var domException = exception;
         var name_1 = domException.name || 'DOMException';
         var message = domException.message ? name_1 + ": " + domException.message : name_1;
@@ -652,11 +651,11 @@ function exceptionCheck(exception) {
         // addExceptionTypeValue(event, message);
         return event;
     }
-    if (isError(exception)) {
+    if (Object(argos_utils_dist["isError"])(exception)) {
         event = eventFromStacktrace(computeStackTrace(exception));
         return event;
     }
-    if (isPlainObject(exception) || isEvent(exception)) {
+    if (Object(argos_utils_dist["isPlainObject"])(exception) || Object(argos_utils_dist["isEvent"])(exception)) {
         // If it is plain Object or Event, serialize it manually and extract options
         // This will allow us to group events based on top-level keys
         // which is much better than creating new group when any key/value change
@@ -694,406 +693,6 @@ function eventFromString(input, syntheticException, options) {
         };
     }
     return event;
-}
-var Status;
-(function (Status) {
-    /** The status could not be determined. */
-    Status["Unknown"] = "unknown";
-    /** The event was skipped due to configuration or callbacks. */
-    // Skipped = 'skipped',
-    /** The event was sent to Sentry successfully. */
-    Status["Success"] = "success";
-    /** The client is currently rate limited and will try again later. */
-    Status["RateLimit"] = "rate_limit";
-    /** The event could not be processed. */
-    Status["Invalid"] = "invalid";
-    /** A server-side error ocurred during submission. */
-    Status["Failed"] = "failed";
-})(Status || (Status = {}));
-function fromHttpCode(code) {
-    if (code >= 200 && code < 300) {
-        return Status.Success;
-    }
-    if (code === 429) {
-        return Status.RateLimit;
-    }
-    if (code >= 400 && code < 500) {
-        return Status.Invalid;
-    }
-    if (code >= 500) {
-        return Status.Failed;
-    }
-    return Status.Unknown;
-}
-/**
- * A safe form of location.href
- */
-function getLocationHref() {
-    try {
-        return document.location.href;
-    }
-    catch (oO) {
-        return '';
-    }
-}
-/**
- * wrap 方法包裹的方法，如果里面报错了，除了自身会捕获，onerror 也会捕获到，
- * 这个时候，不应该重复的捕获，于是用了下面的方法
- */
-var ignoreOnError = 0;
-/**
- * @hidden
- */
-function shouldIgnoreOnError() {
-    return ignoreOnError > 0;
-}
-/**
- * @hidden
- */
-function ignoreNextOnError() {
-    // onerror should trigger before setTimeout
-    ignoreOnError += 1;
-    setTimeout(function () {
-        ignoreOnError -= 1;
-    });
-}
-/**
- * 在一些环境下面可能没有 console 相关的对象和方法，需要统一先做检查
- * @param type
- * @param callback
- */
-function consoleSandbox(type, callback) {
-    var global = getGlobalObject();
-    if (!('console' in global)) {
-        return;
-    }
-    var originalConsole = global.console;
-    if (originalConsole[type]) {
-        var result = callback();
-        return result;
-    }
-    return;
-}
-
-// CONCATENATED MODULE: ./src/Hub.ts
-/**
- * 建立方法之间的全局调用桥梁
- * 例如 在 try-catch 中捕获的错误，onerror 无法拿到，需要一个公用的方法，可以调用已存在的公共方法
- */
-
-var Hub_Hub = /** @class */ (function () {
-    function Hub() {
-        this._bond = new Map();
-    }
-    Hub.prototype._dispatchClient = function (method, key) {
-        var args = [];
-        for (var _i = 2; _i < arguments.length; _i++) {
-            args[_i - 2] = arguments[_i];
-        }
-        var targetBond = this.getBond().get(key);
-        if (targetBond && targetBond[method]) {
-            targetBond[method].apply(targetBond, args);
-        }
-    };
-    Hub.prototype.getBond = function () {
-        return this._bond;
-    };
-    Hub.prototype.bindClient = function (client, key) {
-        if (key === void 0) { key = 'client'; }
-        this.getBond().set(key, client);
-    };
-    Hub.prototype.captureException = function (key, exception, hint) {
-        var eventId = uuid4();
-        this._dispatchClient('captureException', key, exception, { eventId: eventId });
-    };
-    return Hub;
-}());
-
-function getGlobalCarrier() {
-    var carrier = getGlobalObject();
-    carrier[globalMark] = carrier[globalMark] || {
-        hub: undefined,
-    };
-    return carrier;
-}
-var getCurrentHub = function () {
-    var global = getGlobalCarrier();
-    return getHubFromCarrier(global);
-};
-function getHubFromCarrier(carrier) {
-    var carrierObj = carrier[globalMark];
-    if (carrierObj && carrierObj.hub) {
-        return carrierObj.hub;
-    }
-    carrier[globalMark] = carrier[globalMark] || {};
-    carrier[globalMark].hub = new Hub_Hub();
-    return carrier[globalMark].hub;
-}
-function callOnHub(method) {
-    var args = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-        args[_i - 1] = arguments[_i];
-    }
-    var hub = getCurrentHub();
-    if (hub && hub[method]) {
-        return hub[method].apply(hub, args);
-    }
-    throw new Error("No hub defined or " + method + " was not found on the hub, please open a bug report.");
-}
-function captureException(exception, key) {
-    if (key === void 0) { key = 'client'; }
-    return callOnHub('captureException', key, exception, {
-        originalException: exception,
-    });
-}
-
-// CONCATENATED MODULE: ./src/logger.ts
-var logger_assign = (undefined && undefined.__assign) || function () {
-    logger_assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return logger_assign.apply(this, arguments);
-};
-var __spreadArrays = (undefined && undefined.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
-};
-
-var logger_global = getGlobalObject();
-var prefix = 'Argos Log';
-var logger_Log = /** @class */ (function () {
-    function Log() {
-        this.options = {
-            enableLog: false,
-            showLog: true,
-            showInfo: true,
-            showWarn: true,
-            showError: true,
-            isXCX: false,
-        };
-    }
-    Log.prototype.bindOptions = function (options) {
-        this.options = logger_assign(logger_assign({}, this.options), options);
-    };
-    Log.prototype.log = function () {
-        var args = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            args[_i] = arguments[_i];
-        }
-        var _a = this.options, enableLog = _a.enableLog, showLog = _a.showLog, isXCX = _a.isXCX;
-        if (!enableLog || !showLog) {
-            return;
-        }
-        if (isXCX) {
-            console.log.apply(console, __spreadArrays(["[" + prefix + "]"], args));
-            return;
-        }
-        consoleSandbox('log', function () {
-            var _a;
-            (_a = logger_global.console).log.apply(_a, __spreadArrays(["[" + prefix + "]"], args));
-        });
-    };
-    Log.prototype.warn = function () {
-        var args = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            args[_i] = arguments[_i];
-        }
-        var _a = this.options, enableLog = _a.enableLog, showWarn = _a.showWarn, isXCX = _a.isXCX;
-        if (!enableLog || !showWarn) {
-            return;
-        }
-        if (isXCX) {
-            console.warn.apply(console, __spreadArrays(["[" + prefix + "]"], args));
-            return;
-        }
-        consoleSandbox('warn', function () {
-            var _a;
-            (_a = logger_global.console).warn.apply(_a, __spreadArrays(["[" + prefix + "]"], args));
-        });
-    };
-    Log.prototype.info = function () {
-        var args = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            args[_i] = arguments[_i];
-        }
-        var _a = this.options, enableLog = _a.enableLog, showInfo = _a.showInfo, isXCX = _a.isXCX;
-        if (!enableLog || !showInfo) {
-            return;
-        }
-        if (isXCX) {
-            console.info.apply(console, __spreadArrays(["[" + prefix + "]"], args));
-            return;
-        }
-        consoleSandbox('info', function () {
-            var _a;
-            (_a = logger_global.console).info.apply(_a, __spreadArrays(["[" + prefix + "]"], args));
-        });
-    };
-    Log.prototype.error = function () {
-        var args = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            args[_i] = arguments[_i];
-        }
-        var _a = this.options, enableLog = _a.enableLog, showError = _a.showError, isXCX = _a.isXCX;
-        if (!enableLog || !showError) {
-            return;
-        }
-        if (isXCX) {
-            console.error.apply(console, __spreadArrays(["[" + prefix + "]"], args));
-            return;
-        }
-        consoleSandbox('error', function () {
-            var _a;
-            (_a = logger_global.console).error.apply(_a, __spreadArrays(["[" + prefix + "]"], args));
-        });
-    };
-    return Log;
-}());
-logger_global[globalMark] = logger_global[globalMark] || {};
-var logger = logger_global[globalMark].logger || (logger_global[globalMark].logger = new logger_Log());
-/* harmony default export */ var src_logger = (logger);
-
-// CONCATENATED MODULE: ./src/Request.ts
-var Request_assign = (undefined && undefined.__assign) || function () {
-    Request_assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return Request_assign.apply(this, arguments);
-};
-
-
-
-var ignoreMark = '__ignore__';
-var Request_Request = /** @class */ (function () {
-    function Request(options) {
-        if (options === void 0) { options = {}; }
-        this.tasks = [];
-        this.options = {
-            maxRequest: 20,
-        };
-        this.options = Request_assign(Request_assign({}, this.options), options);
-    }
-    Request.prototype.isReady = function () {
-        return this.tasks.length <= this.options.maxRequest;
-    };
-    Request.prototype.remove = function (task) {
-        var removedTask = this.tasks.splice(this.tasks.indexOf(task), 1)[0];
-        return removedTask;
-    };
-    Request.prototype.add = function (task) {
-        var _this = this;
-        if (!this.isReady()) {
-            src_logger.warn('too many request');
-            return;
-        }
-        this.tasks.push(task);
-        task.then(function () { return _this.remove(task); }).then(null, function () {
-            return _this.remove(task).then(null, function () {
-                // We have to add this catch here otherwise we have an unhandledPromiseRejection
-                // because it's a new Promise chain.
-            });
-        });
-        return task;
-    };
-    return Request;
-}());
-
-var Request_sendData = function (data, options) {
-    var isXCX = options.isXCX;
-    if (isXCX) {
-        return createWXRequest(data, options);
-    }
-    if (!isSupportsFetch()) {
-        return createFetch(data, options);
-    }
-    return createXHR(data, options);
-};
-function createFetch(data, options) {
-    return new Promise(function (resolve, reject) {
-        var url = options.url, headers = options.headers;
-        if (!url) {
-            console.error('There is no upload data url!');
-            return;
-        }
-        var reqOptions = {
-            body: JSON.stringify(data),
-            method: 'POST',
-            headers: Request_assign({}, headers)
-        };
-        return fetch(url, Request_assign({}, reqOptions)).then(function (response) {
-            var status = fromHttpCode(response.status);
-            if (status === Status.Success) {
-                resolve({ status: status });
-                return;
-            }
-            if (status === Status.RateLimit) {
-                console.warn('Too many requests');
-            }
-            reject(response);
-        }).catch(function (ex) {
-            //上传的请求报错了，就不要抛到全局捕获了，直接在这里截断
-            reject(ex);
-        });
-    });
-}
-function createXHR(data, options) {
-    return new Promise(function (resolve, reject) {
-        var url = options.url, headers = options.headers;
-        if (!url) {
-            console.error('There is no upload data url!');
-            return;
-        }
-        var request = new XMLHttpRequest();
-        request.onreadystatechange = function () {
-            if (request.readyState !== 4) {
-                return;
-            }
-            var status = fromHttpCode(request.status);
-            if (status === Status.Success) {
-                resolve({ status: status });
-                return;
-            }
-            src_logger.error(request);
-            // 上传的请求报错了，就不要抛到全局捕获了，直接在这里截断
-            reject(request);
-        };
-        request.open('POST', url);
-        for (var header in headers) {
-            if (headers.hasOwnProperty(header)) {
-                request.setRequestHeader(header, headers[header]);
-            }
-        }
-        var sendData = JSON.stringify(data);
-        request.send(sendData);
-    });
-}
-function createWXRequest(data, options) {
-    var url = options.url;
-    if (!url) {
-        console.error('There is no upload data url!');
-        return;
-    }
-    return new Promise(function (resolve, reject) {
-        // @ts-ignore
-        wx.request({
-            url: url,
-            method: 'POST',
-            data: data
-        });
-    });
 }
 
 // CONCATENATED MODULE: ./src/Base.ts
@@ -1138,14 +737,14 @@ var Base_Base = /** @class */ (function () {
         var exceptionFormat = exceptionCheck(exception);
         exceptionFormat.eventId = eventId;
         var allData = this.combineData(exceptionFormat);
-        src_logger.info('exception data', allData);
+        argos_utils_dist["logger"].info('exception data', allData);
         this.request.add(new Promise(function () {
             Request_sendData(allData, _this.options);
         }));
     };
     // 获取环境基本信息
     Base.prototype.getUserAgent = function () {
-        var global = getGlobalObject();
+        var global = Object(argos_utils_dist["getGlobalObject"])();
         var data = {
             pageW: null,
             pageH: null,
@@ -1207,8 +806,7 @@ var GlobalHandlers_assign = (undefined && undefined.__assign) || function () {
 
 
 
-
-var GlobalHandlers_global = getGlobalObject();
+var GlobalHandlers_global = Object(argos_utils_dist["getGlobalObject"])();
 var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
     function GlobalHandlers(options) {
         this.options = {
@@ -1244,14 +842,14 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
         // 有可能已有被重写了，所以要暂存下来
         var oldOnError = GlobalHandlers_global.onerror;
         GlobalHandlers_global.onerror = function (msg, url, line, column, error) {
-            src_logger.info('onerror event: ', { msg: msg, url: url, line: line, column: column, error: error });
-            if (shouldIgnoreOnError()) {
+            argos_utils_dist["logger"].info('onerror event: ', { msg: msg, url: url, line: line, column: column, error: error });
+            if (Object(argos_utils_dist["shouldIgnoreOnError"])()) {
                 return;
             }
-            var ex = isPrimitive(error)
+            var ex = Object(argos_utils_dist["isPrimitive"])(error)
                 ? self._eventFromIncompleteOnError(msg, url, line, column)
                 : self._enhanceEventWithInitialFrame(exceptionCheck(error), url, line, column);
-            captureException(ex);
+            Object(dist["captureException"])(ex);
             if (oldOnError) {
                 return oldOnError.apply(this, arguments);
             }
@@ -1263,7 +861,7 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
         // 有可能已有被重写了，所以要暂存下来
         var oldOnError = GlobalHandlers_global.onunhandledrejection;
         GlobalHandlers_global.onunhandledrejection = function (e) {
-            src_logger.info('unhandledrejection event: ', e);
+            argos_utils_dist["logger"].info('unhandledrejection event: ', e);
             var error = e;
             try {
                 error = e && 'reason' in e ? e.reason : e;
@@ -1271,10 +869,10 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
             catch (ex) {
                 // no-empty
             }
-            if (shouldIgnoreOnError()) {
+            if (Object(argos_utils_dist["shouldIgnoreOnError"])()) {
                 return;
             }
-            var ex = isPrimitive(error)
+            var ex = Object(argos_utils_dist["isPrimitive"])(error)
                 ? self._eventFromIncompleteRejection(error)
                 : exceptionCheck(error);
             if (oldOnError) {
@@ -1291,7 +889,7 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
         if (!proto || !proto.hasOwnProperty || !proto.hasOwnProperty('addEventListener')) {
             return;
         }
-        fill(proto, 'addEventListener', function (original) {
+        Object(argos_utils_dist["fill"])(proto, 'addEventListener', function (original) {
             return function (eventName, fn, options) {
                 var wrapFn = fn;
                 if (eventName === 'click') {
@@ -1303,13 +901,13 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
     };
     // 暂时用不到
     GlobalHandlers.prototype._wrapXHR = function () {
-        if (!isSupportsXMR()) {
+        if (!Object(argos_utils_dist["isSupportsXMR"])()) {
             return;
         }
     };
     // 暂时用不到
     GlobalHandlers.prototype._wrapFetch = function () {
-        fill(GlobalHandlers_global, 'fetch', function (originalFetch) {
+        Object(argos_utils_dist["fill"])(GlobalHandlers_global, 'fetch', function (originalFetch) {
             return function () {
                 var args = [];
                 for (var _i = 0; _i < arguments.length; _i++) {
@@ -1334,7 +932,7 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
                     method = args[1].method;
                 }
                 var fetchData = {
-                    method: isString(method) ? method.toUpperCase() : method,
+                    method: Object(argos_utils_dist["isString"])(method) ? method.toUpperCase() : method,
                     url: url,
                 };
                 return originalFetch
@@ -1352,9 +950,9 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
     GlobalHandlers.prototype._eventFromIncompleteOnError = function (msg, url, line, column) {
         var ERROR_TYPES_RE = /^(?:[Uu]ncaught (?:exception: )?)?(?:((?:Eval|Internal|Range|Reference|Syntax|Type|URI|)Error): )?(.*)$/i;
         // If 'message' is ErrorEvent, get real message from inside
-        var message = isErrorEvent(msg) ? msg.message : msg;
+        var message = Object(argos_utils_dist["isErrorEvent"])(msg) ? msg.message : msg;
         var name;
-        if (isString(message)) {
+        if (Object(argos_utils_dist["isString"])(message)) {
             var groups = message.match(ERROR_TYPES_RE);
             if (groups) {
                 name = groups[1];
@@ -1393,7 +991,7 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
         event.exception.values[0].stacktrace.frames = event.exception.values[0].stacktrace.frames || [];
         var colno = isNaN(parseInt(column, 10)) ? undefined : column;
         var lineno = isNaN(parseInt(line, 10)) ? undefined : line;
-        var filename = isString(url) && url.length > 0 ? url : getLocationHref();
+        var filename = Object(argos_utils_dist["isString"])(url) && url.length > 0 ? url : Object(argos_utils_dist["getLocationHref"])();
         if (event.exception.values[0].stacktrace.frames.length === 0) {
             event.exception.values[0].stacktrace.frames.push({
                 colno: colno,
@@ -1415,7 +1013,6 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
  */
 
 
-
 /**
  * Vue 中全局错误配置 errorHandler
  * https://cn.vuejs.org/v2/api/#errorHandler
@@ -1423,23 +1020,23 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
 var integrations_VueIntegration = /** @class */ (function () {
     function VueIntegration(options) {
         this._hasSet = false;
-        var globalObj = getGlobalObject();
+        var globalObj = Object(argos_utils_dist["getGlobalObject"])();
         this._vue = options.Vue || globalObj.Vue;
         this.setUp();
     }
     VueIntegration.prototype.setUp = function () {
         var _this = this;
         if (this._hasSet) {
-            src_logger.info('VueIntegration installed');
+            argos_utils_dist["logger"].info('VueIntegration installed');
             return;
         }
         if (!this._vue || !this._vue.config) {
-            src_logger.error('VueIntegration is missing a Vue instance');
+            argos_utils_dist["logger"].error('VueIntegration is missing a Vue instance');
             return;
         }
         var oldOnError = this._vue.config.errorHandler;
         this._vue.config.errorHandler = function (error, vm, info) {
-            captureException(error);
+            Object(dist["captureException"])(error);
             if (typeof oldOnError === 'function') {
                 oldOnError.call(_this._vue, error, vm, info);
             }
@@ -1473,13 +1070,13 @@ var init = function (options) {
         url: '' // 上报的请求
     };
     var combineOptions = src_assign(src_assign({}, defaultOptions), options);
-    src_logger.bindOptions(combineOptions);
+    argos_utils_dist["logger"].bindOptions(combineOptions);
     if (!combineOptions.url) {
-        src_logger.error('There is no upload data url!');
+        argos_utils_dist["logger"].error('There is no upload data url!');
         return;
     }
     var base = new src_Base(combineOptions);
-    var hub = getCurrentHub();
+    var hub = Object(dist["getCurrentHub"])();
     hub.bindClient(base);
     new src_GlobalHandlers(combineOptions);
 };
