@@ -13,7 +13,7 @@ export class VueIntegration {
   private readonly _vue: any;
   private _hasSet: boolean = false;
 
-  constructor(options) {
+  constructor(options: any = {}) {
     const globalObj: any = getGlobalObject();
     this._vue = options.Vue || globalObj.Vue;
     this.setUp();
