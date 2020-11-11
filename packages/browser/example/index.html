@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Argos example</title>
+  <style>
+    button {
+      display: block;
+      margin-bottom: 10px;
+    }
+  </style>
+  <!-- <script
+  src="https://browser.sentry-cdn.com/5.27.0/bundle.min.js"
+  integrity="sha384-odt6g+qg66eR/WbXcAHMweT2Ab+eHnyzmeJOodbqYhP2rQdeJbPgDM/xbi5jj2tx"
+  crossorigin="anonymous"
+></script> -->
+  <script src="./sentry.js"></script>
+  <script src="./args.js?v=32324221421"></script>
+</head>
+<body>
+  <button id="regularException">regular exception</button>
+  <button id="eventException">event exception</button>
+  <script src="./index.js"></script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+{
+  "name": "@thynpm/argos-hub",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "run-s build:dist build:example",
+    "build:dist": "webpack --config webpack.config.js",
+    "build:example": "webpack --outPath=example --filename=hub --config webpack.config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/XXHolic/argos.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "author": "argos",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/XXHolic/argos/issues"
+  },
+  "homepage": "https://github.com/XXHolic/argos#readme",
+  "devDependencies": {
+    "@tsconfig/recommended": "^1.0.1",
+    "clean-webpack-plugin": "^3.0.0",
+    "npm-run-all": "^4.1.5",
+    "ts-loader": "^8.0.4",
+    "typescript": "^4.0.3",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "dependencies": {
+    "@thynpm/argos-utils": "^1.0.0"
+  }
+}
