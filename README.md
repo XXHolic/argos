@@ -59,3 +59,18 @@ Argos.init({
 });
 ```
 
+## 维护发布说明
+使用 [lerna][url-lerna] 进行管理。有变动的时候，会自动检测到变化。
+1、版本号
+```
+npm run major // 不兼容上个版本的大更改
+npm run minor // 增加了新功能，并且可以向后兼容。
+npm run patch // 有bug修复或优化等效的改动，并且可以向后兼容。
+```
+2、发布
+```
+npm run publish
+```
+
+[url-lerna]:https://github.com/lerna/lerna
+
