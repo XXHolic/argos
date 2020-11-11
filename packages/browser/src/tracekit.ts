@@ -1,7 +1,6 @@
 
 /**
- * This was originally forked from https://github.com/occ/TraceKit, but has since been
- * largely modified and is now maintained as part of Sentry JS SDK.
+ * This was originally forked from https://github.com/occ/TraceKit
  */
 
 /**
