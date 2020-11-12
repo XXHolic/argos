@@ -1,6 +1,6 @@
 import { isSupportsFetch,logger,fromHttpCode,requestStatus } from '@thynpm/argos-utils'
 
-const ignoreMark = '__ignore__';
+// const ignoreMark = '__ignore__';
 
 
 interface RequestOptions {
