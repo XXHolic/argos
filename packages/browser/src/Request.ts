@@ -1,6 +1,6 @@
 import { isSupportsFetch,logger,fromHttpCode,requestStatus } from '@thynpm/argos-utils'
 
-const ignoreMark = '__ignore__';
+// const ignoreMark = '__ignore__';
 
 
 interface RequestOptions {
@@ -46,11 +46,6 @@ export class Request {
 }
 
 export const sendData = (data,options) => {
-  const {isXCX} = options;
-  if (isXCX) {
-    return createWXRequest(data,options);
-  }
-
   if(!isSupportsFetch()) {
     return createFetch(data,options);
   }
@@ -123,22 +118,5 @@ function createXHR(data,options) {
     }
     const sendData = JSON.stringify(data);
     request.send(sendData);
-  })
-}
-
-function createWXRequest(data,options) {
-  const {url} = options;
-  if (!url) {
-    console.error('There is no upload data url!');
-    return;
-  }
-
-  return new Promise((resolve,reject) => {
-    // @ts-ignore
-    wx.request({
-      url: url,
-      method: 'POST',
-      data: data
-    })
   })
 }

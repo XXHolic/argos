@@ -59,3 +59,12 @@ Argos.init({
 });
 ```
 
+## 维护发布说明
+使用 [Lerna][url-lerna] 进行管理。有变动的时候，会自动检测到变化。
+发布时会提示选择版本号，发布后会自动 push 到远程。
+```
+npm run publish
+```
+
+[url-lerna]:https://github.com/lerna/lerna
+
