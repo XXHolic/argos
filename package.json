@@ -10,13 +10,9 @@
     "build:example": "webpack --outPath=example --filename=args --config ./script/webpack.prod.js",
     "watch": "webpack --watch",
     "start": "webpack-dev-server --open --config ./script/webpack.dev.js",
-    "major": "lerna version major",
-    "minor": "lerna version minor",
-    "patch": "lerna version patch",
     "bootstrap": "lerna bootstrap",
     "publish": "lerna publish",
     "updated": "lerna updated"
-
   },
   "repository": {
     "type": "git",
