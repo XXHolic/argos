@@ -122,11 +122,11 @@ __webpack_require__.d(__webpack_exports__, "captureException", function() { retu
 __webpack_require__.d(__webpack_exports__, "getCurrentHub", function() { return /* reexport */ dist["getCurrentHub"]; });
 __webpack_require__.d(__webpack_exports__, "VueIntegration", function() { return /* reexport */ integrations_VueIntegration; });
 
-// EXTERNAL MODULE: ./node_modules/@thynpm/argos-hub/dist/index.js
+// EXTERNAL MODULE: ../hub/dist/index.js
 var dist = __webpack_require__(1);
 
-// EXTERNAL MODULE: ./node_modules/@thynpm/argos-utils/dist/index.js
-var argos_utils_dist = __webpack_require__(0);
+// EXTERNAL MODULE: ../utils/dist/index.js
+var utils_dist = __webpack_require__(0);
 
 // CONCATENATED MODULE: ./src/Request.ts
 var __assign = (undefined && undefined.__assign) || function () {
@@ -141,7 +141,6 @@ var __assign = (undefined && undefined.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 
-var ignoreMark = '__ignore__';
 var Request_Request = /** @class */ (function () {
     function Request(options) {
         if (options === void 0) { options = {}; }
@@ -161,7 +160,7 @@ var Request_Request = /** @class */ (function () {
     Request.prototype.add = function (task) {
         var _this = this;
         if (!this.isReady()) {
-            argos_utils_dist["logger"].warn('too many request');
+            utils_dist["logger"].warn('too many request');
             return;
         }
         this.tasks.push(task);
@@ -177,11 +176,7 @@ var Request_Request = /** @class */ (function () {
 }());
 
 var Request_sendData = function (data, options) {
-    var isXCX = options.isXCX;
-    if (isXCX) {
-        return createWXRequest(data, options);
-    }
-    if (!Object(argos_utils_dist["isSupportsFetch"])()) {
+    if (!Object(utils_dist["isSupportsFetch"])()) {
         return createFetch(data, options);
     }
     return createXHR(data, options);
@@ -199,12 +194,12 @@ function createFetch(data, options) {
             headers: __assign({}, headers)
         };
         return fetch(url, __assign({}, reqOptions)).then(function (response) {
-            var status = Object(argos_utils_dist["fromHttpCode"])(response.status);
-            if (status === argos_utils_dist["requestStatus"].Success) {
+            var status = Object(utils_dist["fromHttpCode"])(response.status);
+            if (status === utils_dist["requestStatus"].Success) {
                 resolve({ status: status });
                 return;
             }
-            if (status === argos_utils_dist["requestStatus"].RateLimit) {
+            if (status === utils_dist["requestStatus"].RateLimit) {
                 console.warn('Too many requests');
             }
             reject(response);
@@ -226,12 +221,12 @@ function createXHR(data, options) {
             if (request.readyState !== 4) {
                 return;
             }
-            var status = Object(argos_utils_dist["fromHttpCode"])(request.status);
-            if (status === argos_utils_dist["requestStatus"].Success) {
+            var status = Object(utils_dist["fromHttpCode"])(request.status);
+            if (status === utils_dist["requestStatus"].Success) {
                 resolve({ status: status });
                 return;
             }
-            argos_utils_dist["logger"].error(request);
+            utils_dist["logger"].error(request);
             // 上传的请求报错了，就不要抛到全局捕获了，直接在这里截断
             reject(request);
         };
@@ -245,26 +240,10 @@ function createXHR(data, options) {
         request.send(sendData);
     });
 }
-function createWXRequest(data, options) {
-    var url = options.url;
-    if (!url) {
-        console.error('There is no upload data url!');
-        return;
-    }
-    return new Promise(function (resolve, reject) {
-        // @ts-ignore
-        wx.request({
-            url: url,
-            method: 'POST',
-            data: data
-        });
-    });
-}
 
 // CONCATENATED MODULE: ./src/tracekit.ts
 /**
- * This was originally forked from https://github.com/occ/TraceKit, but has since been
- * largely modified and is now maintained as part of Sentry JS SDK.
+ * This was originally forked from https://github.com/occ/TraceKit
  */
 var tracekit_assign = (undefined && undefined.__assign) || function () {
     tracekit_assign = Object.assign || function(t) {
@@ -511,7 +490,7 @@ function eventFromPlainObject(exception, syntheticException, rejection) {
         exception: {
             values: [
                 {
-                    type: Object(argos_utils_dist["isEvent"])(exception) ? exception.constructor.name : rejection ? 'UnhandledRejection' : 'Error',
+                    type: Object(utils_dist["isEvent"])(exception) ? exception.constructor.name : rejection ? 'UnhandledRejection' : 'Error',
                     value: "Non-Error " + (rejection ? 'promise rejection' : 'exception') + " captured with keys: " + exception,
                 },
             ],
@@ -603,7 +582,7 @@ var wrap = function (fn, options) {
             return fn.apply(this, args);
         }
         catch (ex) {
-            Object(argos_utils_dist["ignoreNextOnError"])();
+            Object(utils_dist["ignoreNextOnError"])();
             Object(dist["captureException"])(ex);
             throw ex;
         }
@@ -637,13 +616,13 @@ var wrap = function (fn, options) {
 // 异常类型检测
 function exceptionCheck(exception) {
     var event;
-    if (Object(argos_utils_dist["isErrorEvent"])(exception) && exception.error) {
+    if (Object(utils_dist["isErrorEvent"])(exception) && exception.error) {
         var errorEvent = exception;
         exception = errorEvent.error;
         event = eventFromStacktrace(computeStackTrace(exception));
         return event;
     }
-    if (Object(argos_utils_dist["isDOMException"])(exception)) {
+    if (Object(utils_dist["isDOMException"])(exception)) {
         var domException = exception;
         var name_1 = domException.name || 'DOMException';
         var message = domException.message ? name_1 + ": " + domException.message : name_1;
@@ -651,11 +630,11 @@ function exceptionCheck(exception) {
         // addExceptionTypeValue(event, message);
         return event;
     }
-    if (Object(argos_utils_dist["isError"])(exception)) {
+    if (Object(utils_dist["isError"])(exception)) {
         event = eventFromStacktrace(computeStackTrace(exception));
         return event;
     }
-    if (Object(argos_utils_dist["isPlainObject"])(exception) || Object(argos_utils_dist["isEvent"])(exception)) {
+    if (Object(utils_dist["isPlainObject"])(exception) || Object(utils_dist["isEvent"])(exception)) {
         // If it is plain Object or Event, serialize it manually and extract options
         // This will allow us to group events based on top-level keys
         // which is much better than creating new group when any key/value change
@@ -737,14 +716,14 @@ var Base_Base = /** @class */ (function () {
         var exceptionFormat = exceptionCheck(exception);
         exceptionFormat.eventId = eventId;
         var allData = this.combineData(exceptionFormat);
-        argos_utils_dist["logger"].info('exception data', allData);
+        utils_dist["logger"].info('exception data', allData);
         this.request.add(new Promise(function () {
             Request_sendData(allData, _this.options);
         }));
     };
     // 获取环境基本信息
     Base.prototype.getUserAgent = function () {
-        var global = Object(argos_utils_dist["getGlobalObject"])();
+        var global = Object(utils_dist["getGlobalObject"])();
         var data = {
             pageW: null,
             pageH: null,
@@ -806,7 +785,7 @@ var GlobalHandlers_assign = (undefined && undefined.__assign) || function () {
 
 
 
-var GlobalHandlers_global = Object(argos_utils_dist["getGlobalObject"])();
+var GlobalHandlers_global = Object(utils_dist["getGlobalObject"])();
 var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
     function GlobalHandlers(options) {
         this.options = {
@@ -842,11 +821,11 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
         // 有可能已有被重写了，所以要暂存下来
         var oldOnError = GlobalHandlers_global.onerror;
         GlobalHandlers_global.onerror = function (msg, url, line, column, error) {
-            argos_utils_dist["logger"].info('onerror event: ', { msg: msg, url: url, line: line, column: column, error: error });
-            if (Object(argos_utils_dist["shouldIgnoreOnError"])()) {
+            utils_dist["logger"].info('onerror event: ', { msg: msg, url: url, line: line, column: column, error: error });
+            if (Object(utils_dist["shouldIgnoreOnError"])()) {
                 return;
             }
-            var ex = Object(argos_utils_dist["isPrimitive"])(error)
+            var ex = Object(utils_dist["isPrimitive"])(error)
                 ? self._eventFromIncompleteOnError(msg, url, line, column)
                 : self._enhanceEventWithInitialFrame(exceptionCheck(error), url, line, column);
             Object(dist["captureException"])(ex);
@@ -861,7 +840,7 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
         // 有可能已有被重写了，所以要暂存下来
         var oldOnError = GlobalHandlers_global.onunhandledrejection;
         GlobalHandlers_global.onunhandledrejection = function (e) {
-            argos_utils_dist["logger"].info('unhandledrejection event: ', e);
+            utils_dist["logger"].info('unhandledrejection event: ', e);
             var error = e;
             try {
                 error = e && 'reason' in e ? e.reason : e;
@@ -869,10 +848,10 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
             catch (ex) {
                 // no-empty
             }
-            if (Object(argos_utils_dist["shouldIgnoreOnError"])()) {
+            if (Object(utils_dist["shouldIgnoreOnError"])()) {
                 return;
             }
-            var ex = Object(argos_utils_dist["isPrimitive"])(error)
+            var ex = Object(utils_dist["isPrimitive"])(error)
                 ? self._eventFromIncompleteRejection(error)
                 : exceptionCheck(error);
             if (oldOnError) {
@@ -889,7 +868,7 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
         if (!proto || !proto.hasOwnProperty || !proto.hasOwnProperty('addEventListener')) {
             return;
         }
-        Object(argos_utils_dist["fill"])(proto, 'addEventListener', function (original) {
+        Object(utils_dist["fill"])(proto, 'addEventListener', function (original) {
             return function (eventName, fn, options) {
                 var wrapFn = fn;
                 if (eventName === 'click') {
@@ -898,16 +877,22 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
                 return original.call(this, eventName, wrapFn, options);
             };
         });
+        // 资源加载异常
+        GlobalHandlers_global.addEventListener('error', function (e) {
+            if (e && e.type === 'error') {
+                Object(dist["captureException"])(e);
+            }
+        }, true);
     };
     // 暂时用不到
     GlobalHandlers.prototype._wrapXHR = function () {
-        if (!Object(argos_utils_dist["isSupportsXMR"])()) {
+        if (!Object(utils_dist["isSupportsXMR"])()) {
             return;
         }
     };
     // 暂时用不到
     GlobalHandlers.prototype._wrapFetch = function () {
-        Object(argos_utils_dist["fill"])(GlobalHandlers_global, 'fetch', function (originalFetch) {
+        Object(utils_dist["fill"])(GlobalHandlers_global, 'fetch', function (originalFetch) {
             return function () {
                 var args = [];
                 for (var _i = 0; _i < arguments.length; _i++) {
@@ -932,7 +917,7 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
                     method = args[1].method;
                 }
                 var fetchData = {
-                    method: Object(argos_utils_dist["isString"])(method) ? method.toUpperCase() : method,
+                    method: Object(utils_dist["isString"])(method) ? method.toUpperCase() : method,
                     url: url,
                 };
                 return originalFetch
@@ -950,9 +935,9 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
     GlobalHandlers.prototype._eventFromIncompleteOnError = function (msg, url, line, column) {
         var ERROR_TYPES_RE = /^(?:[Uu]ncaught (?:exception: )?)?(?:((?:Eval|Internal|Range|Reference|Syntax|Type|URI|)Error): )?(.*)$/i;
         // If 'message' is ErrorEvent, get real message from inside
-        var message = Object(argos_utils_dist["isErrorEvent"])(msg) ? msg.message : msg;
+        var message = Object(utils_dist["isErrorEvent"])(msg) ? msg.message : msg;
         var name;
-        if (Object(argos_utils_dist["isString"])(message)) {
+        if (Object(utils_dist["isString"])(message)) {
             var groups = message.match(ERROR_TYPES_RE);
             if (groups) {
                 name = groups[1];
@@ -991,7 +976,7 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
         event.exception.values[0].stacktrace.frames = event.exception.values[0].stacktrace.frames || [];
         var colno = isNaN(parseInt(column, 10)) ? undefined : column;
         var lineno = isNaN(parseInt(line, 10)) ? undefined : line;
-        var filename = Object(argos_utils_dist["isString"])(url) && url.length > 0 ? url : Object(argos_utils_dist["getLocationHref"])();
+        var filename = Object(utils_dist["isString"])(url) && url.length > 0 ? url : Object(utils_dist["getLocationHref"])();
         if (event.exception.values[0].stacktrace.frames.length === 0) {
             event.exception.values[0].stacktrace.frames.push({
                 colno: colno,
@@ -1019,19 +1004,20 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
  */
 var integrations_VueIntegration = /** @class */ (function () {
     function VueIntegration(options) {
+        if (options === void 0) { options = {}; }
         this._hasSet = false;
-        var globalObj = Object(argos_utils_dist["getGlobalObject"])();
+        var globalObj = Object(utils_dist["getGlobalObject"])();
         this._vue = options.Vue || globalObj.Vue;
         this.setUp();
     }
     VueIntegration.prototype.setUp = function () {
         var _this = this;
         if (this._hasSet) {
-            argos_utils_dist["logger"].info('VueIntegration installed');
+            utils_dist["logger"].info('VueIntegration installed');
             return;
         }
         if (!this._vue || !this._vue.config) {
-            argos_utils_dist["logger"].error('VueIntegration is missing a Vue instance');
+            utils_dist["logger"].error('VueIntegration is missing a Vue instance');
             return;
         }
         var oldOnError = this._vue.config.errorHandler;
@@ -1070,9 +1056,9 @@ var init = function (options) {
         url: '' // 上报的请求
     };
     var combineOptions = src_assign(src_assign({}, defaultOptions), options);
-    argos_utils_dist["logger"].bindOptions(combineOptions);
+    utils_dist["logger"].bindOptions(combineOptions);
     if (!combineOptions.url) {
-        argos_utils_dist["logger"].error('There is no upload data url!');
+        utils_dist["logger"].error('There is no upload data url!');
         return;
     }
     var base = new src_Base(combineOptions);

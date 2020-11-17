@@ -66,6 +66,7 @@ export const wrap = (fn, options={}) => {
 // 异常类型检测
 export function exceptionCheck(exception) {
   var event;
+  // [object ErrorEvent]
   if (isErrorEvent(exception) && exception.error) {
       var errorEvent = exception;
       exception = errorEvent.error;
@@ -84,6 +85,7 @@ export function exceptionCheck(exception) {
       event = eventFromStacktrace(computeStackTrace(exception));
       return event;
   }
+  // 图片资源加载会进入这里
   if (isPlainObject(exception) || isEvent(exception)) {
       // If it is plain Object or Event, serialize it manually and extract options
       // This will allow us to group events based on top-level keys

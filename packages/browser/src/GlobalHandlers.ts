@@ -79,6 +79,8 @@ class GlobalHandlers {
       return false;
     }
 
+
+
   }
 
   private _wrapOnunhandledrejection() {
@@ -131,6 +133,13 @@ class GlobalHandlers {
         return original.call(this,eventName,wrapFn,options);
       }
     });
+
+    // 资源加载异常
+    global.addEventListener('error',function(e){
+      if(e && e.type === 'error') {
+        captureException(e)
+      }
+    },true)
 
   }
 
