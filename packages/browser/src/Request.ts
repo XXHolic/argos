@@ -1,7 +1,8 @@
+/**
+ * 用来进行异常上报的请求
+ */
+
 import { isSupportsFetch,logger,fromHttpCode,requestStatus } from '@thynpm/argos-utils'
-
-// const ignoreMark = '__ignore__';
-
 
 interface RequestOptions {
   maxRequest?: number,

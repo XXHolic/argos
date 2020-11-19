@@ -4,6 +4,14 @@ import Base from './Base';
 import GlobalHandlers from './GlobalHandlers';
 import {VueIntegration} from './integrations';
 
+/**
+ * 进行初始化步骤：
+ * 1. 配置初始化，包含配置同步到一些公用方法或类中；
+ * 2. 初始化基础类 Base 以及全局协调的 Hub 类；
+ * 3. Hub 与 base 产生关联；
+ * 4. 初始化全局 GlobalHandlers 包裹的类。
+ * @param options
+ */
 
 const init = (options={}) => {
   const defaultOptions = {
