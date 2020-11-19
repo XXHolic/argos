@@ -1,4 +1,4 @@
-
+import logger from './logger'
 
 const originMark = '__argos_original__';
 export const globalMark = '__ARGOS__'
@@ -31,7 +31,7 @@ export const fill = (source, name, replacement) => {
             },
         });
     } catch (e) {
-      console.warn('multiple fill may cause error')
+      logger.warn('multiple fill may cause error')
     }
 }
   source[name] = wrapped;

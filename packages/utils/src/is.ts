@@ -1,6 +1,5 @@
 import {getGlobalObject} from './utils'
 
-
 export const isSupportsFetch = () => {
   if (!('fetch' in getGlobalObject())) {
       return false;
@@ -32,7 +31,7 @@ export const isError = (value) => {
           return true;
       case '[object Exception]':
           return true;
-      case '[object DOMException]':
+      case '[object DOMException]': // 这个还并没有成为标准
           return true;
       default:
           return isInstanceOf(value, Error);
