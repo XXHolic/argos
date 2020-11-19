@@ -5,12 +5,13 @@ const filterArgv = require('../../script/filterArgv.js')
 const outPath = filterArgv('--outPath') || 'dist';
 const filename = filterArgv('--filename') || 'index';
 
-const isMini = !(outPath === 'example')
+const isMini = !(outPath === 'example');
+const devtoolValue = isMini?'source-map':'none';
 
 let proConfig = {
   entry: path.resolve(basePath, "src/index.ts"),
   mode: 'production',
-  devtool: 'source-map',
+  devtool: devtoolValue,
   plugins: [
     new CleanWebpackPlugin()
   ],

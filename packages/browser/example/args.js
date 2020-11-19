@@ -129,6 +129,9 @@ var dist = __webpack_require__(1);
 var utils_dist = __webpack_require__(0);
 
 // CONCATENATED MODULE: ./src/Request.ts
+/**
+ * 用来进行异常上报的请求
+ */
 var __assign = (undefined && undefined.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -176,7 +179,7 @@ var Request_Request = /** @class */ (function () {
 }());
 
 var Request_sendData = function (data, options) {
-    if (!Object(utils_dist["isSupportsFetch"])()) {
+    if (Object(utils_dist["isSupportsFetch"])()) {
         return createFetch(data, options);
     }
     return createXHR(data, options);
@@ -185,7 +188,7 @@ function createFetch(data, options) {
     return new Promise(function (resolve, reject) {
         var url = options.url, headers = options.headers;
         if (!url) {
-            console.error('There is no upload data url!');
+            utils_dist["logger"].error('There is no upload data url!');
             return;
         }
         var reqOptions = {
@@ -200,20 +203,22 @@ function createFetch(data, options) {
                 return;
             }
             if (status === utils_dist["requestStatus"].RateLimit) {
-                console.warn('Too many requests');
+                utils_dist["logger"].warn('Too many requests');
             }
             reject(response);
         }).catch(function (ex) {
-            //上传的请求报错了，就不要抛到全局捕获了，直接在这里截断
-            reject(ex);
+            utils_dist["logger"].error(ex);
         });
+    }).catch(function (ex) {
+        //上传的请求报错了，就不要抛到全局捕获了，直接在这里截断
+        utils_dist["logger"].error(ex);
     });
 }
 function createXHR(data, options) {
     return new Promise(function (resolve, reject) {
         var url = options.url, headers = options.headers;
         if (!url) {
-            console.error('There is no upload data url!');
+            utils_dist["logger"].error('There is no upload data url!');
             return;
         }
         var request = new XMLHttpRequest();
@@ -227,7 +232,6 @@ function createXHR(data, options) {
                 return;
             }
             utils_dist["logger"].error(request);
-            // 上传的请求报错了，就不要抛到全局捕获了，直接在这里截断
             reject(request);
         };
         request.open('POST', url);
@@ -238,6 +242,9 @@ function createXHR(data, options) {
         }
         var sendData = JSON.stringify(data);
         request.send(sendData);
+    }).catch(function (ex) {
+        //上传的请求报错了，就不要抛到全局捕获了，直接在这里截断
+        utils_dist["logger"].error(ex);
     });
 }
 
@@ -559,6 +566,11 @@ function prepareFramesForEvent(stack) {
 var originMark = '__argos_original__';
 var wrapMark = '__argos_wrapped__';
 var globalMark = '__ARGOS__';
+/**
+ * 主要用来包裹事件监听的方法，事件处理程序里面产生了异常，这里就可以进行统一捕获。
+ * @param fn
+ * @param options
+ */
 var wrap = function (fn, options) {
     var _a;
     if (options === void 0) { options = {}; }
@@ -584,6 +596,10 @@ var wrap = function (fn, options) {
         catch (ex) {
             Object(utils_dist["ignoreNextOnError"])();
             Object(dist["captureException"])(ex);
+            /**
+             * 这里的异常如果不抛出去，相当于屏蔽了用户那边的异常显示，
+             * 如果在远程查看下，在控制台也会看不到对应的异常信息，所以还是要抛出异常。
+             */
             throw ex;
         }
     };
@@ -595,7 +611,7 @@ var wrap = function (fn, options) {
         }
     }
     catch (error) {
-        // throw error;
+        // 不需要上报
     }
     // 相当于复制
     fn.prototype = fn.prototype || {};
@@ -613,7 +629,10 @@ var wrap = function (fn, options) {
         _a));
     return wrapped;
 };
-// 异常类型检测
+/**
+ * 异常类型检测
+ * @param exception
+ */
 function exceptionCheck(exception) {
     var event;
     if (Object(utils_dist["isErrorEvent"])(exception) && exception.error) {
@@ -627,35 +646,19 @@ function exceptionCheck(exception) {
         var name_1 = domException.name || 'DOMException';
         var message = domException.message ? name_1 + ": " + domException.message : name_1;
         event = eventFromString(message);
-        // addExceptionTypeValue(event, message);
         return event;
     }
     if (Object(utils_dist["isError"])(exception)) {
         event = eventFromStacktrace(computeStackTrace(exception));
         return event;
     }
+    // 图片资源加载会进入这里
     if (Object(utils_dist["isPlainObject"])(exception) || Object(utils_dist["isEvent"])(exception)) {
-        // If it is plain Object or Event, serialize it manually and extract options
-        // This will allow us to group events based on top-level keys
-        // which is much better than creating new group when any key/value change
         var objectException = exception;
         event = eventFromPlainObject(objectException);
-        // addExceptionMechanism(event, {
-        //     synthetic: true,
-        // });
         return event;
     }
-    // If none of previous checks were valid, then it means that it's not:
-    // - an instance of DOMError
-    // - an instance of DOMException
-    // - an instance of Event
-    // - an instance of Error
-    // - a valid ErrorEvent (one with an error property)
-    // - a plain Object
-    //
-    // So bail out and capture it as a simple message:
     event = eventFromString(exception);
-    // addExceptionTypeValue(event, "" + exception, undefined);
     return event;
 }
 function eventFromString(input, syntheticException, options) {
@@ -686,6 +689,9 @@ var Base_assign = (undefined && undefined.__assign) || function () {
     };
     return Base_assign.apply(this, arguments);
 };
+/**
+ * Base 类会进行外部框架插件异常的初始化，异常捕获和再加工
+ */
 
 
 
@@ -703,6 +709,10 @@ var Base_Base = /** @class */ (function () {
             this.setUpIntegrations(integrations);
         }
     }
+    /**
+     * 外部提供传入方法的初始化
+     * @param integrations
+     */
     Base.prototype.setUpIntegrations = function (integrations) {
         integrations.forEach(function (ele) {
             if (ele && ele.setUp) {
@@ -710,8 +720,14 @@ var Base_Base = /** @class */ (function () {
             }
         });
     };
+    /**
+     * 与 Hub 中同名的异常捕获，Hub 进行中心调度的时候，就会根据名称进行调用。
+     * @param exception
+     * @param otherMsg
+     */
     Base.prototype.captureException = function (exception, otherMsg) {
         var _this = this;
+        // 原则上是统一自动生成的
         var eventId = otherMsg && otherMsg.eventId;
         var exceptionFormat = exceptionCheck(exception);
         exceptionFormat.eventId = eventId;
@@ -721,7 +737,9 @@ var Base_Base = /** @class */ (function () {
             Request_sendData(allData, _this.options);
         }));
     };
-    // 获取环境基本信息
+    /**
+     * 获取宿主环境的一些基本信息
+     */
     Base.prototype.getUserAgent = function () {
         var global = Object(utils_dist["getGlobalObject"])();
         var data = {
@@ -754,7 +772,10 @@ var Base_Base = /** @class */ (function () {
         }
         return data;
     };
-    // 合并数据
+    /**
+     * 宿主信息和异常信息整合到一起
+     * @param data
+     */
     Base.prototype.combineData = function (data) {
         var environment = this.getUserAgent();
         if (!data.environment) {
@@ -779,8 +800,8 @@ var GlobalHandlers_assign = (undefined && undefined.__assign) || function () {
     return GlobalHandlers_assign.apply(this, arguments);
 };
 /**
- * 对原生方法的重新包装，为错误捕获提供另外一个角度
- * 比如本地无服务情况下，chrome 由于同源策略，看不到错误相关信息，这个时候，对原生方法重新包装就有效果
+ * 对原生方法的重新包装，捕获一些异常信息。
+ * 也可以通过配置传入是否进行初始化，提供更高的的配置化。
  */
 
 
@@ -811,14 +832,10 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
         if (eventTarget) {
             this._wrapEventTarget();
         }
-        // if (xhr) {
-        //   this._wrapXHR()
-        // }
         this._isSet = true;
     };
     GlobalHandlers.prototype._wrapOnerror = function () {
         var self = this; // tslint:disable-line:no-this-assignment
-        // 有可能已有被重写了，所以要暂存下来
         var oldOnError = GlobalHandlers_global.onerror;
         GlobalHandlers_global.onerror = function (msg, url, line, column, error) {
             utils_dist["logger"].info('onerror event: ', { msg: msg, url: url, line: line, column: column, error: error });
@@ -837,7 +854,6 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
     };
     GlobalHandlers.prototype._wrapOnunhandledrejection = function () {
         var self = this;
-        // 有可能已有被重写了，所以要暂存下来
         var oldOnError = GlobalHandlers_global.onunhandledrejection;
         GlobalHandlers_global.onunhandledrejection = function (e) {
             utils_dist["logger"].info('unhandledrejection event: ', e);
@@ -854,6 +870,7 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
             var ex = Object(utils_dist["isPrimitive"])(error)
                 ? self._eventFromIncompleteRejection(error)
                 : exceptionCheck(error);
+            Object(dist["captureException"])(ex);
             if (oldOnError) {
                 return oldOnError.apply(this, arguments);
             }
@@ -879,58 +896,10 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
         });
         // 资源加载异常
         GlobalHandlers_global.addEventListener('error', function (e) {
-            if (e && e.type === 'error') {
+            if (e && e.target && (e.target.src || e.target.href)) {
                 Object(dist["captureException"])(e);
             }
         }, true);
-    };
-    // 暂时用不到
-    GlobalHandlers.prototype._wrapXHR = function () {
-        if (!Object(utils_dist["isSupportsXMR"])()) {
-            return;
-        }
-    };
-    // 暂时用不到
-    GlobalHandlers.prototype._wrapFetch = function () {
-        Object(utils_dist["fill"])(GlobalHandlers_global, 'fetch', function (originalFetch) {
-            return function () {
-                var args = [];
-                for (var _i = 0; _i < arguments.length; _i++) {
-                    args[_i] = arguments[_i];
-                }
-                var fetchInput = args[0];
-                var method = 'GET';
-                var url;
-                if (typeof fetchInput === 'string') {
-                    url = fetchInput;
-                }
-                else if ('Request' in GlobalHandlers_global && fetchInput instanceof Request) {
-                    url = fetchInput.url;
-                    if (fetchInput.method) {
-                        method = fetchInput.method;
-                    }
-                }
-                else {
-                    url = String(fetchInput);
-                }
-                if (args[1] && args[1].method) {
-                    method = args[1].method;
-                }
-                var fetchData = {
-                    method: Object(utils_dist["isString"])(method) ? method.toUpperCase() : method,
-                    url: url,
-                };
-                return originalFetch
-                    .apply(GlobalHandlers_global, args)
-                    .then(function (response) {
-                    fetchData.status_code = response.status;
-                    return response;
-                })
-                    .then(null, function (error) {
-                    throw error;
-                });
-            };
-        });
     };
     GlobalHandlers.prototype._eventFromIncompleteOnError = function (msg, url, line, column) {
         var ERROR_TYPES_RE = /^(?:[Uu]ncaught (?:exception: )?)?(?:((?:Eval|Internal|Range|Reference|Syntax|Type|URI|)Error): )?(.*)$/i;
@@ -1050,6 +1019,14 @@ var src_assign = (undefined && undefined.__assign) || function () {
 
 
 
+/**
+ * 进行初始化步骤：
+ * 1. 配置初始化，包含配置同步到一些公用方法或类中；
+ * 2. 初始化基础类 Base 以及全局协调的 Hub 类；
+ * 3. Hub 与 base 产生关联；
+ * 4. 初始化全局 GlobalHandlers 包裹的类。
+ * @param options
+ */
 var init = function (options) {
     if (options === void 0) { options = {}; }
     var defaultOptions = {
@@ -1072,4 +1049,3 @@ var init = function (options) {
 /***/ })
 /******/ ]);
 });
-//# sourceMappingURL=args.js.map

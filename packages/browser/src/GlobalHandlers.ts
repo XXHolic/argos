@@ -129,7 +129,7 @@ class GlobalHandlers {
 
     // 资源加载异常
     global.addEventListener('error',function(e){
-      if(e && e.type === 'error') {
+      if(e && e.target && (e.target.src || e.target.href)) {
         captureException(e)
       }
     },true)

@@ -47,7 +47,7 @@ export class Request {
 }
 
 export const sendData = (data,options) => {
-  if(!isSupportsFetch()) {
+  if(isSupportsFetch()) {
     return createFetch(data,options);
   }
   return createXHR(data,options);
@@ -57,7 +57,7 @@ function createFetch(data,options) {
   return new Promise((resolve,reject) => {
     const {url,headers} = options;
     if (!url) {
-      console.error('There is no upload data url!');
+      logger.error('There is no upload data url!');
       return;
     }
     const reqOptions = {
@@ -74,15 +74,17 @@ function createFetch(data,options) {
       }
 
       if (status === requestStatus.RateLimit) {
-        console.warn('Too many requests');
+        logger.warn('Too many requests');
       }
 
       reject(response);
 
     }).catch((ex) => {
-      //上传的请求报错了，就不要抛到全局捕获了，直接在这里截断
-      reject(ex)
+      logger.error(ex)
     });
+  }).catch((ex) => {
+    //上传的请求报错了，就不要抛到全局捕获了，直接在这里截断
+    logger.error(ex)
   })
 }
 
@@ -91,7 +93,7 @@ function createXHR(data,options) {
   return new Promise((resolve,reject) => {
     const {url,headers} = options;
     if (!url) {
-      console.error('There is no upload data url!');
+      logger.error('There is no upload data url!');
       return;
     }
     const request = new XMLHttpRequest();
@@ -107,8 +109,6 @@ function createXHR(data,options) {
         return;
       }
       logger.error(request);
-
-      // 上传的请求报错了，就不要抛到全局捕获了，直接在这里截断
       reject(request);
     };
     request.open('POST', url);
@@ -119,5 +119,8 @@ function createXHR(data,options) {
     }
     const sendData = JSON.stringify(data);
     request.send(sendData);
+  }).catch((ex) => {
+      //上传的请求报错了，就不要抛到全局捕获了，直接在这里截断
+      logger.error(ex)
   })
 }

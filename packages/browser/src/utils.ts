@@ -33,6 +33,10 @@ export const wrap = (fn, options={}) => {
     } catch (ex) {
       ignoreNextOnError()
       captureException(ex);
+      /**
+       * 这里的异常如果不抛出去，相当于屏蔽了用户那边的异常显示，
+       * 如果在远程查看下，在控制台也会看不到对应的异常信息，所以还是要抛出异常。
+       */
       throw ex;
     }
   }
