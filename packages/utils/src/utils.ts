@@ -183,3 +183,15 @@ export function consoleSandbox(type,callback) {
 
   return;
 }
+
+/**
+ * A better form of hasOwnProperty<br/>
+ * Example: `_has(MainHostObject, property) === true/false`
+ *
+ * @param {Object} object to check property
+ * @param {string} key to check
+ * @return {Boolean} true if the object has the key and it is not inherited
+ */
+export function has(object, key) {
+  return Object.prototype.hasOwnProperty.call(object, key);
+}

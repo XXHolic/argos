@@ -2,14 +2,15 @@ import logger from './logger'
 
 export {
   isSupportsFetch,
-  isSupportsXMR,
+  isSupportsXHR,
   isError,
   isErrorEvent,
   isDOMException,
   isEvent,
   isString,
   isPlainObject,
-  isPrimitive
+  isPrimitive,
+  isUndefined
 } from './is';
 
 export {

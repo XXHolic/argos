@@ -7,7 +7,7 @@ export const isSupportsFetch = () => {
   return true;
 }
 
-export const isSupportsXMR = () => {
+export const isSupportsXHR = () => {
   if (!('XMLHttpRequest' in getGlobalObject())) {
       return false;
   }
@@ -72,4 +72,15 @@ export const isPlainObject = (value) => {
  */
 export const isPrimitive = (value) => {
   return value === null || (typeof value !== 'object' && typeof value !== 'function');
+}
+
+/**
+ * Returns true if the parameter is undefined<br/>
+ * Example: `_isUndefined(val) === true/false`
+ *
+ * @param {*} what Value to check
+ * @return {Boolean} true if undefined and false otherwise
+ */
+export const isUndefined = (value) => {
+  return typeof value === 'undefined';
 }
