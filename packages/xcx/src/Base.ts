@@ -1,7 +1,7 @@
 
 import {Request,sendData} from './Request';
 import {logger} from '@thynpm/argos-utils';
-
+import { SDK_MSG } from './version';
 
 interface BaseOptions {
   headers?: object,
@@ -52,6 +52,7 @@ class Base {
     if (!data.environment) {
       data.environment = this.environment;
     }
+    data.sdk = SDK_MSG;
     return data;
   }
 
