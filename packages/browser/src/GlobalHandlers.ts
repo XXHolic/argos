@@ -3,8 +3,8 @@
  * 也可以通过配置传入是否进行初始化，提供更高的的配置化。
  */
 import { captureException } from '@thynpm/argos-hub';
-import { fill,getGlobalObject,getLocationHref,shouldIgnoreOnError,logger,isString,isSupportsXMR,isPrimitive,isErrorEvent } from '@thynpm/argos-utils'
-import { exceptionCheck,wrap } from './utils'
+import { fill,getGlobalObject,getLocationHref,shouldIgnoreOnError,logger,isString,isPrimitive,isErrorEvent } from '@thynpm/argos-utils'
+import { exceptionFormat,wrap } from './utils'
 
 const global:any = getGlobalObject();
 interface GlobalHandlersOptions {
@@ -54,17 +54,12 @@ class GlobalHandlers {
       if (shouldIgnoreOnError()) {
         return;
       }
-
+      // 如果 error 是 undefined, null, number, boolean, string
       const ex = isPrimitive(error)
-      ? self._eventFromIncompleteOnError(msg, url, line, column)
-      : self._enhanceEventWithInitialFrame(
-        exceptionCheck(error),
-          url,
-          line,
-          column,
-        );
+      ? self._eventFromIncompleteOnError(msg, url, line, column,error)
+      : error;
 
-        captureException(ex)
+      captureException(ex)
       if (oldOnError) {
         return oldOnError.apply(this, arguments);
       }
@@ -94,7 +89,7 @@ class GlobalHandlers {
 
       const ex = isPrimitive(error)
       ? self._eventFromIncompleteRejection(error)
-      : exceptionCheck(error);
+      : exceptionFormat(error);
 
       captureException(ex)
 
@@ -136,9 +131,21 @@ class GlobalHandlers {
 
   }
 
-  private _eventFromIncompleteOnError(msg: any, url: any, line: any, column: any): Event {
+  /**
+   * 拆自 https://github.com/occ/TraceKit
+   * @param msg
+   * @param url
+   * @param line
+   * @param column
+   */
+  private _eventFromIncompleteOnError(msg: any, url: any, line: any, column: any,error: any) {
     const ERROR_TYPES_RE = /^(?:[Uu]ncaught (?:exception: )?)?(?:((?:Eval|Internal|Range|Reference|Syntax|Type|URI|)Error): )?(.*)$/i;
 
+    const location = {
+      'url': url,
+      'line': line,
+      'column': column,
+    };
     // If 'message' is ErrorEvent, get real message from inside
     let message = isErrorEvent(msg) ? msg.message : msg;
     let name;
@@ -151,55 +158,21 @@ class GlobalHandlers {
       }
     }
 
-    const event = {
-      exception: {
-        values: [
-          {
-            type: name || 'Error',
-            value: message,
-          },
-        ],
-      },
+    const exception = {
+      name: name || 'Error',
+      message: message,
+      stack:[location],
+      mode: 'onerror',
     };
 
-    return this._enhanceEventWithInitialFrame(event, url, line, column);
+    return exception;
   }
 
   private _eventFromIncompleteRejection(error: any) {
     return {
-      exception: {
-        values: [
-          {
-            type: 'UnhandledRejection',
-            value: `Non-Error promise rejection captured with value: ${error}`,
-          },
-        ],
-      },
+      name: 'UnhandledRejection',
+      message: `Non-Error promise rejection captured with value: ${error}`,
     };
-  }
-
-  private _enhanceEventWithInitialFrame(event: any, url: any, line: any, column: any) {
-    event.exception = event.exception || {};
-    event.exception.values = event.exception.values || [];
-    event.exception.values[0] = event.exception.values[0] || {};
-    event.exception.values[0].stacktrace = event.exception.values[0].stacktrace || {};
-    event.exception.values[0].stacktrace.frames = event.exception.values[0].stacktrace.frames || [];
-
-    const colno = isNaN(parseInt(column, 10)) ? undefined : column;
-    const lineno = isNaN(parseInt(line, 10)) ? undefined : line;
-    const filename = isString(url) && url.length > 0 ? url : getLocationHref();
-
-    if (event.exception.values[0].stacktrace.frames.length === 0) {
-      event.exception.values[0].stacktrace.frames.push({
-        colno,
-        filename,
-        function: '?',
-        in_app: true,
-        lineno,
-      });
-    }
-
-    return event;
   }
 
 

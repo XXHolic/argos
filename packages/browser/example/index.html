@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Argos example</title>
+  <title>Argos</title>
   <style>
     button {
       display: block;
@@ -16,15 +16,23 @@
   integrity="sha384-odt6g+qg66eR/WbXcAHMweT2Ab+eHnyzmeJOodbqYhP2rQdeJbPgDM/xbi5jj2tx"
   crossorigin="anonymous"
 ></script> -->
-  <script src="./sentry.js"></script>
-  <script src="./args.js?v=32324221422"></script>
+  <!-- <script src="./tracekit.js"></script> -->
+  <!-- <script src="./sentry.js"></script> -->
+  <script src="./args.js?v=3232422142212"></script>
+  <!-- <script src="./index.js"></script> -->
+  <script>
+    Argos.init({
+      url:'http://localhost:6688/argos',
+      enableLog: true
+    })
+
+  </script>
 </head>
 <body>
-  <button id="regularException">regular exception</button>
   <button id="eventException">event exception</button>
   <div id="demo"></div>
+  <script src="./exception.js"></script>
   <!-- <img src="./demo.png" alt="" /> -->
-  <script src="./index.js"></script>
   <!-- <link rel="stylesheet" href="./test/css"> -->
 </body>
 </html>

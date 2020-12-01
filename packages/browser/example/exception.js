@@ -7,8 +7,8 @@ function tryCatchWrap(fn) {
     // console.info('exception type',Object.prototype.toString.call(e))
     // console.info('exception isInstanceOf Error',isInstanceOf(e, Error))
 
-    TraceKit.report(e);
-    // throw e;
+    // TraceKit.report(e);
+    throw e;
     // console.log('e：',e);
     // console.log('message：',e.message);              //
     // console.log('name：',e.name);                 //
@@ -31,22 +31,22 @@ function getType(value) {
   return Object.prototype.toString.call(value);
 }
 
-window.onerror = function(msg, url, lineNo, columnNo, error) {
-  console.info('-----msg：',msg)
-  console.info('-----url：',url)
-  console.info('--lineNo：',lineNo)
-  console.info('columnNo：',columnNo)
-  console.info('---error：',error)
-  // console.info('exception type',Object.prototype.toString.call(error))
-  // console.info('exception isInstanceOf Error',isInstanceOf(error, Error))
-  console.info('')
-  console.info('-----error.message：',error.message)
-  console.info('--------error.name：',error.name)
-  console.info('----error.fileName：',error.fileName);
-  console.info('--error.lineNumber：',error.lineNumber);
-  console.info('error.columnNumber：',error.columnNumber);
-  console.info('-------error.stack：',error.stack);
-}
+// window.onerror = function(msg, url, lineNo, columnNo, error) {
+//   console.info('-----msg：',msg)
+//   console.info('-----url：',url)
+//   console.info('--lineNo：',lineNo)
+//   console.info('columnNo：',columnNo)
+//   console.info('---error：',error)
+//   // console.info('exception type',Object.prototype.toString.call(error))
+//   // console.info('exception isInstanceOf Error',isInstanceOf(error, Error))
+//   console.info('')
+//   console.info('-----error.message：',error.message)
+//   console.info('--------error.name：',error.name)
+//   console.info('----error.fileName：',error.fileName);
+//   console.info('--error.lineNumber：',error.lineNumber);
+//   console.info('error.columnNumber：',error.columnNumber);
+//   console.info('-------error.stack：',error.stack);
+// }
 
 // window.onunhandledrejection = function(error) {
 //   console.info('error',error)
@@ -62,9 +62,9 @@ window.onerror = function(msg, url, lineNo, columnNo, error) {
 //   }
 // },true)
 
-TraceKit.report.subscribe(function yourLogger(errorReport) {
-  console.info('errorReport',errorReport)
-});
+// TraceKit.report.subscribe(function yourLogger(errorReport) {
+//   console.info('errorReport',errorReport)
+// });
 
 // Sentry.init({
 //   dsn: "https://1ea46c0309124094908fa0eb69e21afb@o366923.ingest.sentry.io/5169726",
@@ -91,9 +91,9 @@ TraceKit.report.subscribe(function yourLogger(errorReport) {
 
 
 // RangeError
-tryCatchWrap(function() {
-  const arr = new Array(-10)
-})
+// tryCatchWrap(function() {
+//   const arr = new Array(-10)
+// })
 
 // ReferenceError
 // tryCatchWrap(function() {
@@ -117,12 +117,12 @@ tryCatchWrap(function() {
 // })
 
 // AggregateError
-// Promise.any([
-//   Promise.reject(new Error("some error")),
-// ]).catch(e => {
-//   // console.info({e})
-//   throw e;
-// });
+Promise.any([
+  Promise.reject(new Error("some error")),
+]).catch(e => {
+  // console.info({e})
+  throw e;
+});
 
 
 // DOMException

@@ -3,7 +3,7 @@
  */
 import { logger, getGlobalObject } from '@thynpm/argos-utils';
 import { Request, sendData } from './Request';
-import { exceptionCheck } from './utils';
+import { exceptionFormat } from './utils';
 
 interface BaseOptions {
   headers?: object,
@@ -49,9 +49,10 @@ class Base {
   captureException(exception,otherMsg) {
     // 原则上是统一自动生成的
     const eventId = otherMsg && otherMsg.eventId;
-    let exceptionFormat = exceptionCheck(exception);
-    exceptionFormat.eventId = eventId;
-    const allData = this.combineData(exceptionFormat)
+    let exceptionFormatData = exceptionFormat(exception);
+    exceptionFormatData.eventId = eventId;
+    delete exceptionFormatData.__isFormat__
+    const allData = this.combineData(exceptionFormatData)
     logger.info('exception data',allData);
     this.request.add(
       new Promise(() => {

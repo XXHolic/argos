@@ -1,6 +1,6 @@
 
 /**
- * This was originally forked from https://github.com/occ/TraceKit
+ * 基于 https://github.com/occ/TraceKit
  */
 
 /**
@@ -31,9 +31,9 @@ export interface StackFrame {
 export interface StackTrace {
   name: string;
   message: string;
-  mechanism?: string;
   stack: StackFrame[];
-  failed?: boolean;
+  origin?: object;
+  mode?: string;
 }
 
 // global reference to slice
@@ -81,7 +81,8 @@ export function computeStackTrace(ex: any): StackTrace {
     message: extractMessage(ex),
     name: ex && ex.name,
     stack: [],
-    failed: true,
+    origin: ex,
+    mode: 'failed',
   };
 }
 
@@ -165,6 +166,8 @@ function computeStackTraceFromStackProp(ex: any): StackTrace | null {
   return {
     message: extractMessage(ex),
     name: ex.name,
+    mode: 'stack',
+    origin: ex,
     stack,
   };
 }
@@ -220,6 +223,8 @@ function computeStackTraceFromStacktraceProp(ex: any): StackTrace | null {
   return {
     message: extractMessage(ex),
     name: ex.name,
+    mode: 'stacktrace',
+    origin: ex,
     stack,
   };
 }

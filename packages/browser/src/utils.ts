@@ -2,10 +2,11 @@
 import { isErrorEvent,isDOMException,isError,isPlainObject,isEvent,ignoreNextOnError } from '@thynpm/argos-utils';
 import { captureException } from '@thynpm/argos-hub';
 import { computeStackTrace } from './tracekit'
-import {eventFromStacktrace,prepareFramesForEvent,eventFromPlainObject} from './parsers'
+import {eventFromStacktrace,eventFromPlainObject,eventFromString} from './parsers'
 
 const originMark = '__argos_original__';
 const wrapMark = '__argos_wrapped__';
+// const UNKNOWN_FUNCTION = '?';
 
 export const globalMark = '__ARGOS__'
 
@@ -74,12 +75,17 @@ export const wrap = (fn, options={}) => {
  * 异常类型检测
  * @param exception
  */
-export function exceptionCheck(exception) {
+export function exceptionFormat(exception) {
   var event;
+  // 已解析过的标识，有些情况可能会造成重复的解析
+  if (exception.__isFormat__) {
+    return exception;
+  }
   if (isErrorEvent(exception) && exception.error) {
       var errorEvent = exception;
       exception = errorEvent.error;
       event = eventFromStacktrace(computeStackTrace(exception));
+      event.__isFormat__ = true;
       return event;
   }
   if (isDOMException(exception)) {
@@ -87,45 +93,29 @@ export function exceptionCheck(exception) {
       var name_1 = domException.name || 'DOMException';
       var message = domException.message ? name_1 + ": " + domException.message : name_1;
       event = eventFromString(message);
+      event.__isFormat__ = true;
       return event;
   }
   if (isError(exception)) {
       event = eventFromStacktrace(computeStackTrace(exception));
+      event.__isFormat__ = true;
       return event;
   }
   // 图片资源加载会进入这里
   if (isPlainObject(exception) || isEvent(exception)) {
       var objectException = exception;
       event = eventFromPlainObject(objectException);
+      event.__isFormat__ = true;
       return event;
   }
 
   event = eventFromString(exception);
+  event.__isFormat__ = true;
   return event;
 }
 
-export function eventFromString(
-  input: string,
-  syntheticException?: Error,
-  options: {
-    attachStacktrace?: boolean;
-  } = {},
-) {
-  const event = {
-    message: input,
-    stacktrace:null
-  };
 
-  if (options.attachStacktrace && syntheticException) {
-    const stacktrace = computeStackTrace(syntheticException);
-    const frames = prepareFramesForEvent(stacktrace.stack);
-    event.stacktrace = {
-      frames,
-    };
-  }
 
-  return event;
-}
 
 
 

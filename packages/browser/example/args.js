@@ -250,7 +250,7 @@ function createXHR(data, options) {
 
 // CONCATENATED MODULE: ./src/tracekit.ts
 /**
- * This was originally forked from https://github.com/occ/TraceKit
+ * 基于 https://github.com/occ/TraceKit
  */
 var tracekit_assign = (undefined && undefined.__assign) || function () {
     tracekit_assign = Object.assign || function(t) {
@@ -304,7 +304,8 @@ function computeStackTrace(ex) {
         message: extractMessage(ex),
         name: ex && ex.name,
         stack: [],
-        failed: true,
+        origin: ex,
+        mode: 'failed',
     };
 }
 /** JSDoc */
@@ -385,6 +386,8 @@ function computeStackTraceFromStackProp(ex) {
     return {
         message: extractMessage(ex),
         name: ex.name,
+        mode: 'stack',
+        origin: ex,
         stack: stack,
     };
 }
@@ -436,6 +439,8 @@ function computeStackTraceFromStacktraceProp(ex) {
     return {
         message: extractMessage(ex),
         name: ex.name,
+        mode: 'stacktrace',
+        origin: ex,
         stack: stack,
     };
 }
@@ -465,97 +470,72 @@ function extractMessage(ex) {
 }
 
 // CONCATENATED MODULE: ./src/parsers.ts
-
+var parsers_assign = (undefined && undefined.__assign) || function () {
+    parsers_assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return parsers_assign.apply(this, arguments);
+};
 
 var STACKTRACE_LIMIT = 50;
 /**
  * This function creates an exception from an TraceKitStackTrace
  * @param stacktrace TraceKitStackTrace that will be converted to an exception
- * @hidden
+ *
  */
 function exceptionFromStacktrace(stacktrace) {
     var frames = prepareFramesForEvent(stacktrace.stack);
-    var exception = {
-        type: stacktrace.name,
-        value: stacktrace.message,
-        stacktrace: null
-    };
-    if (frames && frames.length) {
-        exception.stacktrace = { frames: frames };
-    }
+    var exception = parsers_assign({}, stacktrace);
+    exception.stack = frames;
     // tslint:disable-next-line:strict-type-predicates
-    if (exception.type === undefined && exception.value === '') {
-        exception.value = 'Unrecoverable error caught';
+    if (exception.name === undefined && exception.message === '') {
+        exception.message = 'Unrecoverable error caught';
     }
     return exception;
 }
 /**
- * @hidden
+ * 传入的数据，不一定是源异常，可能是组装过的，例如 onerror 里面就是组装过的
+ * 静态资源加载会进入到这里
  */
-function eventFromPlainObject(exception, syntheticException, rejection) {
+function eventFromPlainObject(exception, rejection) {
     var event = {
-        exception: {
-            values: [
-                {
-                    type: Object(utils_dist["isEvent"])(exception) ? exception.constructor.name : rejection ? 'UnhandledRejection' : 'Error',
-                    value: "Non-Error " + (rejection ? 'promise rejection' : 'exception') + " captured with keys: " + exception,
-                },
-            ],
-        },
-        extra: {
-            __serialized__: exception,
-        },
-        stacktrace: null
+        name: Object(utils_dist["isEvent"])(exception) ? exception.constructor.name : rejection ? 'UnhandledRejection' : 'Error',
+        message: "Non-Error " + (rejection ? 'promise rejection' : 'exception') + " captured with keys: " + exception,
+        mode: 'plainObject',
+        origin: exception
     };
-    if (syntheticException) {
-        var stacktrace = computeStackTrace(syntheticException);
-        var frames_1 = prepareFramesForEvent(stacktrace.stack);
-        event.stacktrace = {
-            frames: frames_1,
-        };
-    }
-    return event;
+    return { exception: event };
 }
 /**
- * @hidden
+ *
  */
 function eventFromStacktrace(stacktrace) {
     var exception = exceptionFromStacktrace(stacktrace);
-    return {
-        exception: {
-            values: [exception],
-        },
-    };
+    return { exception: exception };
 }
 /**
- * @hidden
+ *
  */
 function prepareFramesForEvent(stack) {
     if (!stack || !stack.length) {
         return [];
     }
     var localStack = stack;
-    var firstFrameFunction = localStack[0].func || '';
-    var lastFrameFunction = localStack[localStack.length - 1].func || '';
-    // If stack starts with one of our API calls, remove it (starts, meaning it's the top of the stack - aka last call)
-    if (firstFrameFunction.indexOf('captureMessage') !== -1 || firstFrameFunction.indexOf('captureException') !== -1) {
-        localStack = localStack.slice(1);
-    }
-    // If stack ends with one of our internal API calls, remove it (ends, meaning it's the bottom of the stack - aka top-most call)
-    if (lastFrameFunction.indexOf('sentryWrapped') !== -1) {
-        localStack = localStack.slice(0, -1);
-    }
-    // The frame where the crash happened, should be the last entry in the array
-    return localStack
-        .map(function (frame) { return ({
-        colno: frame.column === null ? undefined : frame.column,
-        filename: frame.url || localStack[0].url,
-        function: frame.func || '?',
-        in_app: true,
-        lineno: frame.line === null ? undefined : frame.line,
-    }); })
-        .slice(0, STACKTRACE_LIMIT)
-        .reverse();
+    // 控制一下数组大小
+    return localStack.slice(0, STACKTRACE_LIMIT);
+}
+function eventFromString(input) {
+    var event = {
+        message: input,
+        mode: 'string',
+        stack: null
+    };
+    return { exception: event };
 }
 
 // CONCATENATED MODULE: ./src/utils.ts
@@ -565,6 +545,7 @@ function prepareFramesForEvent(stack) {
 
 var originMark = '__argos_original__';
 var wrapMark = '__argos_wrapped__';
+// const UNKNOWN_FUNCTION = '?';
 var globalMark = '__ARGOS__';
 /**
  * 主要用来包裹事件监听的方法，事件处理程序里面产生了异常，这里就可以进行统一捕获。
@@ -633,12 +614,17 @@ var wrap = function (fn, options) {
  * 异常类型检测
  * @param exception
  */
-function exceptionCheck(exception) {
+function exceptionFormat(exception) {
     var event;
+    // 已解析过的标识，有些情况可能会造成重复的解析
+    if (exception.__isFormat__) {
+        return exception;
+    }
     if (Object(utils_dist["isErrorEvent"])(exception) && exception.error) {
         var errorEvent = exception;
         exception = errorEvent.error;
         event = eventFromStacktrace(computeStackTrace(exception));
+        event.__isFormat__ = true;
         return event;
     }
     if (Object(utils_dist["isDOMException"])(exception)) {
@@ -646,34 +632,23 @@ function exceptionCheck(exception) {
         var name_1 = domException.name || 'DOMException';
         var message = domException.message ? name_1 + ": " + domException.message : name_1;
         event = eventFromString(message);
+        event.__isFormat__ = true;
         return event;
     }
     if (Object(utils_dist["isError"])(exception)) {
         event = eventFromStacktrace(computeStackTrace(exception));
+        event.__isFormat__ = true;
         return event;
     }
     // 图片资源加载会进入这里
     if (Object(utils_dist["isPlainObject"])(exception) || Object(utils_dist["isEvent"])(exception)) {
         var objectException = exception;
         event = eventFromPlainObject(objectException);
+        event.__isFormat__ = true;
         return event;
     }
     event = eventFromString(exception);
-    return event;
-}
-function eventFromString(input, syntheticException, options) {
-    if (options === void 0) { options = {}; }
-    var event = {
-        message: input,
-        stacktrace: null
-    };
-    if (options.attachStacktrace && syntheticException) {
-        var stacktrace = computeStackTrace(syntheticException);
-        var frames_1 = prepareFramesForEvent(stacktrace.stack);
-        event.stacktrace = {
-            frames: frames_1,
-        };
-    }
+    event.__isFormat__ = true;
     return event;
 }
 
@@ -729,9 +704,10 @@ var Base_Base = /** @class */ (function () {
         var _this = this;
         // 原则上是统一自动生成的
         var eventId = otherMsg && otherMsg.eventId;
-        var exceptionFormat = exceptionCheck(exception);
-        exceptionFormat.eventId = eventId;
-        var allData = this.combineData(exceptionFormat);
+        var exceptionFormatData = exceptionFormat(exception);
+        exceptionFormatData.eventId = eventId;
+        delete exceptionFormatData.__isFormat__;
+        var allData = this.combineData(exceptionFormatData);
         utils_dist["logger"].info('exception data', allData);
         this.request.add(new Promise(function () {
             Request_sendData(allData, _this.options);
@@ -842,9 +818,10 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
             if (Object(utils_dist["shouldIgnoreOnError"])()) {
                 return;
             }
+            // 如果 error 是 undefined, null, number, boolean, string
             var ex = Object(utils_dist["isPrimitive"])(error)
-                ? self._eventFromIncompleteOnError(msg, url, line, column)
-                : self._enhanceEventWithInitialFrame(exceptionCheck(error), url, line, column);
+                ? self._eventFromIncompleteOnError(msg, url, line, column, error)
+                : error;
             Object(dist["captureException"])(ex);
             if (oldOnError) {
                 return oldOnError.apply(this, arguments);
@@ -869,7 +846,7 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
             }
             var ex = Object(utils_dist["isPrimitive"])(error)
                 ? self._eventFromIncompleteRejection(error)
-                : exceptionCheck(error);
+                : exceptionFormat(error);
             Object(dist["captureException"])(ex);
             if (oldOnError) {
                 return oldOnError.apply(this, arguments);
@@ -901,8 +878,20 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
             }
         }, true);
     };
-    GlobalHandlers.prototype._eventFromIncompleteOnError = function (msg, url, line, column) {
+    /**
+     * 拆自 https://github.com/occ/TraceKit
+     * @param msg
+     * @param url
+     * @param line
+     * @param column
+     */
+    GlobalHandlers.prototype._eventFromIncompleteOnError = function (msg, url, line, column, error) {
         var ERROR_TYPES_RE = /^(?:[Uu]ncaught (?:exception: )?)?(?:((?:Eval|Internal|Range|Reference|Syntax|Type|URI|)Error): )?(.*)$/i;
+        var location = {
+            'url': url,
+            'line': line,
+            'column': column,
+        };
         // If 'message' is ErrorEvent, get real message from inside
         var message = Object(utils_dist["isErrorEvent"])(msg) ? msg.message : msg;
         var name;
@@ -913,49 +902,19 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
                 message = groups[2];
             }
         }
-        var event = {
-            exception: {
-                values: [
-                    {
-                        type: name || 'Error',
-                        value: message,
-                    },
-                ],
-            },
+        var exception = {
+            name: name || 'Error',
+            message: message,
+            stack: [location],
+            mode: 'onerror',
         };
-        return this._enhanceEventWithInitialFrame(event, url, line, column);
+        return exception;
     };
     GlobalHandlers.prototype._eventFromIncompleteRejection = function (error) {
         return {
-            exception: {
-                values: [
-                    {
-                        type: 'UnhandledRejection',
-                        value: "Non-Error promise rejection captured with value: " + error,
-                    },
-                ],
-            },
+            name: 'UnhandledRejection',
+            message: "Non-Error promise rejection captured with value: " + error,
         };
-    };
-    GlobalHandlers.prototype._enhanceEventWithInitialFrame = function (event, url, line, column) {
-        event.exception = event.exception || {};
-        event.exception.values = event.exception.values || [];
-        event.exception.values[0] = event.exception.values[0] || {};
-        event.exception.values[0].stacktrace = event.exception.values[0].stacktrace || {};
-        event.exception.values[0].stacktrace.frames = event.exception.values[0].stacktrace.frames || [];
-        var colno = isNaN(parseInt(column, 10)) ? undefined : column;
-        var lineno = isNaN(parseInt(line, 10)) ? undefined : line;
-        var filename = Object(utils_dist["isString"])(url) && url.length > 0 ? url : Object(utils_dist["getLocationHref"])();
-        if (event.exception.values[0].stacktrace.frames.length === 0) {
-            event.exception.values[0].stacktrace.frames.push({
-                colno: colno,
-                filename: filename,
-                function: '?',
-                in_app: true,
-                lineno: lineno,
-            });
-        }
-        return event;
     };
     return GlobalHandlers;
 }());
