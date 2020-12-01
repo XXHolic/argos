@@ -1,7 +1,7 @@
 // console.info('Argos',Argos)
 const VueIntegration = Argos.VueIntegration;
 Argos.init({
-  url:'http://localhost:2233/',
+  url:'http://localhost:6688/argos',
   enableLog: true,
   integrations:[new VueIntegration({})]
 })

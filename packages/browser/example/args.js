@@ -91,7 +91,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -110,6 +110,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ }),
 /* 2 */
+/***/ (function(module) {
+
+module.exports = JSON.parse("{\"name\":\"@thynpm/argos\",\"version\":\"1.0.7\",\"description\":\"\",\"main\":\"dist/index.js\",\"scripts\":{\"test\":\"echo \\\"Error: no test specified\\\" && exit 1\",\"build\":\"run-s build:dist build:example\",\"build:dist\":\"webpack --config webpack.config.js\",\"build:example\":\"webpack --outPath=example --filename=args --config webpack.config.js\"},\"repository\":{\"type\":\"git\",\"url\":\"git+https://github.com/XXHolic/argos.git\"},\"files\":[\"dist\"],\"author\":\"argos\",\"license\":\"ISC\",\"bugs\":{\"url\":\"https://github.com/XXHolic/argos/issues\"},\"homepage\":\"https://github.com/XXHolic/argos#readme\",\"devDependencies\":{\"@tsconfig/recommended\":\"^1.0.1\",\"clean-webpack-plugin\":\"^3.0.0\",\"npm-run-all\":\"^4.1.5\",\"ts-loader\":\"^8.0.4\",\"typescript\":\"^4.0.3\",\"webpack\":\"^4.44.2\",\"webpack-cli\":\"^3.3.12\"},\"publishConfig\":{\"registry\":\"https://registry.npmjs.org/\"},\"dependencies\":{\"@thynpm/argos-hub\":\"^1.0.1\",\"@thynpm/argos-utils\":\"^1.0.3\"}}");
+
+/***/ }),
+/* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -652,6 +658,12 @@ function exceptionFormat(exception) {
     return event;
 }
 
+// CONCATENATED MODULE: ./src/version.ts
+var packageMsg = __webpack_require__(2);
+var version_name = packageMsg.name, dependencies = packageMsg.dependencies;
+// 先编译好，再发布，自动会改变版本号，所以此处版本要手动同步到下一次发布的版本
+var SDK_MSG = { name: version_name, dependencies: dependencies, version: '1.0.8' };
+
 // CONCATENATED MODULE: ./src/Base.ts
 var Base_assign = (undefined && undefined.__assign) || function () {
     Base_assign = Object.assign || function(t) {
@@ -667,6 +679,7 @@ var Base_assign = (undefined && undefined.__assign) || function () {
 /**
  * Base 类会进行外部框架插件异常的初始化，异常捕获和再加工
  */
+
 
 
 
@@ -757,6 +770,7 @@ var Base_Base = /** @class */ (function () {
         if (!data.environment) {
             data.environment = environment;
         }
+        data.sdk = SDK_MSG;
         return data;
     };
     return Base;

@@ -4,6 +4,8 @@
 import { logger, getGlobalObject } from '@thynpm/argos-utils';
 import { Request, sendData } from './Request';
 import { exceptionFormat } from './utils';
+import { SDK_MSG } from './version';
+
 
 interface BaseOptions {
   headers?: object,
@@ -109,6 +111,7 @@ class Base {
     if (!data.environment) {
       data.environment = environment;
     }
+    data.sdk = SDK_MSG;
     return data;
   }
 
