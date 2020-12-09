@@ -20,7 +20,7 @@ export class Request {
   }
 
   isReady() {
-    return this.tasks.length <= this.options.maxRequest;
+    return this.options.maxRequest && this.tasks.length <= this.options.maxRequest;
   }
 
   remove(task) {
@@ -56,16 +56,12 @@ export const sendData = (data,options) => {
 function createFetch(data,options) {
   return new Promise((resolve,reject) => {
     const {url,headers} = options;
-    if (!url) {
-      logger.error('There is no upload data url!');
-      return;
-    }
     const reqOptions = {
       body: JSON.stringify(data),
       method: 'POST',
       headers:{...headers}
     }
-    return fetch(url,{...reqOptions}).then(response => {
+    fetch(url,{...reqOptions}).then(response => {
       const status = fromHttpCode(response.status);
 
       if (status === requestStatus.Success) {
@@ -80,22 +76,19 @@ function createFetch(data,options) {
       reject(response);
 
     }).catch((ex) => {
-      logger.error(ex)
+      reject(ex)
     });
-  }).catch((ex) => {
-    //上传的请求报错了，就不要抛到全局捕获了，直接在这里截断
-    logger.error(ex)
   })
+  // .catch((ex) => {
+  //   //上传的请求报错了，就不要抛到全局捕获了，直接在这里截断
+  //   logger.error(ex)
+  // })
 }
 
 function createXHR(data,options) {
 
   return new Promise((resolve,reject) => {
     const {url,headers} = options;
-    if (!url) {
-      logger.error('There is no upload data url!');
-      return;
-    }
     const request = new XMLHttpRequest();
     request.onreadystatechange = () => {
       if (request.readyState !== 4) {
@@ -119,8 +112,9 @@ function createXHR(data,options) {
     }
     const sendData = JSON.stringify(data);
     request.send(sendData);
-  }).catch((ex) => {
-      //上传的请求报错了，就不要抛到全局捕获了，直接在这里截断
-      logger.error(ex)
   })
+  // .catch((ex) => {
+  //     //上传的请求报错了，就不要抛到全局捕获了，直接在这里截断
+  //     logger.error(ex)
+  // })
 }

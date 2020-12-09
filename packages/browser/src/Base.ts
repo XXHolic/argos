@@ -56,11 +56,7 @@ class Base {
     delete exceptionFormatData.__isFormat__
     const allData = this.combineData(exceptionFormatData)
     logger.info('exception data',allData);
-    this.request.add(
-      new Promise(() => {
-        sendData(allData,this.options);
-      })
-    )
+    this.request.add(sendData(allData,this.options))
   }
 
   /**

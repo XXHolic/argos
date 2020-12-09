@@ -3,7 +3,7 @@
  * 也可以通过配置传入是否进行初始化，提供更高的的配置化。
  */
 import { captureException } from '@thynpm/argos-hub';
-import { fill,getGlobalObject,getLocationHref,shouldIgnoreOnError,logger,isString,isPrimitive,isErrorEvent } from '@thynpm/argos-utils'
+import { fill,getGlobalObject,shouldIgnoreOnError,logger,isString,isPrimitive,isErrorEvent } from '@thynpm/argos-utils'
 import { exceptionFormat,wrap } from './utils'
 
 const global:any = getGlobalObject();

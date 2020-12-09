@@ -92,8 +92,10 @@ function getType(value) {
 
 // RangeError
 // tryCatchWrap(function() {
-//   const arr = new Array(-10)
+  // const arr = new Array(-10)
 // })
+
+throw new EvalError('Hello, EvalError');
 
 // ReferenceError
 // tryCatchWrap(function() {
@@ -117,12 +119,12 @@ function getType(value) {
 // })
 
 // AggregateError
-Promise.any([
-  Promise.reject(new Error("some error")),
-]).catch(e => {
-  // console.info({e})
-  throw e;
-});
+// Promise.any([
+//   Promise.reject(new Error("some error")),
+// ]).catch(e => {
+//   // console.info({e})
+//   throw e;
+// });
 
 
 // DOMException
