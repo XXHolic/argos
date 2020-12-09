@@ -1,6 +1,6 @@
 {
   "name": "@thynpm/argos-xcx",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -35,7 +35,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
-    "@thynpm/argos-hub": "^1.0.4",
-    "@thynpm/argos-utils": "^1.0.6"
+    "@thynpm/argos-hub": "^1.0.5",
+    "@thynpm/argos-utils": "^1.0.7"
   }
 }
