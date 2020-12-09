@@ -2,8 +2,9 @@
  * 用来进行异常上报的请求
  */
 
-import { isSupportsFetch,logger,fromHttpCode,requestStatus } from '@thynpm/argos-utils'
+import { isSupportsFetch,logger,fromHttpCode,requestStatus,isSupportsBeacon,getGlobalObject } from '@thynpm/argos-utils'
 
+const globalObj: any = getGlobalObject()
 interface RequestOptions {
   maxRequest?: number,
 }
@@ -47,11 +48,26 @@ export class Request {
 }
 
 export const sendData = (data,options) => {
+  if (isSupportsBeacon()) {
+    return createBeacon(data,options);
+  }
+
   if(isSupportsFetch()) {
     return createFetch(data,options);
   }
+
   return createXHR(data,options);
 }
+
+function createBeacon(data,options) {
+  const {url} = options;
+  return new Promise((resolve,reject) => {
+    const result = globalObj.navigator.sendBeacon(url,JSON.stringify(data));
+    resolve({sendBeacon:result})
+  })
+
+}
+
 
 function createFetch(data,options) {
   return new Promise((resolve,reject) => {

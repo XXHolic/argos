@@ -150,6 +150,7 @@ var __assign = (undefined && undefined.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 
+var Request_globalObj = Object(utils_dist["getGlobalObject"])();
 var Request_Request = /** @class */ (function () {
     function Request(options) {
         if (options === void 0) { options = {}; }
@@ -160,12 +161,10 @@ var Request_Request = /** @class */ (function () {
         this.options = __assign(__assign({}, this.options), options);
     }
     Request.prototype.isReady = function () {
-        console.info('isReady tasks.length',this.tasks.length)
-        return this.tasks.length <= this.options.maxRequest;
+        return this.options.maxRequest && this.tasks.length <= this.options.maxRequest;
     };
     Request.prototype.remove = function (task) {
         var removedTask = this.tasks.splice(this.tasks.indexOf(task), 1)[0];
-        console.info('tasks.length',this.tasks.length)
         return removedTask;
     };
     Request.prototype.add = function (task) {
@@ -187,11 +186,21 @@ var Request_Request = /** @class */ (function () {
 }());
 
 var Request_sendData = function (data, options) {
+    if (Object(utils_dist["isSupportsBeacon"])()) {
+        return createBeacon(data, options);
+    }
     if (Object(utils_dist["isSupportsFetch"])()) {
         return createFetch(data, options);
     }
     return createXHR(data, options);
 };
+function createBeacon(data, options) {
+    var url = options.url;
+    return new Promise(function (resolve, reject) {
+        var result = Request_globalObj.navigator.sendBeacon(url, JSON.stringify(data));
+        resolve({ sendBeacon: result });
+    });
+}
 function createFetch(data, options) {
     return new Promise(function (resolve, reject) {
         var url = options.url, headers = options.headers;
