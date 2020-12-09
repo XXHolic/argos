@@ -67,7 +67,7 @@ export const isPlainObject = (value) => {
   return Object.prototype.toString.call(value) === '[object Object]';
 }
 /**
- * 检查是否是基本类型(undefined, null, number, boolean, string)
+ * 检查是否为基本类型(undefined, null, number, boolean, string)
  * @param value
  */
 export const isPrimitive = (value) => {
