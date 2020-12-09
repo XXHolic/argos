@@ -67,7 +67,7 @@ export const isPlainObject = (value) => {
   return Object.prototype.toString.call(value) === '[object Object]';
 }
 /**
- * Checks whether given value's is a primitive (undefined, null, number, boolean, string)
+ * 检查是否是基本类型(undefined, null, number, boolean, string)
  * @param value
  */
 export const isPrimitive = (value) => {
@@ -75,12 +75,16 @@ export const isPrimitive = (value) => {
 }
 
 /**
- * Returns true if the parameter is undefined<br/>
- * Example: `_isUndefined(val) === true/false`
- *
- * @param {*} what Value to check
- * @return {Boolean} true if undefined and false otherwise
+ * 检查是否为 undefined
  */
 export const isUndefined = (value) => {
   return typeof value === 'undefined';
+}
+
+export const isSupportsBeacon = () => {
+  const globalObj: any = getGlobalObject()
+  if (globalObj.navigator && globalObj.navigator.sendBeacon) {
+    return true;
+  }
+  return false;
 }

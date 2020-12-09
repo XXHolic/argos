@@ -10,7 +10,8 @@ export {
   isString,
   isPlainObject,
   isPrimitive,
-  isUndefined
+  isUndefined,
+  isSupportsBeacon,
 } from './is';
 
 export {
