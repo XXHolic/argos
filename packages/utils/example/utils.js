@@ -104,7 +104,7 @@ __webpack_require__.r(__webpack_exports__);
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, "isSupportsFetch", function() { return /* reexport */ isSupportsFetch; });
-__webpack_require__.d(__webpack_exports__, "isSupportsXMR", function() { return /* reexport */ isSupportsXMR; });
+__webpack_require__.d(__webpack_exports__, "isSupportsXHR", function() { return /* reexport */ isSupportsXHR; });
 __webpack_require__.d(__webpack_exports__, "isError", function() { return /* reexport */ isError; });
 __webpack_require__.d(__webpack_exports__, "isErrorEvent", function() { return /* reexport */ isErrorEvent; });
 __webpack_require__.d(__webpack_exports__, "isDOMException", function() { return /* reexport */ isDOMException; });
@@ -112,6 +112,8 @@ __webpack_require__.d(__webpack_exports__, "isEvent", function() { return /* ree
 __webpack_require__.d(__webpack_exports__, "isString", function() { return /* reexport */ isString; });
 __webpack_require__.d(__webpack_exports__, "isPlainObject", function() { return /* reexport */ isPlainObject; });
 __webpack_require__.d(__webpack_exports__, "isPrimitive", function() { return /* reexport */ isPrimitive; });
+__webpack_require__.d(__webpack_exports__, "isUndefined", function() { return /* reexport */ isUndefined; });
+__webpack_require__.d(__webpack_exports__, "isSupportsBeacon", function() { return /* reexport */ isSupportsBeacon; });
 __webpack_require__.d(__webpack_exports__, "getGlobalObject", function() { return /* reexport */ getGlobalObject; });
 __webpack_require__.d(__webpack_exports__, "globalMark", function() { return /* reexport */ globalMark; });
 __webpack_require__.d(__webpack_exports__, "fill", function() { return /* reexport */ fill; });
@@ -127,6 +129,7 @@ __webpack_require__.d(__webpack_exports__, "consoleSandbox", function() { return
 __webpack_require__.d(__webpack_exports__, "logger", function() { return /* reexport */ src_logger; });
 
 // CONCATENATED MODULE: ./src/utils.ts
+
 var originMark = '__argos_original__';
 var globalMark = '__ARGOS__';
 var fallbackGlobalObject = {};
@@ -158,7 +161,7 @@ var fill = function (source, name, replacement) {
                 _a));
         }
         catch (e) {
-            console.warn('multiple fill may cause error');
+            src_logger.warn('multiple fill may cause error');
         }
     }
     source[name] = wrapped;
@@ -293,6 +296,17 @@ function consoleSandbox(type, callback) {
     }
     return;
 }
+/**
+ * A better form of hasOwnProperty<br/>
+ * Example: `_has(MainHostObject, property) === true/false`
+ *
+ * @param {Object} object to check property
+ * @param {string} key to check
+ * @return {Boolean} true if the object has the key and it is not inherited
+ */
+function has(object, key) {
+    return Object.prototype.hasOwnProperty.call(object, key);
+}
 
 // CONCATENATED MODULE: ./src/logger.ts
 var __assign = (undefined && undefined.__assign) || function () {
@@ -416,7 +430,7 @@ var isSupportsFetch = function () {
     }
     return true;
 };
-var isSupportsXMR = function () {
+var isSupportsXHR = function () {
     if (!('XMLHttpRequest' in getGlobalObject())) {
         return false;
     }
@@ -440,7 +454,7 @@ var isError = function (value) {
             return true;
         case '[object Exception]':
             return true;
-        case '[object DOMException]':
+        case '[object DOMException]': // 这个还并没有成为标准
             return true;
         default:
             return isInstanceOf(value, Error);
@@ -470,11 +484,24 @@ var isPlainObject = function (value) {
     return Object.prototype.toString.call(value) === '[object Object]';
 };
 /**
- * Checks whether given value's is a primitive (undefined, null, number, boolean, string)
+ * 检查是否为基本类型(undefined, null, number, boolean, string)
  * @param value
  */
 var isPrimitive = function (value) {
     return value === null || (typeof value !== 'object' && typeof value !== 'function');
+};
+/**
+ * 检查是否为 undefined
+ */
+var isUndefined = function (value) {
+    return typeof value === 'undefined';
+};
+var isSupportsBeacon = function () {
+    var globalObj = getGlobalObject();
+    if (globalObj.navigator && globalObj.navigator.sendBeacon) {
+        return true;
+    }
+    return false;
 };
 
 // CONCATENATED MODULE: ./src/index.ts
