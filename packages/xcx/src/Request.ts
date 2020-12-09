@@ -1,8 +1,5 @@
 import { logger } from '@thynpm/argos-utils'
 
-const ignoreMark = '__ignore__';
-
-
 interface RequestOptions {
   maxRequest?: number,
 }
@@ -53,10 +50,6 @@ export const sendData = (data,options) => {
 
 function createWXRequest(data,options) {
   const {url} = options;
-  if (!url) {
-    console.error('There is no upload data url!');
-    return;
-  }
 
   return new Promise((resolve,reject) => {
     // @ts-ignore
