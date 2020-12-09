@@ -112,7 +112,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 2 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"@thynpm/argos\",\"version\":\"1.0.8\",\"description\":\"\",\"main\":\"dist/index.js\",\"scripts\":{\"test\":\"echo \\\"Error: no test specified\\\" && exit 1\",\"build\":\"run-s build:dist build:example\",\"build:dist\":\"webpack --config webpack.config.js\",\"build:example\":\"webpack --outPath=example --filename=args --config webpack.config.js\"},\"repository\":{\"type\":\"git\",\"url\":\"git+https://github.com/XXHolic/argos.git\"},\"files\":[\"dist\"],\"author\":\"argos\",\"license\":\"ISC\",\"bugs\":{\"url\":\"https://github.com/XXHolic/argos/issues\"},\"homepage\":\"https://github.com/XXHolic/argos#readme\",\"devDependencies\":{\"@tsconfig/recommended\":\"^1.0.1\",\"clean-webpack-plugin\":\"^3.0.0\",\"npm-run-all\":\"^4.1.5\",\"ts-loader\":\"^8.0.4\",\"typescript\":\"^4.0.3\",\"webpack\":\"^4.44.2\",\"webpack-cli\":\"^3.3.12\"},\"publishConfig\":{\"registry\":\"https://registry.npmjs.org/\"},\"dependencies\":{\"@thynpm/argos-hub\":\"^1.0.2\",\"@thynpm/argos-utils\":\"^1.0.4\"}}");
+module.exports = JSON.parse("{\"name\":\"@thynpm/argos\",\"version\":\"1.0.9\",\"description\":\"\",\"main\":\"dist/index.js\",\"scripts\":{\"test\":\"echo \\\"Error: no test specified\\\" && exit 1\",\"build\":\"run-s build:dist build:example\",\"build:dist\":\"webpack --config webpack.config.js\",\"build:example\":\"webpack --outPath=example --filename=args --config webpack.config.js\"},\"repository\":{\"type\":\"git\",\"url\":\"git+https://github.com/XXHolic/argos.git\"},\"files\":[\"dist\"],\"author\":\"argos\",\"license\":\"ISC\",\"bugs\":{\"url\":\"https://github.com/XXHolic/argos/issues\"},\"homepage\":\"https://github.com/XXHolic/argos#readme\",\"devDependencies\":{\"@tsconfig/recommended\":\"^1.0.1\",\"clean-webpack-plugin\":\"^3.0.0\",\"npm-run-all\":\"^4.1.5\",\"ts-loader\":\"^8.0.4\",\"typescript\":\"^4.0.3\",\"webpack\":\"^4.44.2\",\"webpack-cli\":\"^3.3.12\"},\"publishConfig\":{\"registry\":\"https://registry.npmjs.org/\"},\"dependencies\":{\"@thynpm/argos-hub\":\"^1.0.4\",\"@thynpm/argos-utils\":\"^1.0.6\"}}");
 
 /***/ }),
 /* 3 */
@@ -128,11 +128,11 @@ __webpack_require__.d(__webpack_exports__, "captureException", function() { retu
 __webpack_require__.d(__webpack_exports__, "getCurrentHub", function() { return /* reexport */ dist["getCurrentHub"]; });
 __webpack_require__.d(__webpack_exports__, "VueIntegration", function() { return /* reexport */ integrations_VueIntegration; });
 
-// EXTERNAL MODULE: ../hub/dist/index.js
+// EXTERNAL MODULE: ./node_modules/@thynpm/argos-hub/dist/index.js
 var dist = __webpack_require__(1);
 
-// EXTERNAL MODULE: ../utils/dist/index.js
-var utils_dist = __webpack_require__(0);
+// EXTERNAL MODULE: ./node_modules/@thynpm/argos-utils/dist/index.js
+var argos_utils_dist = __webpack_require__(0);
 
 // CONCATENATED MODULE: ./src/Request.ts
 /**
@@ -150,7 +150,7 @@ var __assign = (undefined && undefined.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 
-var Request_globalObj = Object(utils_dist["getGlobalObject"])();
+var Request_globalObj = Object(argos_utils_dist["getGlobalObject"])();
 var Request_Request = /** @class */ (function () {
     function Request(options) {
         if (options === void 0) { options = {}; }
@@ -170,7 +170,7 @@ var Request_Request = /** @class */ (function () {
     Request.prototype.add = function (task) {
         var _this = this;
         if (!this.isReady()) {
-            utils_dist["logger"].warn('too many request');
+            argos_utils_dist["logger"].warn('too many request');
             return;
         }
         this.tasks.push(task);
@@ -186,10 +186,10 @@ var Request_Request = /** @class */ (function () {
 }());
 
 var Request_sendData = function (data, options) {
-    if (Object(utils_dist["isSupportsBeacon"])()) {
+    if (Object(argos_utils_dist["isSupportsBeacon"])()) {
         return createBeacon(data, options);
     }
-    if (Object(utils_dist["isSupportsFetch"])()) {
+    if (Object(argos_utils_dist["isSupportsFetch"])()) {
         return createFetch(data, options);
     }
     return createXHR(data, options);
@@ -210,13 +210,13 @@ function createFetch(data, options) {
             headers: __assign({}, headers)
         };
         fetch(url, __assign({}, reqOptions)).then(function (response) {
-            var status = Object(utils_dist["fromHttpCode"])(response.status);
-            if (status === utils_dist["requestStatus"].Success) {
+            var status = Object(argos_utils_dist["fromHttpCode"])(response.status);
+            if (status === argos_utils_dist["requestStatus"].Success) {
                 resolve({ status: status });
                 return;
             }
-            if (status === utils_dist["requestStatus"].RateLimit) {
-                utils_dist["logger"].warn('Too many requests');
+            if (status === argos_utils_dist["requestStatus"].RateLimit) {
+                argos_utils_dist["logger"].warn('Too many requests');
             }
             reject(response);
         }).catch(function (ex) {
@@ -236,12 +236,12 @@ function createXHR(data, options) {
             if (request.readyState !== 4) {
                 return;
             }
-            var status = Object(utils_dist["fromHttpCode"])(request.status);
-            if (status === utils_dist["requestStatus"].Success) {
+            var status = Object(argos_utils_dist["fromHttpCode"])(request.status);
+            if (status === argos_utils_dist["requestStatus"].Success) {
                 resolve({ status: status });
                 return;
             }
-            utils_dist["logger"].error(request);
+            argos_utils_dist["logger"].error(request);
             reject(request);
         };
         request.open('POST', url);
@@ -515,7 +515,7 @@ function exceptionFromStacktrace(stacktrace) {
  */
 function eventFromPlainObject(exception, rejection) {
     var event = {
-        name: Object(utils_dist["isEvent"])(exception) ? exception.constructor.name : rejection ? 'UnhandledRejection' : 'Error',
+        name: Object(argos_utils_dist["isEvent"])(exception) ? exception.constructor.name : rejection ? 'UnhandledRejection' : 'Error',
         message: "Non-Error " + (rejection ? 'promise rejection' : 'exception') + " captured with keys: " + exception,
         mode: 'plainObject',
         origin: exception
@@ -586,7 +586,7 @@ var wrap = function (fn, options) {
             return fn.apply(this, args);
         }
         catch (ex) {
-            Object(utils_dist["ignoreNextOnError"])();
+            Object(argos_utils_dist["ignoreNextOnError"])();
             Object(dist["captureException"])(ex);
             /**
              * 这里的异常如果不抛出去，相当于屏蔽了用户那边的异常显示，
@@ -631,14 +631,14 @@ function exceptionFormat(exception) {
     if (exception.__isFormat__) {
         return exception;
     }
-    if (Object(utils_dist["isErrorEvent"])(exception) && exception.error) {
+    if (Object(argos_utils_dist["isErrorEvent"])(exception) && exception.error) {
         var errorEvent = exception;
         exception = errorEvent.error;
         event = eventFromStacktrace(computeStackTrace(exception));
         event.__isFormat__ = true;
         return event;
     }
-    if (Object(utils_dist["isDOMException"])(exception)) {
+    if (Object(argos_utils_dist["isDOMException"])(exception)) {
         var domException = exception;
         var name_1 = domException.name || 'DOMException';
         var message = domException.message ? name_1 + ": " + domException.message : name_1;
@@ -646,13 +646,13 @@ function exceptionFormat(exception) {
         event.__isFormat__ = true;
         return event;
     }
-    if (Object(utils_dist["isError"])(exception)) {
+    if (Object(argos_utils_dist["isError"])(exception)) {
         event = eventFromStacktrace(computeStackTrace(exception));
         event.__isFormat__ = true;
         return event;
     }
     // 图片资源加载会进入这里
-    if (Object(utils_dist["isPlainObject"])(exception) || Object(utils_dist["isEvent"])(exception)) {
+    if (Object(argos_utils_dist["isPlainObject"])(exception) || Object(argos_utils_dist["isEvent"])(exception)) {
         var objectException = exception;
         event = eventFromPlainObject(objectException);
         event.__isFormat__ = true;
@@ -725,14 +725,14 @@ var Base_Base = /** @class */ (function () {
         exceptionFormatData.eventId = eventId;
         delete exceptionFormatData.__isFormat__;
         var allData = this.combineData(exceptionFormatData);
-        utils_dist["logger"].info('exception data', allData);
+        argos_utils_dist["logger"].info('exception data', allData);
         this.request.add(Request_sendData(allData, this.options));
     };
     /**
      * 获取宿主环境的一些基本信息
      */
     Base.prototype.getUserAgent = function () {
-        var global = Object(utils_dist["getGlobalObject"])();
+        var global = Object(argos_utils_dist["getGlobalObject"])();
         var data = {
             pageW: null,
             pageH: null,
@@ -798,7 +798,7 @@ var GlobalHandlers_assign = (undefined && undefined.__assign) || function () {
 
 
 
-var GlobalHandlers_global = Object(utils_dist["getGlobalObject"])();
+var GlobalHandlers_global = Object(argos_utils_dist["getGlobalObject"])();
 var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
     function GlobalHandlers(options) {
         this.options = {
@@ -830,12 +830,12 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
         var self = this; // tslint:disable-line:no-this-assignment
         var oldOnError = GlobalHandlers_global.onerror;
         GlobalHandlers_global.onerror = function (msg, url, line, column, error) {
-            utils_dist["logger"].info('onerror event: ', { msg: msg, url: url, line: line, column: column, error: error });
-            if (Object(utils_dist["shouldIgnoreOnError"])()) {
+            argos_utils_dist["logger"].info('onerror event: ', { msg: msg, url: url, line: line, column: column, error: error });
+            if (Object(argos_utils_dist["shouldIgnoreOnError"])()) {
                 return;
             }
             // 如果 error 是 undefined, null, number, boolean, string
-            var ex = Object(utils_dist["isPrimitive"])(error)
+            var ex = Object(argos_utils_dist["isPrimitive"])(error)
                 ? self._eventFromIncompleteOnError(msg, url, line, column, error)
                 : error;
             Object(dist["captureException"])(ex);
@@ -849,7 +849,7 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
         var self = this;
         var oldOnError = GlobalHandlers_global.onunhandledrejection;
         GlobalHandlers_global.onunhandledrejection = function (e) {
-            utils_dist["logger"].info('unhandledrejection event: ', e);
+            argos_utils_dist["logger"].info('unhandledrejection event: ', e);
             var error = e;
             try {
                 error = e && 'reason' in e ? e.reason : e;
@@ -857,10 +857,10 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
             catch (ex) {
                 // no-empty
             }
-            if (Object(utils_dist["shouldIgnoreOnError"])()) {
+            if (Object(argos_utils_dist["shouldIgnoreOnError"])()) {
                 return;
             }
-            var ex = Object(utils_dist["isPrimitive"])(error)
+            var ex = Object(argos_utils_dist["isPrimitive"])(error)
                 ? self._eventFromIncompleteRejection(error)
                 : exceptionFormat(error);
             Object(dist["captureException"])(ex);
@@ -878,7 +878,7 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
         if (!proto || !proto.hasOwnProperty || !proto.hasOwnProperty('addEventListener')) {
             return;
         }
-        Object(utils_dist["fill"])(proto, 'addEventListener', function (original) {
+        Object(argos_utils_dist["fill"])(proto, 'addEventListener', function (original) {
             return function (eventName, fn, options) {
                 var wrapFn = fn;
                 if (eventName === 'click') {
@@ -909,9 +909,9 @@ var GlobalHandlers_GlobalHandlers = /** @class */ (function () {
             'column': column,
         };
         // If 'message' is ErrorEvent, get real message from inside
-        var message = Object(utils_dist["isErrorEvent"])(msg) ? msg.message : msg;
+        var message = Object(argos_utils_dist["isErrorEvent"])(msg) ? msg.message : msg;
         var name;
-        if (Object(utils_dist["isString"])(message)) {
+        if (Object(argos_utils_dist["isString"])(message)) {
             var groups = message.match(ERROR_TYPES_RE);
             if (groups) {
                 name = groups[1];
@@ -950,18 +950,18 @@ var integrations_VueIntegration = /** @class */ (function () {
     function VueIntegration(options) {
         if (options === void 0) { options = {}; }
         this._hasSet = false;
-        var globalObj = Object(utils_dist["getGlobalObject"])();
+        var globalObj = Object(argos_utils_dist["getGlobalObject"])();
         this._vue = options.Vue || globalObj.Vue;
         this.setUp();
     }
     VueIntegration.prototype.setUp = function () {
         var _this = this;
         if (this._hasSet) {
-            utils_dist["logger"].info('VueIntegration installed');
+            argos_utils_dist["logger"].info('VueIntegration installed');
             return;
         }
         if (!this._vue || !this._vue.config) {
-            utils_dist["logger"].error('VueIntegration is missing a Vue instance');
+            argos_utils_dist["logger"].error('VueIntegration is missing a Vue instance');
             return;
         }
         var oldOnError = this._vue.config.errorHandler;
@@ -1008,9 +1008,9 @@ var init = function (options) {
         url: '' // 上报的请求
     };
     var combineOptions = src_assign(src_assign({}, defaultOptions), options);
-    utils_dist["logger"].bindOptions(combineOptions);
+    argos_utils_dist["logger"].bindOptions(combineOptions);
     if (!combineOptions.url) {
-        utils_dist["logger"].error('There is no upload data url!');
+        argos_utils_dist["logger"].error('There is no upload data url!');
         return;
     }
     var base = new src_Base(combineOptions);
