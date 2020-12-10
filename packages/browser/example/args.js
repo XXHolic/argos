@@ -667,7 +667,7 @@ function exceptionFormat(exception) {
 var packageMsg = __webpack_require__(2);
 var version_name = packageMsg.name, dependencies = packageMsg.dependencies;
 // 先编译好，再发布，自动会改变版本号，所以此处版本要手动同步到下一次发布的版本
-var SDK_MSG = { name: version_name, dependencies: dependencies, version: '1.0.11' };
+var SDK_MSG = { name: version_name, dependencies: dependencies, version: "1.1.0" };
 
 // CONCATENATED MODULE: ./src/Base.ts
 var Base_assign = (undefined && undefined.__assign) || function () {
