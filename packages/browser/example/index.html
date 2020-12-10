@@ -1,41 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Argos</title>
-  <style>
-    button {
-      display: block;
-      margin-bottom: 10px;
-    }
-  </style>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Argos</title>
+    <style>
+      button {
+        display: block;
+        margin-bottom: 10px;
+      }
+    </style>
 
-  <!-- <script
+    <!-- <script
   src="https://browser.sentry-cdn.com/5.27.0/bundle.min.js"
   integrity="sha384-odt6g+qg66eR/WbXcAHMweT2Ab+eHnyzmeJOodbqYhP2rQdeJbPgDM/xbi5jj2tx"
   crossorigin="anonymous"
 ></script> -->
-  <!-- <script src="./tracekit.js"></script> -->
-  <!-- <script src="./sentry.js"></script> -->
-  <script src="./args.js?v=3232423"></script>
-  <!-- <script src="./index.js"></script> -->
-  <script>
-    Argos.init({
-      url:'http://localhost:6677/argos',
-      enableLog: true
-    })
-
-  </script>
-</head>
-<body>
-  <button id="eventException">event exception</button>
-  <div id="demo"></div>
-  <script src="./exception.js?v=3232"></script>
-  <!-- <img src="http://localhost:6688" alt="" /> -->
-  <!-- <link rel="stylesheet" href="./test/css"> -->
-  <script>
-    // window.navigator.sendBeacon('http://localhost:6688',{test:123})
-  </script>
-</body>
+    <!-- <script src="./tracekit.js"></script> -->
+    <!-- <script src="./sentry.js"></script> -->
+    <script src="./args.js?v=3232423"></script>
+    <!-- <script src="./index.js"></script> -->
+    <script>
+      Argos.init({
+        url: "http://localhost:6688/argos",
+        enableLog: true,
+      });
+      //   Sentry.init({
+      //     dsn:
+      //       "https://1ea46c0309124094908fa0eb69e21afb@o366923.ingest.sentry.io/5169726",
+      //   });
+    </script>
+  </head>
+  <body>
+    <button id="eventException">event exception</button>
+    <div id="demo"></div>
+    <script src="./exception.js?v=3232"></script>
+    <!-- <img src="http://localhost:6688" alt="" /> -->
+    <!-- <link rel="stylesheet" href="./test/css"> -->
+    <script>
+      // window.navigator.sendBeacon('http://localhost:6688',{test:123})
+    </script>
+  </body>
 </html>

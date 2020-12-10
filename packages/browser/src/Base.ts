@@ -1,34 +1,32 @@
 /**
  * Base 类会进行外部框架插件异常的初始化，异常捕获和再加工
  */
-import { logger, getGlobalObject } from '@thynpm/argos-utils';
-import { Request, sendData } from './Request';
-import { exceptionFormat } from './utils';
-import { SDK_MSG } from './version';
-
+import { logger, getGlobalObject } from "@thynpm/argos-utils";
+import { Request, sendData } from "./Request";
+import { exceptionFormat } from "./utils";
+import { SDK_MSG } from "./version";
 
 interface BaseOptions {
-  headers?: object,
-  url?: string,
-  integrations?: Array<any>
+  headers?: object;
+  url?: string;
+  integrations?: Array<any>;
 }
 
 class Base {
   options: BaseOptions = {
-    headers:{
-      'Content-Type': 'application/json'
-    }
+    headers: {
+      "Content-Type": "application/json",
+    },
   };
   request: any;
 
   constructor(options) {
-    this.options = {...this.options,...options};
+    this.options = { ...this.options, ...options };
     this.request = new Request();
-    const {integrations} = this.options;
+    const { integrations } = this.options;
     if (integrations) {
-      this.setUpIntegrations(integrations)
+      this.setUpIntegrations(integrations);
     }
-
   }
 
   /**
@@ -36,9 +34,9 @@ class Base {
    * @param integrations
    */
   setUpIntegrations(integrations) {
-    integrations.forEach(ele => {
+    integrations.forEach((ele) => {
       if (ele && ele.setUp) {
-        ele.setUp()
+        ele.setUp();
       }
     });
   }
@@ -48,22 +46,22 @@ class Base {
    * @param exception
    * @param otherMsg
    */
-  captureException(exception,otherMsg) {
+  captureException(exception, otherMsg) {
     // 原则上是统一自动生成的
     const eventId = otherMsg && otherMsg.eventId;
     let exceptionFormatData = exceptionFormat(exception);
     exceptionFormatData.eventId = eventId;
-    delete exceptionFormatData.__isFormat__
-    const allData = this.combineData(exceptionFormatData)
-    logger.info('exception data',allData);
-    this.request.add(sendData(allData,this.options))
+    delete exceptionFormatData.__isFormat__;
+    const allData = this.combineData(exceptionFormatData);
+    logger.info("exception data", allData);
+    this.request.add(sendData(allData, this.options));
   }
 
   /**
    * 获取宿主环境的一些基本信息
    */
   getUserAgent() {
-    const global:any = getGlobalObject();
+    const global: any = getGlobalObject();
     let data = {
       pageW: null,
       pageH: null,
@@ -74,25 +72,38 @@ class Base {
       appName: null,
       system: null,
       appVersion: null,
-      platform: null
+      platform: null,
     };
-    const {innerWidth,innerHeight,screen,navigator} = global;
+    const { innerWidth, innerHeight, screen, navigator } = global;
     if (innerWidth) {
       data.pageW = innerWidth;
       data.pageH = innerHeight;
     }
 
-    if(screen) {
+    if (screen) {
       data.screenW = screen.width;
       data.screenH = screen.height;
     }
 
     if (navigator) {
-      const {appName,appVersion,userAgent,platform} = navigator;
+      const { appName, appVersion, userAgent, platform } = navigator;
       data.appName = appName;
       data.appVersion = appVersion;
       data.userAgent = userAgent;
       data.platform = platform;
+    }
+
+    return data;
+  }
+
+  getLocation() {
+    const global: any = getGlobalObject();
+    const { location } = global;
+    let data = {
+      href: "",
+    };
+    if (location) {
+      data.href = location.href;
     }
 
     return data;
@@ -103,14 +114,17 @@ class Base {
    * @param data
    */
   combineData(data) {
-    const environment = this.getUserAgent()
     if (!data.environment) {
+      const environment = this.getUserAgent();
       data.environment = environment;
+    }
+    if (!data.location) {
+      const path = this.getLocation();
+      data.location = path;
     }
     data.sdk = SDK_MSG;
     return data;
   }
-
 }
 
-export default Base
+export default Base;

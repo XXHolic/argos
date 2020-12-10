@@ -112,7 +112,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 2 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"@thynpm/argos\",\"version\":\"1.0.10\",\"description\":\"\",\"main\":\"dist/index.js\",\"scripts\":{\"test\":\"echo \\\"Error: no test specified\\\" && exit 1\",\"build\":\"run-s build:dist build:example\",\"build:dist\":\"webpack --config webpack.config.js\",\"build:example\":\"webpack --outPath=example --filename=args --config webpack.config.js\"},\"repository\":{\"type\":\"git\",\"url\":\"git+https://github.com/XXHolic/argos.git\"},\"files\":[\"dist\"],\"author\":\"argos\",\"license\":\"ISC\",\"bugs\":{\"url\":\"https://github.com/XXHolic/argos/issues\"},\"homepage\":\"https://github.com/XXHolic/argos#readme\",\"devDependencies\":{\"@tsconfig/recommended\":\"^1.0.1\",\"clean-webpack-plugin\":\"^3.0.0\",\"npm-run-all\":\"^4.1.5\",\"ts-loader\":\"^8.0.4\",\"typescript\":\"^4.0.3\",\"webpack\":\"^4.44.2\",\"webpack-cli\":\"^3.3.12\"},\"publishConfig\":{\"registry\":\"https://registry.npmjs.org/\"},\"dependencies\":{\"@thynpm/argos-hub\":\"^1.0.5\",\"@thynpm/argos-utils\":\"^1.0.7\"}}");
+module.exports = JSON.parse("{\"name\":\"@thynpm/argos\",\"version\":\"1.0.11\",\"description\":\"\",\"main\":\"dist/index.js\",\"scripts\":{\"test\":\"echo \\\"Error: no test specified\\\" && exit 1\",\"build\":\"run-s build:dist build:example\",\"build:dist\":\"webpack --config webpack.config.js\",\"build:example\":\"webpack --outPath=example --filename=args --config webpack.config.js\"},\"repository\":{\"type\":\"git\",\"url\":\"git+https://github.com/XXHolic/argos.git\"},\"files\":[\"dist\"],\"author\":\"argos\",\"license\":\"ISC\",\"bugs\":{\"url\":\"https://github.com/XXHolic/argos/issues\"},\"homepage\":\"https://github.com/XXHolic/argos#readme\",\"devDependencies\":{\"@tsconfig/recommended\":\"^1.0.1\",\"clean-webpack-plugin\":\"^3.0.0\",\"npm-run-all\":\"^4.1.5\",\"ts-loader\":\"^8.0.4\",\"typescript\":\"^4.0.3\",\"webpack\":\"^4.44.2\",\"webpack-cli\":\"^3.3.12\"},\"publishConfig\":{\"registry\":\"https://registry.npmjs.org/\"},\"dependencies\":{\"@thynpm/argos-hub\":\"^1.0.5\",\"@thynpm/argos-utils\":\"^1.0.7\"}}");
 
 /***/ }),
 /* 3 */
@@ -667,7 +667,7 @@ function exceptionFormat(exception) {
 var packageMsg = __webpack_require__(2);
 var version_name = packageMsg.name, dependencies = packageMsg.dependencies;
 // 先编译好，再发布，自动会改变版本号，所以此处版本要手动同步到下一次发布的版本
-var SDK_MSG = { name: version_name, dependencies: dependencies, version: '1.0.10' };
+var SDK_MSG = { name: version_name, dependencies: dependencies, version: '1.0.11' };
 
 // CONCATENATED MODULE: ./src/Base.ts
 var Base_assign = (undefined && undefined.__assign) || function () {
@@ -692,8 +692,8 @@ var Base_Base = /** @class */ (function () {
     function Base(options) {
         this.options = {
             headers: {
-                'Content-Type': 'application/json'
-            }
+                "Content-Type": "application/json",
+            },
         };
         this.options = Base_assign(Base_assign({}, this.options), options);
         this.request = new Request_Request();
@@ -725,7 +725,7 @@ var Base_Base = /** @class */ (function () {
         exceptionFormatData.eventId = eventId;
         delete exceptionFormatData.__isFormat__;
         var allData = this.combineData(exceptionFormatData);
-        argos_utils_dist["logger"].info('exception data', allData);
+        argos_utils_dist["logger"].info("exception data", allData);
         this.request.add(Request_sendData(allData, this.options));
     };
     /**
@@ -743,7 +743,7 @@ var Base_Base = /** @class */ (function () {
             appName: null,
             system: null,
             appVersion: null,
-            platform: null
+            platform: null,
         };
         var innerWidth = global.innerWidth, innerHeight = global.innerHeight, screen = global.screen, navigator = global.navigator;
         if (innerWidth) {
@@ -763,14 +763,29 @@ var Base_Base = /** @class */ (function () {
         }
         return data;
     };
+    Base.prototype.getLocation = function () {
+        var global = Object(argos_utils_dist["getGlobalObject"])();
+        var location = global.location;
+        var data = {
+            href: "",
+        };
+        if (location) {
+            data.href = location.href;
+        }
+        return data;
+    };
     /**
      * 宿主信息和异常信息整合到一起
      * @param data
      */
     Base.prototype.combineData = function (data) {
-        var environment = this.getUserAgent();
         if (!data.environment) {
+            var environment = this.getUserAgent();
             data.environment = environment;
+        }
+        if (!data.location) {
+            var path = this.getLocation();
+            data.location = path;
         }
         data.sdk = SDK_MSG;
         return data;
