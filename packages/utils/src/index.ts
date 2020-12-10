@@ -1,4 +1,4 @@
-import logger from './logger'
+import logger from "./logger";
 
 export {
   isSupportsFetch,
@@ -12,7 +12,7 @@ export {
   isPrimitive,
   isUndefined,
   isSupportsBeacon,
-} from './is';
+} from "./is";
 
 export {
   getGlobalObject,
@@ -27,6 +27,8 @@ export {
   shouldIgnoreOnError,
   ignoreNextOnError,
   consoleSandbox,
-} from './utils'
+} from "./utils";
 
-export { logger }
+export { getTimeStamp } from "./time";
+
+export { logger };

@@ -126,6 +126,7 @@ __webpack_require__.d(__webpack_exports__, "getLocationHref", function() { retur
 __webpack_require__.d(__webpack_exports__, "shouldIgnoreOnError", function() { return /* reexport */ shouldIgnoreOnError; });
 __webpack_require__.d(__webpack_exports__, "ignoreNextOnError", function() { return /* reexport */ ignoreNextOnError; });
 __webpack_require__.d(__webpack_exports__, "consoleSandbox", function() { return /* reexport */ consoleSandbox; });
+__webpack_require__.d(__webpack_exports__, "getTimeStamp", function() { return /* reexport */ getTimeStamp; });
 __webpack_require__.d(__webpack_exports__, "logger", function() { return /* reexport */ src_logger; });
 
 // CONCATENATED MODULE: ./src/utils.ts
@@ -504,7 +505,13 @@ var isSupportsBeacon = function () {
     return false;
 };
 
+// CONCATENATED MODULE: ./src/time.ts
+var getTimeStamp = function () {
+    return Date.now();
+};
+
 // CONCATENATED MODULE: ./src/index.ts
+
 
 
 

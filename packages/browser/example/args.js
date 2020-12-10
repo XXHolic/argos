@@ -112,7 +112,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 2 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"@thynpm/argos\",\"version\":\"1.0.11\",\"description\":\"\",\"main\":\"dist/index.js\",\"scripts\":{\"test\":\"echo \\\"Error: no test specified\\\" && exit 1\",\"build\":\"run-s build:dist build:example\",\"build:dist\":\"webpack --config webpack.config.js\",\"build:example\":\"webpack --outPath=example --filename=args --config webpack.config.js\"},\"repository\":{\"type\":\"git\",\"url\":\"git+https://github.com/XXHolic/argos.git\"},\"files\":[\"dist\"],\"author\":\"argos\",\"license\":\"ISC\",\"bugs\":{\"url\":\"https://github.com/XXHolic/argos/issues\"},\"homepage\":\"https://github.com/XXHolic/argos#readme\",\"devDependencies\":{\"@tsconfig/recommended\":\"^1.0.1\",\"clean-webpack-plugin\":\"^3.0.0\",\"npm-run-all\":\"^4.1.5\",\"ts-loader\":\"^8.0.4\",\"typescript\":\"^4.0.3\",\"webpack\":\"^4.44.2\",\"webpack-cli\":\"^3.3.12\"},\"publishConfig\":{\"registry\":\"https://registry.npmjs.org/\"},\"dependencies\":{\"@thynpm/argos-hub\":\"^1.0.5\",\"@thynpm/argos-utils\":\"^1.0.7\"}}");
+module.exports = JSON.parse("{\"name\":\"@thynpm/argos\",\"version\":\"1.1.0\",\"description\":\"\",\"main\":\"dist/index.js\",\"scripts\":{\"test\":\"echo \\\"Error: no test specified\\\" && exit 1\",\"build\":\"run-s build:dist build:example\",\"build:dist\":\"webpack --config webpack.config.js\",\"build:example\":\"webpack --outPath=example --filename=args --config webpack.config.js\"},\"repository\":{\"type\":\"git\",\"url\":\"git+https://github.com/XXHolic/argos.git\"},\"files\":[\"dist\"],\"author\":\"argos\",\"license\":\"ISC\",\"bugs\":{\"url\":\"https://github.com/XXHolic/argos/issues\"},\"homepage\":\"https://github.com/XXHolic/argos#readme\",\"devDependencies\":{\"@tsconfig/recommended\":\"^1.0.1\",\"clean-webpack-plugin\":\"^3.0.0\",\"npm-run-all\":\"^4.1.5\",\"ts-loader\":\"^8.0.4\",\"typescript\":\"^4.0.3\",\"webpack\":\"^4.44.2\",\"webpack-cli\":\"^3.3.12\"},\"publishConfig\":{\"registry\":\"https://registry.npmjs.org/\"},\"dependencies\":{\"@thynpm/argos-hub\":\"^1.0.5\",\"@thynpm/argos-utils\":\"^1.0.7\"}}");
 
 /***/ }),
 /* 3 */
@@ -161,7 +161,7 @@ var Request_Request = /** @class */ (function () {
         this.options = __assign(__assign({}, this.options), options);
     }
     Request.prototype.isReady = function () {
-        return this.options.maxRequest && this.tasks.length <= this.options.maxRequest;
+        return (this.options.maxRequest && this.tasks.length <= this.options.maxRequest);
     };
     Request.prototype.remove = function (task) {
         var removedTask = this.tasks.splice(this.tasks.indexOf(task), 1)[0];
@@ -170,11 +170,13 @@ var Request_Request = /** @class */ (function () {
     Request.prototype.add = function (task) {
         var _this = this;
         if (!this.isReady()) {
-            argos_utils_dist["logger"].warn('too many request');
+            argos_utils_dist["logger"].warn("too many request");
             return;
         }
         this.tasks.push(task);
-        task.then(function () { return _this.remove(task); }).then(null, function () {
+        task
+            .then(function () { return _this.remove(task); })
+            .then(null, function () {
             return _this.remove(task).then(null, function () {
                 // We have to add this catch here otherwise we have an unhandledPromiseRejection
                 // because it's a new Promise chain.
@@ -197,6 +199,9 @@ var Request_sendData = function (data, options) {
 function createBeacon(data, options) {
     var url = options.url;
     return new Promise(function (resolve, reject) {
+        if (!data.timeStamp) {
+            data.timeStamp = Object(argos_utils_dist["getTimeStamp"])();
+        }
         var result = Request_globalObj.navigator.sendBeacon(url, JSON.stringify(data));
         resolve({ sendBeacon: result });
     });
@@ -204,22 +209,27 @@ function createBeacon(data, options) {
 function createFetch(data, options) {
     return new Promise(function (resolve, reject) {
         var url = options.url, headers = options.headers;
+        if (!data.timeStamp) {
+            data.timeStamp = Object(argos_utils_dist["getTimeStamp"])();
+        }
         var reqOptions = {
             body: JSON.stringify(data),
-            method: 'POST',
-            headers: __assign({}, headers)
+            method: "POST",
+            headers: __assign({}, headers),
         };
-        fetch(url, __assign({}, reqOptions)).then(function (response) {
+        fetch(url, __assign({}, reqOptions))
+            .then(function (response) {
             var status = Object(argos_utils_dist["fromHttpCode"])(response.status);
             if (status === argos_utils_dist["requestStatus"].Success) {
                 resolve({ status: status });
                 return;
             }
             if (status === argos_utils_dist["requestStatus"].RateLimit) {
-                argos_utils_dist["logger"].warn('Too many requests');
+                argos_utils_dist["logger"].warn("Too many requests");
             }
             reject(response);
-        }).catch(function (ex) {
+        })
+            .catch(function (ex) {
             reject(ex);
         });
     });
@@ -244,11 +254,14 @@ function createXHR(data, options) {
             argos_utils_dist["logger"].error(request);
             reject(request);
         };
-        request.open('POST', url);
+        request.open("POST", url);
         for (var header in headers) {
             if (headers.hasOwnProperty(header)) {
                 request.setRequestHeader(header, headers[header]);
             }
+        }
+        if (!data.timeStamp) {
+            data.timeStamp = Object(argos_utils_dist["getTimeStamp"])();
         }
         var sendData = JSON.stringify(data);
         request.send(sendData);
@@ -667,7 +680,7 @@ function exceptionFormat(exception) {
 var packageMsg = __webpack_require__(2);
 var version_name = packageMsg.name, dependencies = packageMsg.dependencies;
 // 先编译好，再发布，自动会改变版本号，所以此处版本要手动同步到下一次发布的版本
-var SDK_MSG = { name: version_name, dependencies: dependencies, version: "1.1.0" };
+var SDK_MSG = { name: version_name, dependencies: dependencies, version: "1.1.1" };
 
 // CONCATENATED MODULE: ./src/Base.ts
 var Base_assign = (undefined && undefined.__assign) || function () {
