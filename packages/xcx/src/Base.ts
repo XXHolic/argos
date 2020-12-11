@@ -13,6 +13,7 @@ class Base {
   environment: object = {};
   networkType: object = {};
   wxSetting: object = {};
+  currentPage: object = {};
 
   constructor(options) {
     this.options = { ...this.options, ...options };
@@ -26,6 +27,7 @@ class Base {
     const eventId = otherMsg && otherMsg.eventId;
     let exceptionFormat = { exception, eventId: null };
     exceptionFormat.eventId = eventId;
+    this.getCurrentPage();
     const allData = this.combineData(exceptionFormat);
     logger.info("exception data", allData);
     this.request.add(
@@ -33,6 +35,33 @@ class Base {
         sendData(allData, this.options);
       })
     );
+  }
+
+  getCurrentPage() {
+    const that = this;
+    try {
+      // @ts-ignore
+      const pages = getCurrentPages();
+      if (pages.length) {
+        const currentPage = pages[pages.length - 1];
+        const {
+          route = "",
+          options = {},
+          __displayReporter = {},
+          __route__ = "",
+          __wxExparserNodeId__ = "",
+        } = currentPage;
+        that.currentPage = {
+          route,
+          options,
+          __displayReporter,
+          __route__,
+          __wxExparserNodeId__,
+        };
+      }
+    } catch (error) {
+      logger.error("getCurrentPages error", error);
+    }
   }
 
   getSetting() {
@@ -86,6 +115,9 @@ class Base {
 
   // 合并数据
   combineData(data) {
+    if (!data.currentPage) {
+      data.currentPage = this.currentPage;
+    }
     if (!data.environment) {
       data.environment = this.environment;
     }
