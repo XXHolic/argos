@@ -112,7 +112,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 2 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"@thynpm/argos-xcx\",\"version\":\"1.0.5\",\"description\":\"\",\"main\":\"dist/index.js\",\"scripts\":{\"test\":\"echo \\\"Error: no test specified\\\" && exit 1\",\"build\":\"run-s build:dist build:example\",\"build:dist\":\"webpack --config webpack.config.js\",\"build:example\":\"webpack --outPath=example --filename=xcx --config webpack.config.js\"},\"repository\":{\"type\":\"git\",\"url\":\"git+https://github.com/XXHolic/argos.git\"},\"files\":[\"dist\"],\"author\":\"\",\"license\":\"ISC\",\"bugs\":{\"url\":\"https://github.com/XXHolic/argos/issues\"},\"homepage\":\"https://github.com/XXHolic/argos#readme\",\"devDependencies\":{\"@tsconfig/recommended\":\"^1.0.1\",\"clean-webpack-plugin\":\"^3.0.0\",\"npm-run-all\":\"^4.1.5\",\"ts-loader\":\"^8.0.4\",\"typescript\":\"^4.0.3\",\"webpack\":\"^4.44.2\",\"webpack-cli\":\"^3.3.12\"},\"publishConfig\":{\"registry\":\"https://registry.npmjs.org/\"},\"dependencies\":{\"@thynpm/argos-hub\":\"^1.0.6\",\"@thynpm/argos-utils\":\"^1.0.8\"}}");
+module.exports = JSON.parse("{\"name\":\"@thynpm/argos-xcx\",\"version\":\"1.0.7\",\"description\":\"\",\"main\":\"dist/index.js\",\"scripts\":{\"test\":\"echo \\\"Error: no test specified\\\" && exit 1\",\"build\":\"run-s build:dist build:example\",\"build:dist\":\"webpack --config webpack.config.js\",\"build:example\":\"webpack --outPath=example --filename=xcx --config webpack.config.js\"},\"repository\":{\"type\":\"git\",\"url\":\"git+https://github.com/XXHolic/argos.git\"},\"files\":[\"dist\"],\"author\":\"\",\"license\":\"ISC\",\"bugs\":{\"url\":\"https://github.com/XXHolic/argos/issues\"},\"homepage\":\"https://github.com/XXHolic/argos#readme\",\"devDependencies\":{\"@tsconfig/recommended\":\"^1.0.1\",\"clean-webpack-plugin\":\"^3.0.0\",\"npm-run-all\":\"^4.1.5\",\"ts-loader\":\"^8.0.4\",\"typescript\":\"^4.0.3\",\"webpack\":\"^4.44.2\",\"webpack-cli\":\"^3.3.12\"},\"publishConfig\":{\"registry\":\"https://registry.npmjs.org/\"},\"dependencies\":{\"@thynpm/argos-hub\":\"^1.0.6\",\"@thynpm/argos-utils\":\"^1.0.8\"}}");
 
 /***/ }),
 /* 3 */
@@ -210,7 +210,7 @@ function createWXRequest(data, options) {
 var packageMsg = __webpack_require__(2);
 var version_name = packageMsg.name, dependencies = packageMsg.dependencies;
 // 先编译好，再发布，自动会改变版本号，所以此处版本要手动同步到下一次发布的版本
-var SDK_MSG = { name: version_name, dependencies: dependencies, version: "1.0.6" };
+var SDK_MSG = { name: version_name, dependencies: dependencies, version: "1.0.8" };
 
 // CONCATENATED MODULE: ./src/Base.ts
 var Base_assign = (undefined && undefined.__assign) || function () {
@@ -233,6 +233,7 @@ var Base_Base = /** @class */ (function () {
         this.environment = {};
         this.networkType = {};
         this.wxSetting = {};
+        this.currentPage = {};
         this.options = Base_assign(Base_assign({}, this.options), options);
         this.request = new Request_Request(options);
         // 异步，一开始先拿到存下来
@@ -244,11 +245,33 @@ var Base_Base = /** @class */ (function () {
         var eventId = otherMsg && otherMsg.eventId;
         var exceptionFormat = { exception: exception, eventId: null };
         exceptionFormat.eventId = eventId;
+        this.getCurrentPage();
         var allData = this.combineData(exceptionFormat);
         argos_utils_dist["logger"].info("exception data", allData);
         this.request.add(new Promise(function () {
             sendData(allData, _this.options);
         }));
+    };
+    Base.prototype.getCurrentPage = function () {
+        var that = this;
+        try {
+            // @ts-ignore
+            var pages = getCurrentPages();
+            if (pages.length) {
+                var currentPage = pages[pages.length - 1];
+                var _a = currentPage.route, route = _a === void 0 ? "" : _a, _b = currentPage.options, options = _b === void 0 ? {} : _b, _c = currentPage.__displayReporter, __displayReporter = _c === void 0 ? {} : _c, _d = currentPage.__route__, __route__ = _d === void 0 ? "" : _d, _e = currentPage.__wxExparserNodeId__, __wxExparserNodeId__ = _e === void 0 ? "" : _e;
+                that.currentPage = {
+                    route: route,
+                    options: options,
+                    __displayReporter: __displayReporter,
+                    __route__: __route__,
+                    __wxExparserNodeId__: __wxExparserNodeId__,
+                };
+            }
+        }
+        catch (error) {
+            argos_utils_dist["logger"].error("getCurrentPages error", error);
+        }
     };
     Base.prototype.getSetting = function () {
         var that = this;
@@ -301,6 +324,9 @@ var Base_Base = /** @class */ (function () {
     };
     // 合并数据
     Base.prototype.combineData = function (data) {
+        if (!data.currentPage) {
+            data.currentPage = this.currentPage;
+        }
         if (!data.environment) {
             data.environment = this.environment;
         }
