@@ -91,14 +91,14 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
-!function(n,t){ true?module.exports=t():undefined}(window,(function(){return function(n){var t={};function r(o){if(t[o])return t[o].exports;var e=t[o]={i:o,l:!1,exports:{}};return n[o].call(e.exports,e,e.exports,r),e.l=!0,e.exports}return r.m=n,r.c=t,r.d=function(n,t,o){r.o(n,t)||Object.defineProperty(n,t,{enumerable:!0,get:o})},r.r=function(n){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(n,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(n,"__esModule",{value:!0})},r.t=function(n,t){if(1&t&&(n=r(n)),8&t)return n;if(4&t&&"object"==typeof n&&n&&n.__esModule)return n;var o=Object.create(null);if(r.r(o),Object.defineProperty(o,"default",{enumerable:!0,value:n}),2&t&&"string"!=typeof n)for(var e in n)r.d(o,e,function(t){return n[t]}.bind(null,e));return o},r.n=function(n){var t=n&&n.__esModule?function(){return n.default}:function(){return n};return r.d(t,"a",t),t},r.o=function(n,t){return Object.prototype.hasOwnProperty.call(n,t)},r.p="",r(r.s=0)}([function(n,t,r){"use strict";r.r(t),r.d(t,"isSupportsFetch",(function(){return S})),r.d(t,"isSupportsXMR",(function(){return E})),r.d(t,"isError",(function(){return L})),r.d(t,"isErrorEvent",(function(){return X})),r.d(t,"isDOMException",(function(){return M})),r.d(t,"isEvent",(function(){return P})),r.d(t,"isString",(function(){return C})),r.d(t,"isPlainObject",(function(){return R})),r.d(t,"isPrimitive",(function(){return A})),r.d(t,"getGlobalObject",(function(){return u})),r.d(t,"globalMark",(function(){return e})),r.d(t,"fill",(function(){return c})),r.d(t,"uuid4",(function(){return f})),r.d(t,"addHandler",(function(){return l})),r.d(t,"triggerHandler",(function(){return s})),r.d(t,"requestStatus",(function(){return o})),r.d(t,"fromHttpCode",(function(){return p})),r.d(t,"getLocationHref",(function(){return d})),r.d(t,"shouldIgnoreOnError",(function(){return y})),r.d(t,"ignoreNextOnError",(function(){return v})),r.d(t,"consoleSandbox",(function(){return x})),r.d(t,"logger",(function(){return m}));var o,e="__ARGOS__",i={},u=function(){return"undefined"!=typeof window?window:i},c=function(n,t,r){var o;if(t in n){var e=n[t],i=r(e);if("function"==typeof i)try{i.prototype=i.prototype||{},Object.defineProperties(i,((o={}).__argos_original__={enumerable:!1,value:e},o))}catch(n){console.warn("multiple fill may cause error")}n[t]=i}},f=function(){var n=u(),t=n.crypto||n.msCrypto;if(void 0!==t&&t.getRandomValues){var r=new Uint16Array(8);t.getRandomValues(r),r[3]=4095&r[3]|16384,r[4]=16383&r[4]|32768;var o=function(n){for(var t=n.toString(16);t.length<4;)t="0"+t;return t};return o(r[0])+o(r[1])+o(r[2])+o(r[3])+o(r[4])+o(r[5])+o(r[6])+o(r[7])}return"xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx".replace(/[xy]/g,(function(n){var t=16*Math.random()|0;return("x"===n?t:3&t|8).toString(16)}))},a={},l=function(n){n&&"string"==typeof n.type&&(a[n.type]=a[n.type]||[],a[n.type].push(n.fn))},s=function(n,t){if(n&&a[n])for(var r=0,o=a[n]||[];r<o.length;r++){var e=o[r];try{e(t)}catch(n){console.error("Error while triggering handler")}}};function p(n){return n>=200&&n<300?o.Success:429===n?o.RateLimit:n>=400&&n<500?o.Invalid:n>=500?o.Failed:o.Unknown}function d(){try{return document.location.href}catch(n){return""}}!function(n){n.Unknown="unknown",n.Success="success",n.RateLimit="rate_limit",n.Invalid="invalid",n.Failed="failed"}(o||(o={}));var g=0;function y(){return g>0}function v(){g+=1,setTimeout((function(){g-=1}))}function x(n,t){var r=u();if("console"in r&&r.console[n])return t()}var b=function(){return(b=Object.assign||function(n){for(var t,r=1,o=arguments.length;r<o;r++)for(var e in t=arguments[r])Object.prototype.hasOwnProperty.call(t,e)&&(n[e]=t[e]);return n}).apply(this,arguments)},h=function(){for(var n=0,t=0,r=arguments.length;t<r;t++)n+=arguments[t].length;var o=Array(n),e=0;for(t=0;t<r;t++)for(var i=arguments[t],u=0,c=i.length;u<c;u++,e++)o[e]=i[u];return o},j=u(),w="Argos Log",O=function(){function n(){this.options={enableLog:!1,showLog:!0,showInfo:!0,showWarn:!0,showError:!0,isXCX:!1}}return n.prototype.bindOptions=function(n){this.options=b(b({},this.options),n)},n.prototype.log=function(){for(var n=[],t=0;t<arguments.length;t++)n[t]=arguments[t];var r=this.options,o=r.enableLog,e=r.showLog,i=r.isXCX;o&&e&&(i?console.log.apply(console,h(["["+w+"]"],n)):x("log",(function(){var t;(t=j.console).log.apply(t,h(["["+w+"]"],n))})))},n.prototype.warn=function(){for(var n=[],t=0;t<arguments.length;t++)n[t]=arguments[t];var r=this.options,o=r.enableLog,e=r.showWarn,i=r.isXCX;o&&e&&(i?console.warn.apply(console,h(["["+w+"]"],n)):x("warn",(function(){var t;(t=j.console).warn.apply(t,h(["["+w+"]"],n))})))},n.prototype.info=function(){for(var n=[],t=0;t<arguments.length;t++)n[t]=arguments[t];var r=this.options,o=r.enableLog,e=r.showInfo,i=r.isXCX;o&&e&&(i?console.info.apply(console,h(["["+w+"]"],n)):x("info",(function(){var t;(t=j.console).info.apply(t,h(["["+w+"]"],n))})))},n.prototype.error=function(){for(var n=[],t=0;t<arguments.length;t++)n[t]=arguments[t];var r=this.options,o=r.enableLog,e=r.showError,i=r.isXCX;o&&e&&(i?console.error.apply(console,h(["["+w+"]"],n)):x("error",(function(){var t;(t=j.console).error.apply(t,h(["["+w+"]"],n))})))},n}();j[e]=j[e]||{};var m=j[e].logger||(j[e].logger=new O),S=function(){return"fetch"in u()},E=function(){return"XMLHttpRequest"in u()};function _(n,t){try{return n instanceof t}catch(n){return!1}}var L=function(n){switch(Object.prototype.toString.call(n)){case"[object Error]":case"[object Exception]":case"[object DOMException]":return!0;default:return _(n,Error)}},X=function(n){return"[object ErrorEvent]"===Object.prototype.toString.call(n)},M=function(n){return"[object DOMException]"===Object.prototype.toString.call(n)},P=function(n){return"undefined"!=typeof Event&&_(n,Event)},C=function(n){return"[object String]"===Object.prototype.toString.call(n)},R=function(n){return"[object Object]"===Object.prototype.toString.call(n)},A=function(n){return null===n||"object"!=typeof n&&"function"!=typeof n}}])}));
+!function(n,t){ true?module.exports=t():undefined}(window,(function(){return function(n){var t={};function r(o){if(t[o])return t[o].exports;var e=t[o]={i:o,l:!1,exports:{}};return n[o].call(e.exports,e,e.exports,r),e.l=!0,e.exports}return r.m=n,r.c=t,r.d=function(n,t,o){r.o(n,t)||Object.defineProperty(n,t,{enumerable:!0,get:o})},r.r=function(n){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(n,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(n,"__esModule",{value:!0})},r.t=function(n,t){if(1&t&&(n=r(n)),8&t)return n;if(4&t&&"object"==typeof n&&n&&n.__esModule)return n;var o=Object.create(null);if(r.r(o),Object.defineProperty(o,"default",{enumerable:!0,value:n}),2&t&&"string"!=typeof n)for(var e in n)r.d(o,e,function(t){return n[t]}.bind(null,e));return o},r.n=function(n){var t=n&&n.__esModule?function(){return n.default}:function(){return n};return r.d(t,"a",t),t},r.o=function(n,t){return Object.prototype.hasOwnProperty.call(n,t)},r.p="",r(r.s=0)}([function(n,t,r){"use strict";r.r(t),r.d(t,"isSupportsFetch",(function(){return S})),r.d(t,"isSupportsXHR",(function(){return E})),r.d(t,"isError",(function(){return L})),r.d(t,"isErrorEvent",(function(){return X})),r.d(t,"isDOMException",(function(){return M})),r.d(t,"isEvent",(function(){return P})),r.d(t,"isString",(function(){return C})),r.d(t,"isPlainObject",(function(){return R})),r.d(t,"isPrimitive",(function(){return A})),r.d(t,"isUndefined",(function(){return H})),r.d(t,"isSupportsBeacon",(function(){return U})),r.d(t,"getGlobalObject",(function(){return u})),r.d(t,"globalMark",(function(){return e})),r.d(t,"fill",(function(){return c})),r.d(t,"uuid4",(function(){return f})),r.d(t,"addHandler",(function(){return l})),r.d(t,"triggerHandler",(function(){return s})),r.d(t,"requestStatus",(function(){return o})),r.d(t,"fromHttpCode",(function(){return p})),r.d(t,"getLocationHref",(function(){return d})),r.d(t,"shouldIgnoreOnError",(function(){return y})),r.d(t,"ignoreNextOnError",(function(){return v})),r.d(t,"consoleSandbox",(function(){return x})),r.d(t,"getTimeStamp",(function(){return I})),r.d(t,"logger",(function(){return m}));var o,e="__ARGOS__",i={},u=function(){return"undefined"!=typeof window?window:i},c=function(n,t,r){var o;if(t in n){var e=n[t],i=r(e);if("function"==typeof i)try{i.prototype=i.prototype||{},Object.defineProperties(i,((o={}).__argos_original__={enumerable:!1,value:e},o))}catch(n){m.warn("multiple fill may cause error")}n[t]=i}},f=function(){var n=u(),t=n.crypto||n.msCrypto;if(void 0!==t&&t.getRandomValues){var r=new Uint16Array(8);t.getRandomValues(r),r[3]=4095&r[3]|16384,r[4]=16383&r[4]|32768;var o=function(n){for(var t=n.toString(16);t.length<4;)t="0"+t;return t};return o(r[0])+o(r[1])+o(r[2])+o(r[3])+o(r[4])+o(r[5])+o(r[6])+o(r[7])}return"xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx".replace(/[xy]/g,(function(n){var t=16*Math.random()|0;return("x"===n?t:3&t|8).toString(16)}))},a={},l=function(n){n&&"string"==typeof n.type&&(a[n.type]=a[n.type]||[],a[n.type].push(n.fn))},s=function(n,t){if(n&&a[n])for(var r=0,o=a[n]||[];r<o.length;r++){var e=o[r];try{e(t)}catch(n){console.error("Error while triggering handler")}}};function p(n){return n>=200&&n<300?o.Success:429===n?o.RateLimit:n>=400&&n<500?o.Invalid:n>=500?o.Failed:o.Unknown}function d(){try{return document.location.href}catch(n){return""}}!function(n){n.Unknown="unknown",n.Success="success",n.RateLimit="rate_limit",n.Invalid="invalid",n.Failed="failed"}(o||(o={}));var g=0;function y(){return g>0}function v(){g+=1,setTimeout((function(){g-=1}))}function x(n,t){var r=u();if("console"in r&&r.console[n])return t()}var b=function(){return(b=Object.assign||function(n){for(var t,r=1,o=arguments.length;r<o;r++)for(var e in t=arguments[r])Object.prototype.hasOwnProperty.call(t,e)&&(n[e]=t[e]);return n}).apply(this,arguments)},h=function(){for(var n=0,t=0,r=arguments.length;t<r;t++)n+=arguments[t].length;var o=Array(n),e=0;for(t=0;t<r;t++)for(var i=arguments[t],u=0,c=i.length;u<c;u++,e++)o[e]=i[u];return o},j=u(),w="Argos Log",O=function(){function n(){this.options={enableLog:!1,showLog:!0,showInfo:!0,showWarn:!0,showError:!0,isXCX:!1}}return n.prototype.bindOptions=function(n){this.options=b(b({},this.options),n)},n.prototype.log=function(){for(var n=[],t=0;t<arguments.length;t++)n[t]=arguments[t];var r=this.options,o=r.enableLog,e=r.showLog,i=r.isXCX;o&&e&&(i?console.log.apply(console,h(["["+w+"]"],n)):x("log",(function(){var t;(t=j.console).log.apply(t,h(["["+w+"]"],n))})))},n.prototype.warn=function(){for(var n=[],t=0;t<arguments.length;t++)n[t]=arguments[t];var r=this.options,o=r.enableLog,e=r.showWarn,i=r.isXCX;o&&e&&(i?console.warn.apply(console,h(["["+w+"]"],n)):x("warn",(function(){var t;(t=j.console).warn.apply(t,h(["["+w+"]"],n))})))},n.prototype.info=function(){for(var n=[],t=0;t<arguments.length;t++)n[t]=arguments[t];var r=this.options,o=r.enableLog,e=r.showInfo,i=r.isXCX;o&&e&&(i?console.info.apply(console,h(["["+w+"]"],n)):x("info",(function(){var t;(t=j.console).info.apply(t,h(["["+w+"]"],n))})))},n.prototype.error=function(){for(var n=[],t=0;t<arguments.length;t++)n[t]=arguments[t];var r=this.options,o=r.enableLog,e=r.showError,i=r.isXCX;o&&e&&(i?console.error.apply(console,h(["["+w+"]"],n)):x("error",(function(){var t;(t=j.console).error.apply(t,h(["["+w+"]"],n))})))},n}();j[e]=j[e]||{};var m=j[e].logger||(j[e].logger=new O),S=function(){return"fetch"in u()},E=function(){return"XMLHttpRequest"in u()};function _(n,t){try{return n instanceof t}catch(n){return!1}}var L=function(n){switch(Object.prototype.toString.call(n)){case"[object Error]":case"[object Exception]":case"[object DOMException]":return!0;default:return _(n,Error)}},X=function(n){return"[object ErrorEvent]"===Object.prototype.toString.call(n)},M=function(n){return"[object DOMException]"===Object.prototype.toString.call(n)},P=function(n){return"undefined"!=typeof Event&&_(n,Event)},C=function(n){return"[object String]"===Object.prototype.toString.call(n)},R=function(n){return"[object Object]"===Object.prototype.toString.call(n)},A=function(n){return null===n||"object"!=typeof n&&"function"!=typeof n},H=function(n){return void 0===n},U=function(){var n=u();return!(!n.navigator||!n.navigator.sendBeacon)},I=function(){return Date.now()}}])}));
 //# sourceMappingURL=index.js.map
 
 /***/ }),
@@ -110,6 +110,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ }),
 /* 2 */
+/***/ (function(module) {
+
+module.exports = JSON.parse("{\"name\":\"@thynpm/argos-xcx\",\"version\":\"1.0.5\",\"description\":\"\",\"main\":\"dist/index.js\",\"scripts\":{\"test\":\"echo \\\"Error: no test specified\\\" && exit 1\",\"build\":\"run-s build:dist build:example\",\"build:dist\":\"webpack --config webpack.config.js\",\"build:example\":\"webpack --outPath=example --filename=xcx --config webpack.config.js\"},\"repository\":{\"type\":\"git\",\"url\":\"git+https://github.com/XXHolic/argos.git\"},\"files\":[\"dist\"],\"author\":\"\",\"license\":\"ISC\",\"bugs\":{\"url\":\"https://github.com/XXHolic/argos/issues\"},\"homepage\":\"https://github.com/XXHolic/argos#readme\",\"devDependencies\":{\"@tsconfig/recommended\":\"^1.0.1\",\"clean-webpack-plugin\":\"^3.0.0\",\"npm-run-all\":\"^4.1.5\",\"ts-loader\":\"^8.0.4\",\"typescript\":\"^4.0.3\",\"webpack\":\"^4.44.2\",\"webpack-cli\":\"^3.3.12\"},\"publishConfig\":{\"registry\":\"https://registry.npmjs.org/\"},\"dependencies\":{\"@thynpm/argos-hub\":\"^1.0.6\",\"@thynpm/argos-utils\":\"^1.0.8\"}}");
+
+/***/ }),
+/* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -140,7 +146,6 @@ var __assign = (undefined && undefined.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 
-var ignoreMark = '__ignore__';
 var Request_Request = /** @class */ (function () {
     function Request(options) {
         if (options === void 0) { options = {}; }
@@ -160,11 +165,13 @@ var Request_Request = /** @class */ (function () {
     Request.prototype.add = function (task) {
         var _this = this;
         if (!this.isReady()) {
-            argos_utils_dist["logger"].warn('too many request');
+            argos_utils_dist["logger"].warn("too many request");
             return;
         }
         this.tasks.push(task);
-        task.then(function () { return _this.remove(task); }).then(null, function () {
+        task
+            .then(function () { return _this.remove(task); })
+            .then(null, function () {
             return _this.remove(task).then(null, function () {
                 // We have to add this catch here otherwise we have an unhandledPromiseRejection
                 // because it's a new Promise chain.
@@ -180,15 +187,14 @@ var sendData = function (data, options) {
 };
 function createWXRequest(data, options) {
     var url = options.url;
-    if (!url) {
-        console.error('There is no upload data url!');
-        return;
+    if (!data.timeStamp) {
+        data.timeStamp = Object(argos_utils_dist["getTimeStamp"])();
     }
     return new Promise(function (resolve, reject) {
         // @ts-ignore
         wx.request({
             url: url,
-            method: 'POST',
+            method: "POST",
             data: data,
             success: function (res) {
                 resolve(res);
@@ -199,6 +205,12 @@ function createWXRequest(data, options) {
         });
     });
 }
+
+// CONCATENATED MODULE: ./src/version.ts
+var packageMsg = __webpack_require__(2);
+var version_name = packageMsg.name, dependencies = packageMsg.dependencies;
+// 先编译好，再发布，自动会改变版本号，所以此处版本要手动同步到下一次发布的版本
+var SDK_MSG = { name: version_name, dependencies: dependencies, version: "1.0.6" };
 
 // CONCATENATED MODULE: ./src/Base.ts
 var Base_assign = (undefined && undefined.__assign) || function () {
@@ -214,13 +226,18 @@ var Base_assign = (undefined && undefined.__assign) || function () {
 };
 
 
+
 var Base_Base = /** @class */ (function () {
     function Base(options) {
         this.options = {};
         this.environment = {};
+        this.networkType = {};
+        this.wxSetting = {};
         this.options = Base_assign(Base_assign({}, this.options), options);
         this.request = new Request_Request(options);
+        // 异步，一开始先拿到存下来
         this.getSystemInfo();
+        this.getNetworkType();
     }
     Base.prototype.captureException = function (exception, otherMsg) {
         var _this = this;
@@ -228,10 +245,29 @@ var Base_Base = /** @class */ (function () {
         var exceptionFormat = { exception: exception, eventId: null };
         exceptionFormat.eventId = eventId;
         var allData = this.combineData(exceptionFormat);
-        argos_utils_dist["logger"].info('exception data', allData);
+        argos_utils_dist["logger"].info("exception data", allData);
         this.request.add(new Promise(function () {
             sendData(allData, _this.options);
         }));
+    };
+    Base.prototype.getSetting = function () {
+        var that = this;
+        try {
+            // @ts-ignore
+            wx.getSetting({
+                success: function (res) {
+                    console.log(res.authSetting);
+                    that.wxSetting = res.authSetting;
+                    // res.authSetting = {
+                    //   "scope.userInfo": true,
+                    //   "scope.userLocation": true
+                    // }
+                },
+            });
+        }
+        catch (error) {
+            argos_utils_dist["logger"].error("wx.getSetting error", error);
+        }
     };
     // 获取环境基本信息
     Base.prototype.getSystemInfo = function () {
@@ -241,17 +277,38 @@ var Base_Base = /** @class */ (function () {
             wx.getSystemInfo({
                 success: function (res) {
                     that.environment = res;
-                }
+                },
             });
         }
         catch (error) {
-            argos_utils_dist["logger"].error('wx.getSystemInfo error', error);
+            argos_utils_dist["logger"].error("wx.getSystemInfo error", error);
+        }
+    };
+    // 获取网络信息
+    Base.prototype.getNetworkType = function () {
+        var that = this;
+        try {
+            // @ts-ignore
+            wx.getNetworkType({
+                success: function (res) {
+                    that.networkType = res;
+                },
+            });
+        }
+        catch (error) {
+            argos_utils_dist["logger"].error("wx.getNetworkType error", error);
         }
     };
     // 合并数据
     Base.prototype.combineData = function (data) {
         if (!data.environment) {
             data.environment = this.environment;
+        }
+        if (!data.networkType) {
+            data.networkType = this.networkType;
+        }
+        if (!data.sdk) {
+            data.sdk = SDK_MSG;
         }
         return data;
     };
@@ -375,13 +432,13 @@ var src_assign = (undefined && undefined.__assign) || function () {
 function init(options) {
     if (options === void 0) { options = {}; }
     var defaultOptions = {
-        url: '',
-        isXCX: true
+        url: "",
+        isXCX: true,
     };
     var combineOptions = src_assign(src_assign({}, defaultOptions), options);
     argos_utils_dist["logger"].bindOptions(combineOptions);
     if (!combineOptions.url) {
-        argos_utils_dist["logger"].error('There is no upload data url!');
+        argos_utils_dist["logger"].error("There is no upload data url!");
         return;
     }
     var base = new src_Base(combineOptions);

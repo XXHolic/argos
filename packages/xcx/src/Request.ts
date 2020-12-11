@@ -1,7 +1,7 @@
-import { logger } from '@thynpm/argos-utils'
+import { logger, getTimeStamp } from "@thynpm/argos-utils";
 
 interface RequestOptions {
-  maxRequest?: number,
+  maxRequest?: number;
 }
 
 export class Request {
@@ -9,10 +9,10 @@ export class Request {
 
   options: RequestOptions = {
     maxRequest: 20,
-  }
+  };
 
-  constructor(options={}) {
-    this.options = {...this.options,...options};
+  constructor(options = {}) {
+    this.options = { ...this.options, ...options };
   }
 
   isReady() {
@@ -25,44 +25,46 @@ export class Request {
   }
 
   add(task) {
-    if(!this.isReady()) {
-      logger.warn('too many request')
+    if (!this.isReady()) {
+      logger.warn("too many request");
       return;
     }
     this.tasks.push(task);
-    task.then(() => this.remove(task)).then(null, () =>
-      this.remove(task).then(null, () => {
-        // We have to add this catch here otherwise we have an unhandledPromiseRejection
-        // because it's a new Promise chain.
-      }),
-    );
+    task
+      .then(() => this.remove(task))
+      .then(null, () =>
+        this.remove(task).then(null, () => {
+          // We have to add this catch here otherwise we have an unhandledPromiseRejection
+          // because it's a new Promise chain.
+        })
+      );
 
     return task;
   }
-
 }
 
-export const sendData = (data,options) => {
-  return createWXRequest(data,options);
-}
+export const sendData = (data, options) => {
+  return createWXRequest(data, options);
+};
 
+function createWXRequest(data, options) {
+  const { url } = options;
+  if (!data.timeStamp) {
+    data.timeStamp = getTimeStamp();
+  }
 
-
-function createWXRequest(data,options) {
-  const {url} = options;
-
-  return new Promise((resolve,reject) => {
+  return new Promise((resolve, reject) => {
     // @ts-ignore
     wx.request({
       url: url,
-      method: 'POST',
+      method: "POST",
       data: data,
       success(res) {
-        resolve(res)
+        resolve(res);
       },
       fail(e) {
-        reject(e)
+        reject(e);
       },
-    })
-  })
+    });
+  });
 }
